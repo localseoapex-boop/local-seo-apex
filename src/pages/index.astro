@@ -1,67 +1,158 @@
 ---
 /**
- * Homepage (/) — uses BaseLayout directly (it's not a service/city/blog page).
+ * / — Local SEO Apex homepage.
  *
- * Passes the brand name as the title so BaseHead renders the bare brand (no
- * "| brand" suffix) — the canonical homepage title pattern. Pulls the service
- * and city catalogs so the grids stay data-driven (add a service or city and it
- * appears here automatically) and every card is an internal link for SEO equity.
+ * Positioning rule: we sell business outcomes (calls, booked jobs, revenue),
+ * not services. Local SEO, websites, GBP, and PPC are the tools, so every
+ * headline and CTA leads with the outcome and names the tool second.
+ *
+ * Section content lives in the arrays below so each section is a single map().
+ * Once these repeat on other pages, the card grids should move to components
+ * (see the notes in each array).
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE, BUSINESS } from '../config/site';
-import { services } from '../data/services';
-import { serviceProcess } from '../data/service-content';
-import { serviceAreaLocations } from '../lib/links';
-import { serviceUrl, cityUrl } from '../lib/urls';
 
-const trustSignals = [
-  'Upfront, volume-based quotes',
-  'No dumpster rental needed',
-  'Full-service loading & hauling',
-  'Donation & recycling first',
+const services = [
+  {
+    title: 'Local SEO',
+    outcome: 'Show up when people search for your service in your city',
+    text: 'Most home service jobs start with a local search. We build your rankings through on-page work, local content, citations, and reviews so the calls come from people who are ready to book, not price shoppers three towns over.',
+  },
+  {
+    title: 'Website Development',
+    outcome: 'Turn the traffic you already have into booked jobs',
+    text: 'A slow site with no clear next step wastes every visitor you earn. We build fast, SEO-first websites with clean structure and obvious calls to action, so more of the people who land on your site pick up the phone.',
+  },
+  {
+    title: 'Google Business Profile Optimization',
+    outcome: 'Win the map results your competitors are fighting over',
+    text: 'The map pack drives a large share of calls for home service companies. We tune your categories, services, photos, and review strategy so you appear in local results and give homeowners a reason to choose you.',
+  },
+  {
+    title: 'PPC Management',
+    outcome: 'Buy leads at a price that still leaves you a profit',
+    text: 'Paid search puts you in front of buyers who need help today. We manage campaigns around cost per booked job instead of clicks, and we cut the spend that never turns into work.',
+  },
 ];
 
-const testimonials = [
+const industries = [
+  { name: 'HVAC', text: 'Demand swings hard by season. Your marketing has to capture emergency repairs and planned replacements at the same time.' },
+  { name: 'Plumbing', text: 'Emergency searches convert in minutes. Whoever is visible and easy to call gets the job.' },
+  { name: 'Electrical', text: 'Panel upgrades, EV chargers, and small repairs each attract a different buyer with a different budget.' },
+  { name: 'Garage Doors', text: 'A broken spring is urgent and the search is specific. Ranking for those terms is the whole game.' },
+  { name: 'Roofing', text: 'High ticket work and heavy competition. Local proof and trust signals decide who gets the estimate.' },
+  { name: 'Landscaping', text: 'Recurring maintenance and one-time projects are two different funnels that need two different offers.' },
+  { name: 'Insulation', text: 'Rebates and energy savings drive the research. Content that answers those questions earns the lead.' },
+];
+
+const principles = [
   {
-    quote:
-      'They gave a clear quote from photos, showed up in the window, and had our garage cleared before lunch.',
-    name: 'M. Alvarez',
-    location: 'Mesa',
+    title: 'SEO-first website architecture',
+    text: 'Structure, internal linking, metadata, schema, and page speed are planned before a single design choice. Retrofitting SEO onto a finished site costs more and works worse.',
   },
   {
-    quote:
-      'Careful with the walls, quick with the heavy furniture, and they swept the patio before leaving.',
-    name: 'J. Morgan',
-    location: 'Gilbert',
+    title: 'Local search expertise',
+    text: 'Ranking in a city is a different problem than ranking nationally. Proximity, categories, reviews, and local relevance drive the map results, and we work all four.',
   },
   {
-    quote:
-      'I needed a rental cleaned out fast. Load Logic made it simple and kept me updated the whole time.',
-    name: 'R. Patel',
-    location: 'Chandler',
+    title: 'Built for home service businesses',
+    text: 'We do not split our attention across ecommerce, SaaS, and restaurants. We know what an HVAC lead costs, what a roofing sales cycle looks like, and which searches actually book.',
+  },
+  {
+    title: 'Systems instead of tactics',
+    text: 'A blog post here and a Google Ads campaign there will not compound. Your site, your profile, your content, and your paid search should feed each other.',
+  },
+  {
+    title: 'Data-driven decisions',
+    text: 'We track calls, forms, and booked jobs back to the source. When something is not producing revenue, we change it or stop paying for it.',
+  },
+  {
+    title: 'AI where it creates real value',
+    text: 'We use AI to speed up research, analysis, and reporting. We do not use it to publish thin content that Google and your customers can both spot.',
+  },
+];
+
+/** Placeholder shells. Swap the copy once real results are cleared for publication. */
+const proofCards = [
+  {
+    title: 'Case studies',
+    text: 'Full breakdowns of the starting point, the work, the timeline, and the lead volume it produced. Publishing soon.',
+  },
+  {
+    title: 'Client results',
+    text: 'Ranking, call, and booked job data from live campaigns, shared with client permission. Publishing soon.',
+  },
+  {
+    title: 'Testimonials',
+    text: 'Owners and marketing managers describing what changed in their business after the work. Publishing soon.',
+  },
+];
+
+const packages = [
+  {
+    title: 'Local SEO',
+    priceNote: 'a custom monthly retainer',
+    text: 'Best for companies that want steady, compounding lead flow in their service area.',
+    includes: [
+      'Local keyword and competitor research',
+      'On-page and technical SEO',
+      'Google Business Profile optimization',
+      'Local content and location pages',
+      'Call and lead tracking',
+    ],
+  },
+  {
+    title: 'SEO-First Website',
+    priceNote: 'a fixed project quote',
+    text: 'Best for companies whose current site is slow, dated, or does not turn visitors into calls.',
+    includes: [
+      'Site architecture and page mapping',
+      'Custom design and build',
+      'Speed and Core Web Vitals work',
+      'Schema and technical foundation',
+      'Conversion-focused page copy',
+    ],
+  },
+  {
+    title: 'PPC Management',
+    priceNote: 'a monthly fee plus ad spend',
+    text: 'Best for companies that need qualified calls now while their organic rankings build.',
+    includes: [
+      'Campaign build and keyword strategy',
+      'Landing pages built to convert',
+      'Negative keyword and waste control',
+      'Bid and budget management',
+      'Cost per booked job reporting',
+    ],
   },
 ];
 
 const faqs = [
   {
-    question: 'How is junk removal priced?',
+    question: 'How long does it take to see results from Local SEO?',
     answer:
-      'Most jobs are priced by how much space your items take in the truck, plus any unusual labor, access, or disposal needs. You approve the price before loading starts.',
+      'Most home service companies start to see movement in rankings and calls within a few months, and the results keep building from there. The timeline depends on how competitive your city is, how strong your website is today, and how established your Google Business Profile already is. Anyone promising you page one in 30 days is guessing.',
   },
   {
-    question: 'Can I get same-day junk removal?',
+    question: 'Should I start with SEO or PPC?',
     answer:
-      'Same-day pickup is often available when you contact us early, share photos, and the job fits an existing Mesa or East Valley route.',
+      'It depends on how fast you need the phone to ring. PPC can generate calls in days but the leads stop the moment you stop paying. SEO takes longer to build but the traffic keeps coming without a per-click cost. Most owners we talk to run paid search for immediate work while SEO builds underneath it.',
   },
   {
-    question: 'What items do you not take?',
+    question: 'Do you only work with home service companies?',
     answer:
-      'We do not haul hazardous waste, wet paint, fuels, oils, chemicals, asbestos, biohazards, or medical waste. Contact us first if you are unsure.',
+      'Yes. HVAC, plumbing, electrical, garage doors, roofing, landscaping, insulation, and related trades. Focusing on one type of business means we already know your buyer, your seasonality, and which searches turn into booked jobs instead of learning it on your budget.',
   },
   {
-    question: 'Do I need to move things outside first?',
+    question: 'Do I need a new website, or can you work with the one I have?',
     answer:
-      'No. Curbside pickup is fastest, but our crew can remove approved items from inside the home, garage, patio, or yard whenever access is safe.',
+      'We can often work with your current site. If it loads fast, is built on a platform we can properly optimize, and already converts visitors, a rebuild is wasted money. If the structure fights against search or visitors leave without calling, we will tell you that plainly and show you why.',
+  },
+  {
+    question: 'How do you measure whether the marketing is working?',
+    answer:
+      'By calls, form submissions, and booked jobs, tracked back to the channel that produced them. Rankings and traffic are useful signals, but they are not the point. If traffic goes up and your calendar does not, something is wrong and we go fix it.',
   },
 ];
 
@@ -76,136 +167,237 @@ const faqSchema = {
 };
 ---
 
-<BaseLayout title={SITE.name} description={SITE.description}>
-  <!-- Hero -->
+<BaseLayout title="Digital Marketing for Home Service Companies" description={SITE.description}>
   <section class="hero">
     <div class="hero-content">
-      <p class="eyebrow">Mesa &amp; the East Valley</p>
-      <h1>Junk Removal Done the Easy Way</h1>
+      <p class="eyebrow">Digital Marketing for Home Service Companies</p>
+      <h1>More Qualified Leads for Your Home Service Business</h1>
       <p class="lead">
-        Load Logic clears furniture, appliances, garages, estates, and construction debris across the
-        East Valley — you point, we haul. Upfront pricing and no dumpster rental required.
+        Local SEO Apex helps HVAC, plumbing, electrical, roofing, and other home service companies
+        get found by the customers who are ready to book. Local SEO, an SEO-first website, Google
+        Business Profile, PPC, and AI-powered marketing systems work together so your phone rings
+        with better leads.
       </p>
       <div class="hero-actions">
-        <a class="button primary" href={`tel:${BUSINESS.phone}`}>Get a free quote — {BUSINESS.phoneDisplay}</a>
-        <a class="button secondary" href="/services">See all services</a>
+        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+        <a class="button secondary" href="/contact">Get a Free SEO Audit</a>
       </div>
       <div class="hero-strip">
-        {trustSignals.map((t) => <span>{t}</span>)}
+        <span>Local SEO</span>
+        <span>SEO-First Websites</span>
+        <span>Google Business Profile</span>
+        <span>PPC Management</span>
       </div>
     </div>
   </section>
 
-  <!-- Services -->
   <section class="section">
     <div class="section-heading">
-      <p class="eyebrow">What we haul</p>
-      <h2>Junk removal &amp; cleanout services</h2>
-      <p>One crew for the heavy, awkward, and time-consuming jobs — at home or for your business.</p>
+      <p class="eyebrow">Services</p>
+      <h2>Four tools. One outcome: more booked jobs.</h2>
+      <p>
+        No owner wakes up wanting SEO. You want a full schedule and work that pays. These are the
+        levers we pull to get you there.
+      </p>
     </div>
+
     <div class="card-grid">
-      {
-        services.map((s) => (
-          <a class="service-card" href={serviceUrl(s.slug)}>
-            <h3>{s.name}</h3>
-            <p>{s.tagline}</p>
-            <span>Learn more →</span>
-          </a>
-        ))
-      }
+      {services.map((service) => (
+        <article class="service-card">
+          <h3>{service.title}</h3>
+          <p class="outcome">{service.outcome}</p>
+          <p>{service.text}</p>
+        </article>
+      ))}
     </div>
   </section>
 
-  <!-- How it works -->
   <section class="section alt">
     <div class="section-heading">
-      <p class="eyebrow">How it works</p>
-      <h2>Four simple steps</h2>
-      <p>From first call to a clean space, here is how a typical pickup goes.</p>
+      <p class="eyebrow">Industries</p>
+      <h2>We know your trade before the first call</h2>
+      <p>
+        A roofing customer and a plumbing customer search differently, decide differently, and are
+        worth different amounts. An agency that treats them the same wastes your budget learning what
+        we already know.
+      </p>
     </div>
-    <ol class="number-list">
-      {
-        serviceProcess.map((step) => (
-          <li>
-            <h3>{step.title}</h3>
-            <p>{step.text}</p>
-          </li>
-        ))
-      }
+
+    <div class="card-grid">
+      {industries.map((industry) => (
+        <article class="city-card">
+          <h3>{industry.name}</h3>
+          <p>{industry.text}</p>
+        </article>
+      ))}
+    </div>
+
+    <p class="section-link"><a href="/industries">See all industries we serve →</a></p>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <p class="eyebrow">Why Local SEO Apex</p>
+      <h2>Principles, not promises</h2>
+      <p>
+        Plenty of agencies will show you a dashboard full of green arrows. Here is how we actually
+        work and what we will not do.
+      </p>
+    </div>
+
+    <ol class="number-list why-list">
+      {principles.map((principle) => (
+        <li>
+          <h3>{principle.title}</h3>
+          <p>{principle.text}</p>
+        </li>
+      ))}
     </ol>
   </section>
 
-  <!-- Service areas -->
-  <section class="section">
-    <div class="section-heading">
-      <p class="eyebrow">Service areas</p>
-      <h2>Proudly based in Mesa</h2>
-      <p>Mesa is our home turf — and we serve these surrounding East Valley cities too.</p>
-    </div>
-    <div class="card-grid">
-      {
-        serviceAreaLocations.map((loc) => (
-          <a class="city-card" href={cityUrl(loc.slug)}>
-            <h3>{loc.city}, {loc.region}</h3>
-            <p>Junk removal &amp; cleanouts</p>
-          </a>
-        ))
-      }
-    </div>
-  </section>
-
-  <!-- Testimonials -->
   <section class="section alt">
     <div class="section-heading">
-      <p class="eyebrow">What customers say</p>
-      <h2>Trusted across the East Valley</h2>
+      <p class="eyebrow">Proof</p>
+      <h2>Results, published as they are cleared</h2>
+      <p>
+        We would rather show you nothing than show you numbers we cannot back up. Real case studies
+        and client results go here as campaigns mature and clients approve the details.
+      </p>
     </div>
+
     <div class="card-grid testimonial-grid">
-      {
-        testimonials.map((t) => (
-          <blockquote class="proof-card">
-            <p>“{t.quote}”</p>
-            <cite>
-              {t.name} · {t.location}
-            </cite>
-          </blockquote>
-        ))
-      }
+      {proofCards.map((card) => (
+        <article class="proof-card">
+          <h3>{card.title}</h3>
+          <p>{card.text}</p>
+        </article>
+      ))}
     </div>
   </section>
 
-  <!-- FAQ -->
   <section class="section">
     <div class="section-heading">
-      <p class="eyebrow">Good to know</p>
-      <h2>Frequently asked questions</h2>
+      <p class="eyebrow">Pricing</p>
+      <h2>What working together looks like</h2>
+      <p>
+        Every market and every website is different, so we quote after we understand your situation.
+        Here is what each engagement includes.
+      </p>
     </div>
-    <div class="faq-list">
-      {
-        faqs.map((f) => (
-          <details>
-            <summary>{f.question}</summary>
-            <p>{f.answer}</p>
-          </details>
-        ))
-      }
+
+    <div class="card-grid pricing-grid">
+      {packages.map((pkg) => (
+        <article class="detail-card">
+          <h3>{pkg.title}</h3>
+          <p class="price-label">Starting at</p>
+          <p class="price-value">{pkg.priceNote}</p>
+          <p class="price-text">{pkg.text}</p>
+          <ul>
+            {pkg.includes.map((item) => <li>{item}</li>)}
+          </ul>
+        </article>
+      ))}
     </div>
   </section>
 
-  <!-- Final CTA -->
+  <section class="section alt">
+    <div class="section-heading">
+      <p class="eyebrow">FAQ</p>
+      <h2>What owners ask before they hire us</h2>
+    </div>
+
+    <div class="faq-list">
+      {faqs.map((f) => (
+        <details>
+          <summary>{f.question}</summary>
+          <p>{f.answer}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
   <section class="cta-band">
     <div>
-      <h2>Ready to clear it out?</h2>
-      <p>Call or send a few photos for a fast, upfront quote anywhere in the East Valley.</p>
+      <h2>Let's talk about your lead flow</h2>
+      <p>
+        A 30 minute strategy call. We will look at where you rank today, what your competitors are
+        doing, and where the fastest wins are. No pressure and no obligation.
+      </p>
     </div>
-    <a class="button primary" href={`tel:${BUSINESS.phone}`}>Call {BUSINESS.phoneDisplay}</a>
+    <a class="button primary" href="/contact">Schedule a Strategy Call</a>
   </section>
 
-  <!-- Sticky mobile call/quote bar -->
   <div class="mobile-sticky">
     <a href={`tel:${BUSINESS.phone}`}>Call now</a>
-    <a href="/services">Free quote</a>
+    <a href="/contact">Strategy Call</a>
   </div>
 
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
 </BaseLayout>
+
+<style>
+  /* Outcome line sits above the explanation so the benefit reads first. */
+  .service-card .outcome {
+    color: var(--green-dark);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 0 0 0.6rem;
+  }
+
+  /* Six principles read better as 3x2 than the global 4-column default. */
+  .why-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pricing-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .price-label {
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .price-value {
+    color: var(--green-dark);
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0 0 0.75rem;
+  }
+  .price-text {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0 0 1rem;
+  }
+
+  .proof-card h3 {
+    margin: 0 0 0.5rem;
+  }
+  .proof-card p {
+    color: var(--muted);
+  }
+
+  .section-link {
+    max-width: 1200px;
+    margin: 1.75rem auto 0;
+    font-weight: 800;
+  }
+  .section-link a {
+    text-decoration: none;
+  }
+
+  @media (max-width: 900px) {
+    .why-list,
+    .pricing-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 600px) {
+    .why-list,
+    .pricing-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

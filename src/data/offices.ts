@@ -65,8 +65,8 @@ export const offices: Office[] = [
     legalName: 'Local SEO Apex',
     type: 'LocalBusiness',
     priceRange: '$$',
-    phone: '+1-480-712-0431',
-    email: 'hello@loadlogicjunk.com',
+    phone: '+1-480-744-0399',
+    email: 'info@localseoapex.com',
     address: {
       // street + postalCode pending final Mesa move-in.
       city: 'Mesa',
