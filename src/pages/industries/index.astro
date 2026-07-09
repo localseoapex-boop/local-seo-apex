@@ -1,0 +1,26 @@
+---
+/**
+ * /industries — hub page for the industries we serve.
+ *
+ * Placeholder for now: breadcrumb parent and landing surface. Industry links
+ * get added once the industry pages exist.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="Industries"
+  description="Local SEO Apex helps home service businesses grow through Local SEO, websites, PPC, and marketing systems."
+>
+  <div class="container page">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Industries' }]} />
+    <header class="page-hero">
+      <h1>Industries We Help</h1>
+      <p class="lede">
+        Local SEO Apex helps home service businesses grow through Local SEO, websites, PPC, and
+        marketing systems.
+      </p>
+    </header>
+  </div>
+</BaseLayout>

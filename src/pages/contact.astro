@@ -1,0 +1,25 @@
+---
+/**
+ * /contact — contact landing page.
+ *
+ * Placeholder for now: the form and contact details land here later.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="Contact Local SEO Apex"
+  description="Ready to grow your home service business? Contact Local SEO Apex to discuss Local SEO, website builds, PPC, and marketing systems."
+>
+  <div class="container page">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Contact' }]} />
+    <header class="page-hero">
+      <h1>Contact Local SEO Apex</h1>
+      <p class="lede">
+        Ready to grow your home service business? Contact Local SEO Apex to discuss Local SEO,
+        website builds, PPC, and marketing systems.
+      </p>
+    </header>
+  </div>
+</BaseLayout>
