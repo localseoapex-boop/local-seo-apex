@@ -62,7 +62,7 @@ export const offices: Office[] = [
     id: 'mesa',
     name: 'Mesa Office',
     homeCitySlug: 'mesa-az',
-    legalName: 'Load Logic Junk Removal LLC',
+    legalName: 'Local SEO Apex',
     type: 'LocalBusiness',
     priceRange: '$$',
     phone: '+1-480-712-0431',

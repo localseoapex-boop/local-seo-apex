@@ -10,56 +10,48 @@ import { primaryOffice } from '../data/offices';
 
 export const SITE = {
   /** Must match `site` in astro.config.mjs. Used to build absolute/canonical URLs. */
-  url: 'https://load-logic.vercel.app',
+  url: 'https://localseoapex.com',
   /** Brand / business name, reused in titles, schema, and footer. */
-  name: 'Load Logic Junk Removal',
+  name: 'Local SEO Apex',
   /** Short tagline used as the default meta description fallback. */
   description:
-    'Full-service junk removal and cleanouts in Mesa and the East Valley. Upfront pricing, fast scheduling, and all the heavy lifting handled.',
+    'Local SEO Apex helps home service businesses grow through Local SEO, custom websites, PPC management, and AI-powered marketing systems.',
   /** Default social share image (lives in /public). 1200x630, regenerated on build. */
   defaultOgImage: '/og-default.png',
   /** Default language for the <html lang> attribute. */
   locale: 'en',
   /** Twitter/X handle for twitter:site card attribution. */
-  twitter: '@loadlogicjunk',
+  twitter: '',
   /**
    * When true, the PRIMARY office's home city (offices[0].homeCitySlug) is NOT
    * generated as a /locations/* service-area page — it is represented directly
-   * by the homepage and the canonical /services/* pages instead. This avoids
-   * duplicate "home city" pages. Flip to false for businesses that DO want a
-   * dedicated location page for their home city. See src/lib/links.ts.
+   * by the homepage and the canonical /services/* pages instead.
    */
   excludeHomeCityFromServiceAreas: true,
 } as const;
 
-/**
- * Org-level business defaults, derived from the primary office. Used for the
- * site-wide NAP shortcuts (nav CTA, service-page provider, etc.). For
- * multi-office data (footer, schema) iterate `offices` from src/data/offices.ts.
- */
 export const BUSINESS = {
   legalName: primaryOffice.legalName,
   type: primaryOffice.type,
   priceRange: primaryOffice.priceRange,
   phone: primaryOffice.phone,
   /** Human-friendly phone for display in CTAs and copy. */
-  phoneDisplay: '(480) 712-0431',
+  phoneDisplay: '(480) 788-9830',
   email: primaryOffice.email,
   address: primaryOffice.address,
   geo: primaryOffice.geo,
   openingHours: primaryOffice.hours,
-  /** All cities served — handy for area-served lists. */
+  /** All cities/markets served — handy for area-served lists. */
   areaServed: [
     'Mesa',
+    'Phoenix',
+    'Scottsdale',
     'Chandler',
     'Gilbert',
     'Tempe',
     'Queen Creek',
     'San Tan Valley',
     'Apache Junction',
-    'Gold Canyon',
-    'Scottsdale',
-    'Ahwatukee',
   ],
 } as const;
 
@@ -67,29 +59,29 @@ export const BUSINESS = {
 export const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
-  { label: 'Areas We Serve', href: '/locations' },
+  { label: 'Industries', href: '/industries' },
   { label: 'Blog', href: '/blog' },
+  { label: 'Locations', href: '/locations' },
+  { label: 'Contact Us', href: '/contact' },
 ] as const;
 
 /** Footer link groups. */
 export const FOOTER_LINKS = [
   {
-    title: 'Popular Services',
+    title: 'Services',
     links: [
-      { label: 'Junk Removal', href: '/services/junk-removal' },
-      { label: 'Furniture Removal', href: '/services/furniture-removal' },
-      { label: 'Garage Cleanouts', href: '/services/garage-cleanouts' },
-      { label: 'Same-Day Junk Removal', href: '/services/same-day-junk-removal' },
+      { label: 'Local SEO', href: '/services/local-seo' },
+      { label: 'Website Builds', href: '/services/website-builds' },
+      { label: 'PPC Management', href: '/services/ppc' },
     ],
   },
   {
     title: 'Company',
     links: [
-      { label: 'All Services', href: '/services' },
-      { label: 'Areas We Serve', href: '/locations' },
-      // Mesa is the home market — represented by the homepage, not a location page.
-      { label: 'Mesa Junk Removal', href: '/' },
+      { label: 'Industries', href: '/industries' },
+      { label: 'Locations', href: '/locations' },
       { label: 'Blog', href: '/blog' },
+      { label: 'Contact Us', href: '/contact' },
     ],
   },
 ] as const;
