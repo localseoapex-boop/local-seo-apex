@@ -14,7 +14,7 @@ import { BUSINESS, SITE } from '../config/site';
 import type { Location } from '../data/locations';
 import { getOffice, primaryOffice } from '../data/offices';
 import { servicesForLocation, nearbyCities } from '../lib/links';
-import { cityUrl, locationServiceUrl } from '../lib/urls';
+import { cityUrl, serviceUrl } from '../lib/urls';
 
 interface Props {
   location: Location;
@@ -33,10 +33,11 @@ const crumbs = [
   { name: cityState },
 ];
 
-// Services this city offers -> deep links to the location-service combo pages.
+// Services this city offers -> the canonical service pages. There are no
+// per-city service pages; /services/[service] is the single URL for each.
 const serviceLinks = servicesForLocation(location).map((s) => ({
-  label: `${s.name} in ${location.city}`,
-  href: locationServiceUrl(location.slug, s.slug),
+  label: s.name,
+  href: serviceUrl(s.slug),
   description: s.tagline,
 }));
 

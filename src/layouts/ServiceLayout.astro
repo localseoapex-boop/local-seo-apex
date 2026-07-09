@@ -26,7 +26,7 @@ import {
   serviceTrustBullets,
 } from '../data/service-content';
 import { relatedServices, locationsForService, subServicesForCategory } from '../lib/links';
-import { serviceUrl, locationServiceUrl, subServiceUrl, absoluteUrl } from '../lib/urls';
+import { serviceUrl, cityUrl, subServiceUrl, absoluteUrl } from '../lib/urls';
 
 interface Props {
   service: Service;
@@ -53,10 +53,11 @@ const subServiceLinks = subServicesForCategory(service.slug).map((sub) => ({
   description: sub.tagline,
 }));
 
-// "Available in these areas" — every city that offers this service.
+// "Available in these areas" — the city pages for every city offering this
+// service. Links go to the city page itself; there is no per-city service page.
 const areaLinks = locationsForService(service.slug).map((loc) => ({
-  label: `${service.name} in ${loc.city}, ${loc.region}`,
-  href: locationServiceUrl(loc.slug, service.slug),
+  label: `${loc.city}, ${loc.region}`,
+  href: cityUrl(loc.slug),
 }));
 
 // "Related services" — curated siblings, backfilled.
