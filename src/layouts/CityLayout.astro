@@ -10,7 +10,7 @@
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import InternalLinks from '../components/InternalLinks.astro';
-import { BUSINESS, SITE } from '../config/site';
+import { SITE } from '../config/site';
 import type { Location } from '../data/locations';
 import { getOffice, primaryOffice } from '../data/offices';
 import { servicesForLocation, nearbyCities } from '../lib/links';
@@ -83,7 +83,7 @@ const nearbyLinks = nearbyCities(location.slug).map((loc) => ({
         <h2>Want more booked jobs in {location.city}?</h2>
         <p>Book a strategy call and we will show you where the leads are leaking.</p>
       </div>
-      <a class="button primary" href={`tel:${office.phone}`}>Call {BUSINESS.phoneDisplay}</a>
+      <a class="button primary" href={`tel:${office.phone}`}>Call {office.phoneDisplay}</a>
     </section>
   </article>
 </BaseLayout>

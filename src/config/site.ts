@@ -34,9 +34,10 @@ export const BUSINESS = {
   legalName: primaryOffice.legalName,
   type: primaryOffice.type,
   priceRange: primaryOffice.priceRange,
+  /** Dial-only (tel: hrefs, schema). Render `phoneDisplay` as text instead. */
   phone: primaryOffice.phone,
-  /** Human-friendly phone for display in CTAs and copy. */
-  phoneDisplay: '(480) 788-9830',
+  /** Display-only. Differs from `phone` by design — see Office.phoneDisplay. */
+  phoneDisplay: primaryOffice.phoneDisplay,
   email: primaryOffice.email,
   address: primaryOffice.address,
   geo: primaryOffice.geo,

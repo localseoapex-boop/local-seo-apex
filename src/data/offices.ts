@@ -38,7 +38,18 @@ export interface Office {
   /** schema.org business @type. */
   type: string;
   priceRange: string;
+  /**
+   * The number that is DIALED: tel: hrefs and schema.org `telephone`. E.164 so
+   * dialers and Google parse it unambiguously. Never render this as text.
+   */
   phone: string;
+  /**
+   * The number that is DISPLAYED as text. Deliberately distinct from `phone` —
+   * this office publishes a call-tracking number while calls route to the line
+   * in `phone`. Keep the pair together on the office so a tel: href and the text
+   * next to it can never come from different offices.
+   */
+  phoneDisplay: string;
   email: string;
   address: {
     /** Omitted until the real Mesa street address is published. */
@@ -66,6 +77,7 @@ export const offices: Office[] = [
     type: 'LocalBusiness',
     priceRange: '$$',
     phone: '+1-480-744-0399',
+    phoneDisplay: '(480) 788-9830',
     email: 'info@localseoapex.com',
     address: {
       // street + postalCode pending final Mesa move-in.

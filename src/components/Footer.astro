@@ -7,7 +7,7 @@
  * LocalBusiness schema exactly — consistent NAP across page + schema + external
  * listings is a core local-SEO ranking factor.
  */
-import { SITE, BUSINESS, FOOTER_LINKS } from '../config/site';
+import { SITE, FOOTER_LINKS } from '../config/site';
 import { offices } from '../data/offices';
 
 const year = new Date().getFullYear();
@@ -34,7 +34,7 @@ const year = new Date().getFullYear();
             {office.address.city}, {office.address.region}
             {office.address.postalCode ? ` ${office.address.postalCode}` : ''}
             <br />
-            <a href={`tel:${office.phone}`}>{BUSINESS.phoneDisplay}</a>
+            <a href={`tel:${office.phone}`}>{office.phoneDisplay}</a>
           </address>
         </div>
       ))
