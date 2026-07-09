@@ -71,8 +71,9 @@ export const FOOTER_LINKS = [
     title: 'Services',
     links: [
       { label: 'Local SEO', href: '/services/local-seo' },
-      { label: 'Website Builds', href: '/services/website-builds' },
-      { label: 'PPC Management', href: '/services/ppc' },
+      { label: 'Website Development', href: '/services/website-development' },
+      { label: 'PPC Management', href: '/services/ppc-management' },
+      { label: 'Google Business Profile', href: '/services/google-business-profile-optimization' },
     ],
   },
   {

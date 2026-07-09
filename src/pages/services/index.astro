@@ -3,31 +3,77 @@
  * /services — hub page listing every service.
  *
  * Acts as the breadcrumb parent for service pages and a crawl hub that links to
- * all of them, helping search engines discover the full set.
+ * all of them, helping search engines discover the full set. Cards are rendered
+ * here rather than via InternalLinks because the hub shows the extra catalog
+ * fields (icon, starting price, featured badge) a plain link grid cannot.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import InternalLinks from '../../components/InternalLinks.astro';
-import { services } from '../../data/services';
+import ServiceIcon from '../../components/ServiceIcon.astro';
+import { services, formatStartingPrice } from '../../data/services';
 import { serviceUrl } from '../../lib/urls';
-
-const links = services.map((s) => ({
-  label: s.name,
-  href: serviceUrl(s.slug),
-  description: s.tagline,
-}));
 ---
 
 <BaseLayout
-  title="Junk Removal & Cleanout Services"
-  description="Explore Load Logic's full range of junk removal and cleanout services across Mesa and the East Valley — furniture, appliances, garages, estates, and more."
+  title="Digital Marketing Services for Home Service Businesses"
+  description="Local SEO, website development, PPC management, and Google Business Profile optimization for home service companies — built around booked jobs, not vanity metrics."
 >
   <div class="container page">
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Services' }]} />
     <header class="page-hero">
-      <h1>Junk Removal &amp; Cleanout Services</h1>
-      <p class="lede">Full-service hauling for homes and businesses across Mesa and the East Valley — we bring the truck and the muscle.</p>
+      <h1>Digital Marketing Services</h1>
+      <p class="lede">Four tools, one outcome: more booked jobs for your home service business.</p>
     </header>
-    <InternalLinks title="Browse services" links={links} />
+
+    <div class="card-grid">
+      {services.map((service) => (
+        <article class="service-card">
+          <ServiceIcon name={service.icon} class="card-icon" />
+          <h2>
+            <a href={serviceUrl(service.slug)}>{service.name}</a>
+            {service.featured && <span class="badge">Most popular</span>}
+          </h2>
+          <p class="outcome">{service.tagline}</p>
+          <p>{service.intro}</p>
+          <p class="starting-price">
+            Starting at <strong>{formatStartingPrice(service.startingPrice)}</strong>
+          </p>
+        </article>
+      ))}
+    </div>
   </div>
 </BaseLayout>
+
+<style>
+  .service-card h2 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .badge {
+    background: var(--green-dark);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  /* Outcome line sits above the explanation so the benefit reads first. */
+  .service-card .outcome {
+    color: var(--green-dark);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 0 0 0.6rem;
+  }
+
+  .starting-price {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+</style>

@@ -7,16 +7,17 @@
  * service-content.ts. The page file just hands over the data — so all service
  * pages share identical SEO structure and a new service needs zero template work.
  *
- * Renders the full junk-removal service page: hero + trust, overview, reasons,
- * what-we-remove, special handling, how-it-works, why-choose, problem/solution,
+ * Renders the full service page: hero + trust, overview, what's included,
+ * benefits, scope notes, how-it-works, why-choose, problem/solution,
  * internal-link blocks, FAQs (with FAQPage schema), and a final CTA band. Emits
  * Service + FAQPage JSON-LD alongside the Breadcrumb schema.
  */
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import InternalLinks from '../components/InternalLinks.astro';
+import ServiceIcon from '../components/ServiceIcon.astro';
 import { BUSINESS, SITE } from '../config/site';
-import type { Service } from '../data/services';
+import { formatStartingPrice, type Service } from '../data/services';
 import {
   getServiceContent,
   getServiceFaqs,
@@ -45,7 +46,7 @@ const crumbs = [
   { name: service.name },
 ];
 
-// Sub-services in this category (e.g. Residential / Commercial Junk Removal).
+// Sub-services in this category (e.g. Local SEO Audits / Citation Building).
 const subServiceLinks = subServicesForCategory(service.slug).map((sub) => ({
   label: sub.name,
   href: subServiceUrl(service.slug, sub.slug),
@@ -65,7 +66,10 @@ const relatedLinks = relatedServices(service.slug).map((s) => ({
   description: s.tagline,
 }));
 
-// Service structured data, referencing the primary business node.
+const priceLabel = formatStartingPrice(service.startingPrice);
+
+// Service structured data, referencing the primary business node. The Offer
+// exposes the same entry price the hero shows, so markup and copy cannot drift.
 const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
@@ -74,6 +78,12 @@ const serviceSchema = {
   areaServed: BUSINESS.areaServed,
   description: service.description,
   url: absoluteUrl(serviceUrl(service.slug)),
+  offers: {
+    '@type': 'Offer',
+    price: service.startingPrice.amount,
+    priceCurrency: service.startingPrice.currency,
+    availability: 'https://schema.org/InStock',
+  },
 };
 
 // FAQPage schema — only the FAQs visible on this page.
@@ -93,12 +103,16 @@ const faqSchema = {
     <Breadcrumbs items={crumbs} />
 
     <header class="page-hero service-hero">
-      <p class="eyebrow">Junk Removal</p>
-      <h1>{service.name} in Mesa &amp; the East Valley</h1>
-      <p class="lede">{service.tagline}</p>
+      <p class="eyebrow">
+        <ServiceIcon name={service.icon} class="eyebrow-icon" />
+        {service.shortName}
+      </p>
+      <h1>{service.heroTitle}</h1>
+      <p class="lede">{service.heroSubtitle}</p>
+      <p class="starting-price">Starting at <strong>{priceLabel}</strong></p>
       <div class="hero-actions">
-        <a class="button primary" href={`tel:${BUSINESS.phone}`}>Get a free quote — {BUSINESS.phoneDisplay}</a>
-        <a class="button outline" href="/locations">Areas we serve</a>
+        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+        <a class="button outline" href={`tel:${BUSINESS.phone}`}>Call {BUSINESS.phoneDisplay}</a>
       </div>
       <ul class="hero-trust">
         {serviceTrustBullets.map((b) => <li>{b}</li>)}
@@ -112,6 +126,14 @@ const faqSchema = {
         <div class="copy-stack">
           {(content?.overview ?? []).map((p) => <p>{p}</p>)}
         </div>
+      </section>
+
+      {/* Outcomes first, deliverables second — owners buy the result. */}
+      <section class="service-section">
+        <h2>What you get out of it</h2>
+        <ul class="check-list">
+          {service.benefits.map((b) => <li>{b}</li>)}
+        </ul>
       </section>
 
       {/* What we offer + common reasons */}
@@ -130,10 +152,10 @@ const faqSchema = {
         )}
       </section>
 
-      {/* What we remove */}
+      {/* What's included */}
       {content && content.detailGroups.length > 0 && (
         <section class="service-section">
-          <h2>What we take</h2>
+          <h2>What's included</h2>
           <div class="detail-grid">
             {content.detailGroups.map((group) => (
               <div class="detail-card">
@@ -151,7 +173,7 @@ const faqSchema = {
       {content?.specialNote && (
         <section class="service-section">
           <div class="warning-section">
-            <h3>Items that need special handling</h3>
+            <h3>Good to know</h3>
             <p>{content.specialNote}</p>
           </div>
         </section>
@@ -172,7 +194,7 @@ const faqSchema = {
 
       {/* Why choose us */}
       <section class="service-section">
-        <h2>Why choose Load Logic</h2>
+        <h2>Why choose {SITE.name}</h2>
         <ul class="check-list">
           {whyChoose.map((w) => <li>{w}</li>)}
         </ul>
@@ -218,13 +240,27 @@ const faqSchema = {
     {/* Final CTA */}
     <section class="cta-band">
       <div>
-        <h2>Ready to clear it out?</h2>
-        <p>Get an upfront quote for {service.name.toLowerCase()} in Mesa and the East Valley.</p>
+        <h2>Ready for more booked jobs?</h2>
+        <p>Get a {service.name.toLowerCase()} plan built around your market, starting at {priceLabel}.</p>
       </div>
-      <a class="button primary" href={`tel:${BUSINESS.phone}`}>Call {BUSINESS.phoneDisplay}</a>
+      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
     </section>
 
     <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} is:inline />
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
   </article>
 </BaseLayout>
+
+<style>
+  /* Icon sits inline with the eyebrow label above the h1. */
+  .service-hero .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .starting-price {
+    margin: 0 0 1.25rem;
+    color: var(--green-dark);
+  }
+</style>

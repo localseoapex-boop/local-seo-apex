@@ -1,0 +1,42 @@
+---
+/**
+ * ServiceIcon.astro — resolves a Service `icon` key to an inline SVG.
+ *
+ * Inline rather than an icon library: four icons is not worth a dependency, and
+ * inlining avoids a render-blocking request on the pages that matter most.
+ * Adding an icon means adding a key here AND to ServiceIcon in data/services.ts,
+ * so the union type keeps the two in sync at build time.
+ */
+import type { ServiceIcon } from '../data/services';
+
+interface Props {
+  name: ServiceIcon;
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+
+/** 24x24 stroke paths, drawn with the currentColor stroke set below. */
+const PATHS: Record<ServiceIcon, string[]> = {
+  search: ['M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16z', 'M21 21l-4.35-4.35'],
+  code: ['M8 6l-6 6 6 6', 'M16 6l6 6-6 6'],
+  target: ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M12 11.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1z'],
+  'map-pin': ['M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z', 'M12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6z'],
+};
+---
+
+<svg
+  class={className}
+  viewBox="0 0 24 24"
+  width="28"
+  height="28"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  {PATHS[name].map((d) => <path d={d} />)}
+</svg>

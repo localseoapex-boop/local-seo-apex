@@ -10,7 +10,7 @@
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import InternalLinks from '../components/InternalLinks.astro';
-import { BUSINESS } from '../config/site';
+import { BUSINESS, SITE } from '../config/site';
 import type { Location } from '../data/locations';
 import { getOffice, primaryOffice } from '../data/offices';
 import { servicesForLocation, nearbyCities } from '../lib/links';
@@ -24,8 +24,8 @@ const { location } = Astro.props;
 const office = getOffice(location.officeId) ?? primaryOffice;
 const cityState = `${location.city}, ${location.region}`;
 
-const title = `Junk Removal in ${cityState}`;
-const description = `Junk removal and cleanouts in ${cityState} — furniture, appliances, mattresses, garages, estates, and construction debris, with upfront pricing.`;
+const title = `Digital Marketing in ${cityState}`;
+const description = `Local SEO, website development, PPC management, and Google Business Profile optimization for home service businesses in ${cityState}.`;
 
 const crumbs = [
   { name: 'Home', href: '/' },
@@ -42,7 +42,7 @@ const serviceLinks = servicesForLocation(location).map((s) => ({
 
 // Nearby cities for lateral internal linking.
 const nearbyLinks = nearbyCities(location.slug).map((loc) => ({
-  label: `Junk removal in ${loc.city}, ${loc.region}`,
+  label: `Digital marketing in ${loc.city}, ${loc.region}`,
   href: cityUrl(loc.slug),
 }));
 ---
@@ -56,16 +56,16 @@ const nearbyLinks = nearbyCities(location.slug).map((loc) => ({
       <h1>{title}</h1>
       <p class="lede">{location.intro ?? description}</p>
       <div class="hero-actions">
-        <a class="button primary" href={`tel:${office.phone}`}>Get a free quote — {BUSINESS.phoneDisplay}</a>
+        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
         <a class="button outline" href="/services">View all services</a>
       </div>
     </header>
 
     <div class="page-body">
       <p>
-        Load Logic is a Mesa-based junk removal team serving {location.city} and the surrounding East
-        Valley. We bring the truck and the muscle, give you an upfront price before we load, and clean
-        up the area when the job is done — no dumpster rental, no heavy lifting on your end.
+        {SITE.name} is a Mesa-based marketing team helping home service businesses in {location.city}
+        and the surrounding East Valley win local search. We build the rankings, the website, and the
+        campaigns that turn searches into booked jobs — and we report on the calls, not on clicks.
       </p>
       {location.neighborhoods && location.neighborhoods.length > 0 && (
         <p class="areas-line">
@@ -79,8 +79,8 @@ const nearbyLinks = nearbyCities(location.slug).map((loc) => ({
 
     <section class="cta-band">
       <div>
-        <h2>Need junk gone in {location.city}?</h2>
-        <p>Call or send a few photos for a fast, upfront quote.</p>
+        <h2>Want more booked jobs in {location.city}?</h2>
+        <p>Book a strategy call and we will show you where the leads are leaking.</p>
       </div>
       <a class="button primary" href={`tel:${office.phone}`}>Call {BUSINESS.phoneDisplay}</a>
     </section>

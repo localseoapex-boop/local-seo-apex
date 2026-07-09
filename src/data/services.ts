@@ -2,285 +2,196 @@
  * services.ts — the service catalog (requirement #6: content model).
  *
  * One entry per service line. This drives:
+ *   - the homepage service grid
  *   - /services/[service] pages (one per entry)
  *   - /locations/[city]/[service] pages (entry × location)
  *   - "Related services" internal links
  *
  * `related` holds sibling slugs for cross-linking. The deeper, page-level copy
- * (overview paragraphs, what-we-remove, problem/solution, special handling, and
+ * (overview paragraphs, what's-included groups, problem/solution pairs, and
  * FAQs) lives in src/data/service-content.ts, keyed by the same slug — this file
  * stays a lean catalog. Adding a service here (plus a content entry) generates
  * its pages automatically — no new route files.
+ *
+ * Slugs are load-bearing: src/config/site.ts FOOTER_LINKS points at them, and
+ * every generated URL derives from them. Changing one is a redirect-worthy event.
  */
+
+/** Icon keys resolved to inline SVG by src/components/ServiceIcon.astro. */
+export type ServiceIcon = 'search' | 'code' | 'target' | 'map-pin';
+
+/**
+ * Entry-level price, used for "starting at" copy and schema.org Offer data.
+ * `period` distinguishes a retainer ('month') from one-time work ('project').
+ */
+export interface StartingPrice {
+  amount: number;
+  /** ISO 4217 currency code. */
+  currency: string;
+  period: 'month' | 'project';
+}
+
 export interface Service {
   slug: string;
   name: string;
-  /** Closest schema.org business type (junk hauling has no dedicated type). */
+  /** Compact label for eyebrows, badges, and nav where the full name is too long. */
+  shortName: string;
+  /** Closest schema.org type for the provider of this service. */
   schemaType: string;
-  /** One-line hero subhead. */
+  /** Outcome-first one-liner used on cards (the benefit, not the deliverable). */
   tagline: string;
+  /** <h1> on the service page. Overrides the generic "{name} in Mesa" pattern. */
+  heroTitle: string;
+  /** Hero subhead beneath the h1. */
+  heroSubtitle: string;
   /** Meta-description base (kept under ~160 chars). */
   description: string;
-  /** Opening body paragraph. */
+  /** Opening body paragraph, also used as the homepage card copy. */
   intro: string;
-  /** Bulleted "what we do" list. */
+  /** Bulleted "what's included" list — the deliverables. */
   features: string[];
+  /** Outcome-oriented bullets — what the client gets out of it. */
+  benefits: string[];
+  /**
+   * PLACEHOLDER PRICING — confirm with the business before launch. These render
+   * publicly on service pages and in schema.org Offer data.
+   */
+  startingPrice: StartingPrice;
+  /** Flags the lead offers; badged on the /services hub. */
+  featured: boolean;
+  icon: ServiceIcon;
   /** Slugs of related services for internal linking. */
   related: string[];
 }
 
 export const services: Service[] = [
   {
-    slug: 'junk-removal',
-    name: 'Junk Removal',
-    schemaType: 'LocalBusiness',
-    tagline: 'Full-service hauling for bulky items, clutter, and cleanouts.',
+    slug: 'local-seo',
+    name: 'Local SEO',
+    shortName: 'Local SEO',
+    schemaType: 'ProfessionalService',
+    tagline: 'Show up when people search for your service in your city',
+    heroTitle: 'Local SEO That Fills Your Schedule',
+    heroSubtitle:
+      'Rank for the searches homeowners actually use when they are ready to book — not vanity keywords that never turn into work.',
     description:
-      'Full-service junk removal in Mesa and the East Valley for bulky items, mixed clutter, move-outs, and property cleanups with upfront pricing.',
+      'Local SEO for home service companies. On-page work, local content, citations, and reviews that grow rankings and bring in calls from ready-to-book customers.',
     intro:
-      'When you have more junk than a trash can can hold and no easy way to haul it, one crew can clear it all in a single visit. We handle the loading, hauling, sorting, and cleanup so you never touch a heavy item or rent a dumpster.',
+      'Most home service jobs start with a local search. We build your rankings through on-page work, local content, citations, and reviews so the calls come from people who are ready to book, not price shoppers three towns over.',
     features: [
-      'Mixed household and garage junk',
-      'Bulky and oversized items',
-      'Curbside, garage, or in-home pickup',
-      'Move-out and cleanup debris',
-      'Upfront, volume-based pricing',
+      'Technical and on-page SEO',
+      'Local keyword and competitor research',
+      'City and service page architecture',
+      'Citation building and cleanup',
+      'Review generation strategy',
+      'Monthly reporting on calls and rankings',
     ],
-    related: ['furniture-removal', 'appliance-removal', 'garage-cleanouts', 'same-day-junk-removal'],
+    benefits: [
+      'Steady, compounding lead flow you do not rent',
+      'Rankings in the cities you actually serve',
+      'Calls from buyers instead of price shoppers',
+      'A traffic base that outlasts your ad budget',
+    ],
+    startingPrice: { amount: 1500, currency: 'USD', period: 'month' },
+    featured: true,
+    icon: 'search',
+    related: ['google-business-profile-optimization', 'website-development', 'ppc-management'],
   },
   {
-    slug: 'furniture-removal',
-    name: 'Furniture Removal',
-    schemaType: 'LocalBusiness',
-    tagline: 'Sofas, mattresses, tables, and bulky pieces hauled away.',
+    slug: 'website-development',
+    name: 'Website Development',
+    shortName: 'Websites',
+    schemaType: 'ProfessionalService',
+    tagline: 'Turn the traffic you already have into booked jobs',
+    heroTitle: 'SEO-First Websites Built to Convert',
+    heroSubtitle:
+      'Fast, clean, and structured for search from the first wireframe — because retrofitting SEO onto a finished site costs more and works worse.',
     description:
-      'Furniture removal in Mesa for sofas, sectionals, mattresses, tables, dressers, and patio furniture. We do the lifting and loading for you.',
+      'Custom website development for home service businesses. Fast, SEO-first builds with clean structure and clear calls to action that turn visitors into phone calls.',
     intro:
-      'Large furniture is heavy, awkward, and rough on walls and floors when you move it alone. Our crew carries it out from inside the home, garage, patio, or curb, and routes usable pieces toward donation when we can.',
+      'A slow site with no clear next step wastes every visitor you earn. We build fast, SEO-first websites with clean structure and obvious calls to action, so more of the people who land on your site pick up the phone.',
     features: [
-      'Sofas, sectionals, and recliners',
-      'Dressers, tables, and bed frames',
-      'Patio and outdoor furniture',
-      'In-home and upstairs removal',
-      'Donation routing when items are usable',
+      'SEO-first information architecture',
+      'Custom, mobile-first design',
+      'Core Web Vitals performance work',
+      'Schema markup and technical SEO',
+      'Conversion-focused calls to action',
+      'Lead form and call tracking setup',
     ],
-    related: ['mattress-removal', 'estate-cleanouts', 'junk-removal', 'appliance-removal'],
+    benefits: [
+      'More booked jobs from the same traffic',
+      'A site that loads before visitors leave',
+      'Structure search engines can actually crawl',
+      'A foundation every other channel depends on',
+    ],
+    startingPrice: { amount: 4500, currency: 'USD', period: 'project' },
+    featured: true,
+    icon: 'code',
+    related: ['local-seo', 'google-business-profile-optimization', 'ppc-management'],
   },
   {
-    slug: 'appliance-removal',
-    name: 'Appliance Removal',
-    schemaType: 'LocalBusiness',
-    tagline: 'Refrigerators, washers, dryers, and water heaters gone.',
+    slug: 'ppc-management',
+    name: 'PPC Management',
+    shortName: 'PPC',
+    schemaType: 'ProfessionalService',
+    tagline: 'Buy leads at a price that still leaves you a profit',
+    heroTitle: 'PPC Management Measured in Booked Jobs',
+    heroSubtitle:
+      'We manage campaigns around cost per booked job instead of cost per click, and cut the spend that never turns into work.',
     description:
-      'Appliance removal in Mesa for refrigerators, washers, dryers, ovens, dishwashers, freezers, and water heaters, with recycling when possible.',
+      'PPC management for home service companies. Google Ads and Local Services Ads managed around cost per booked job, not clicks, with spend that earns its keep.',
     intro:
-      'Old appliances are heavy, sharp-edged, and a hassle to dispose of correctly. Once the unit is disconnected, our crew loads and hauls it away and routes it toward recycling when possible.',
+      'Paid search puts you in front of buyers who need help today. We manage campaigns around cost per booked job instead of clicks, and we cut the spend that never turns into work.',
     features: [
-      'Refrigerators and freezers',
-      'Washers, dryers, and dishwashers',
-      'Ovens, ranges, and water heaters',
-      'Garage and laundry-room pickup',
-      'Recycling routing when available',
+      'Google Ads and Local Services Ads',
+      'Keyword and negative keyword management',
+      'Landing page and ad copy testing',
+      'Call tracking and conversion setup',
+      'Bid and budget management',
+      'Cost-per-booked-job reporting',
     ],
-    related: ['junk-removal', 'garage-cleanouts', 'furniture-removal', 'same-day-junk-removal'],
+    benefits: [
+      'Leads today while SEO compounds in the background',
+      'Spend tied to booked work, not clicks',
+      'Budget pulled off keywords that never convert',
+      'Clear numbers on what a job actually costs you',
+    ],
+    startingPrice: { amount: 1200, currency: 'USD', period: 'month' },
+    featured: false,
+    icon: 'target',
+    related: ['local-seo', 'website-development', 'google-business-profile-optimization'],
   },
   {
-    slug: 'garage-cleanouts',
-    name: 'Garage Cleanouts',
-    schemaType: 'LocalBusiness',
-    tagline: 'Turn a packed garage back into usable space.',
+    slug: 'google-business-profile-optimization',
+    name: 'Google Business Profile Optimization',
+    shortName: 'GBP',
+    schemaType: 'ProfessionalService',
+    tagline: 'Win the map results your competitors are fighting over',
+    heroTitle: 'Google Business Profile Optimization',
+    heroSubtitle:
+      'The map pack drives a large share of home service calls. We tune the profile that decides whether you appear in it.',
     description:
-      'Garage cleanouts in Mesa for boxes, shelving, old tools, sports gear, storage bins, and bulky household overflow, cleared in one visit.',
+      'Google Business Profile optimization for home service businesses. Categories, services, photos, posts, and reviews tuned to win local map pack results.',
     intro:
-      'A garage cleanout turns months of weekend dread into a single appointment. We load boxes, broken equipment, old furniture, and mixed clutter so you can park inside again or pass a rental inspection.',
+      'The map pack drives a large share of calls for home service companies. We tune your categories, services, photos, and review strategy so you appear in local results and give homeowners a reason to choose you.',
     features: [
-      'Boxes, totes, and shelving',
-      'Old tools and broken equipment',
-      'Exercise gear and sports equipment',
-      'Bulky household overflow',
-      'Light sweep after loading',
+      'Category and service selection',
+      'Profile completion and NAP consistency',
+      'Photo and post strategy',
+      'Review generation and response',
+      'Q&A and spam-listing cleanup',
+      'Map pack ranking reporting',
     ],
-    related: ['junk-removal', 'shed-removal', 'estate-cleanouts', 'appliance-removal'],
-  },
-  {
-    slug: 'estate-cleanouts',
-    name: 'Estate Cleanouts',
-    schemaType: 'LocalBusiness',
-    tagline: 'Respectful, room-by-room cleanouts at your pace.',
-    description:
-      'Estate cleanouts in Mesa for furniture, household goods, garages, and donation-ready items, handled with care and clear communication.',
-    intro:
-      'Clearing an estate is physical and emotional work. Our crew removes approved items room by room while family members or executors decide what stays, and prioritizes donation for usable goods.',
-    features: [
-      'Room-by-room removal',
-      'Furniture and household goods',
-      'Garage and storage areas',
-      'Donation sorting and routing',
-      'Coordination with realtors and family',
+    benefits: [
+      'Visibility in the results homeowners tap first',
+      'Reviews that give buyers a reason to pick you',
+      'A profile that stops leaking calls to competitors',
+      'Local relevance no ad budget can buy',
     ],
-    related: ['furniture-removal', 'hoarder-cleanouts', 'foreclosure-cleanouts', 'garage-cleanouts'],
-  },
-  {
-    slug: 'hot-tub-removal',
-    name: 'Hot Tub Removal',
-    schemaType: 'LocalBusiness',
-    tagline: 'Old spas cut up, hauled out, and disposed of.',
-    description:
-      'Hot tub removal in Mesa with cut-up, heavy loading, hauling, and disposal for old backyard spas, even in tight side yards.',
-    intro:
-      'A dead hot tub is one of the hardest things to get rid of on your own. Once it is drained and disconnected, our crew cuts it down, navigates gates and side yards, and hauls every piece away.',
-    features: [
-      'Acrylic spa cut-up and teardown',
-      'Covers, steps, and surrounds',
-      'Tight backyard and gate access',
-      'Heavy loading and hauling',
-      'Cleanup of the removal area',
-    ],
-    related: ['construction-debris-removal', 'yard-waste-removal', 'junk-removal', 'shed-removal'],
-  },
-  {
-    slug: 'construction-debris-removal',
-    name: 'Construction Debris Removal',
-    schemaType: 'LocalBusiness',
-    tagline: 'Remodel debris cleared without renting a dumpster.',
-    description:
-      'Construction debris removal in Mesa for drywall, lumber, flooring, cabinets, fixtures, and packaging from small remodels and repairs.',
-    intro:
-      'Small remodels make big piles. When a full dumpster is overkill, our crew loads drywall, lumber, flooring, old cabinets, and packaging so your work area is clear for the next phase.',
-    features: [
-      'Drywall, lumber, and trim',
-      'Flooring, tile, and carpet',
-      'Old cabinets and fixtures',
-      'Bagged construction trash',
-      'Small jobsite and remodel cleanup',
-    ],
-    related: ['junk-removal', 'yard-waste-removal', 'garage-cleanouts', 'hot-tub-removal'],
-  },
-  {
-    slug: 'yard-waste-removal',
-    name: 'Yard Waste Removal',
-    schemaType: 'LocalBusiness',
-    tagline: 'Branches, brush, and green waste hauled away.',
-    description:
-      'Yard waste removal in Mesa for branches, brush, leaves, palm fronds, and landscaping debris after cleanups, trims, and storms.',
-    intro:
-      'Arizona yards generate more debris than a green bin can take, especially after a trim or a monsoon. We haul branches, brush, palm fronds, and bagged green waste so your yard is clean again fast.',
-    features: [
-      'Branches, brush, and limbs',
-      'Palm fronds and leaves',
-      'Post-storm and monsoon debris',
-      'Old landscaping and sod',
-      'Bagged and loose green waste',
-    ],
-    related: ['junk-removal', 'construction-debris-removal', 'shed-removal', 'garage-cleanouts'],
-  },
-  {
-    slug: 'mattress-removal',
-    name: 'Mattress Removal',
-    schemaType: 'LocalBusiness',
-    tagline: 'Mattresses and box springs out the door for good.',
-    description:
-      'Mattress removal in Mesa for mattresses, box springs, bed frames, and headboards, picked up from any room and hauled away.',
-    intro:
-      'Mattresses are bulky, hard to fit in a vehicle, and rarely accepted by regular trash service. We pick them up from the bedroom, garage, or curb, frame and headboard included, with no heavy lifting on your end.',
-    features: [
-      'Mattresses and box springs',
-      'Bed frames and headboards',
-      'Bedroom and apartment pickup',
-      'Move-out and rental turnover',
-      'No tying it to your car roof',
-    ],
-    related: ['furniture-removal', 'junk-removal', 'estate-cleanouts', 'same-day-junk-removal'],
-  },
-  {
-    slug: 'shed-removal',
-    name: 'Shed Removal',
-    schemaType: 'LocalBusiness',
-    tagline: 'Old sheds and their contents cleared out.',
-    description:
-      'Shed removal and cleanouts in Mesa for old tools, garden supplies, outdoor clutter, broken equipment, and the structure itself.',
-    intro:
-      'Whether you are emptying a packed shed or tearing down a rusted one, our crew clears the contents, sorts what is safe to haul, and can break down and remove the structure so the space is ready to reuse.',
-    features: [
-      'Old tools and garden supplies',
-      'Outdoor clutter and bins',
-      'Broken equipment and shelving',
-      'Shed teardown and haul-away',
-      'Backyard access planning',
-    ],
-    related: ['garage-cleanouts', 'yard-waste-removal', 'junk-removal', 'construction-debris-removal'],
-  },
-  {
-    slug: 'hoarder-cleanouts',
-    name: 'Hoarder Cleanouts',
-    schemaType: 'LocalBusiness',
-    tagline: 'Discreet, judgment-free whole-home cleanouts.',
-    description:
-      'Hoarder cleanouts in Mesa handled with discretion and care, clearing packed rooms safely while protecting anything that should stay.',
-    intro:
-      'Hoarding cleanouts take patience, discretion, and a steady plan. Our crew works room by room at a comfortable pace, protecting valuables and keepsakes while safely clearing the clutter that is in the way.',
-    features: [
-      'Discreet, judgment-free service',
-      'Room-by-room, paced removal',
-      'Careful sorting for valuables',
-      'Heavy, packed-in clutter',
-      'Coordination with family and helpers',
-    ],
-    related: ['estate-cleanouts', 'foreclosure-cleanouts', 'junk-removal', 'furniture-removal'],
-  },
-  {
-    slug: 'office-cleanouts',
-    name: 'Office Cleanouts',
-    schemaType: 'LocalBusiness',
-    tagline: 'Desks, chairs, and fixtures cleared with low disruption.',
-    description:
-      'Office and commercial cleanouts in Mesa for desks, chairs, cubicles, shelving, fixtures, and tenant debris, scheduled around your hours.',
-    intro:
-      'Office refreshes, moves, and downsizes leave behind furniture and equipment your team should not have to haul. We clear desks, chairs, cubicles, and fixtures with scheduling that works around your business hours.',
-    features: [
-      'Desks, chairs, and cubicles',
-      'Shelving, racks, and displays',
-      'Old electronics and equipment',
-      'Tenant turnover debris',
-      'After-hours scheduling available',
-    ],
-    related: ['junk-removal', 'furniture-removal', 'foreclosure-cleanouts', 'construction-debris-removal'],
-  },
-  {
-    slug: 'foreclosure-cleanouts',
-    name: 'Foreclosure Cleanouts',
-    schemaType: 'LocalBusiness',
-    tagline: 'Fast cleanouts to get a property rent- or sale-ready.',
-    description:
-      'Foreclosure and eviction cleanouts in Mesa for abandoned belongings, furniture, trash, and turnover debris so repairs can start sooner.',
-    intro:
-      'Foreclosure and eviction cleanouts are time-sensitive. Once legal access is complete, our crew clears abandoned furniture, trash, and debris from the unit, garage, and yard so cleaning, repairs, and re-listing can begin.',
-    features: [
-      'Abandoned furniture and belongings',
-      'Bagged trash and household items',
-      'Garage, patio, and yard debris',
-      'Fast turnover scheduling',
-      'Property-manager coordination',
-    ],
-    related: ['estate-cleanouts', 'hoarder-cleanouts', 'office-cleanouts', 'junk-removal'],
-  },
-  {
-    slug: 'same-day-junk-removal',
-    name: 'Same-Day Junk Removal',
-    schemaType: 'LocalBusiness',
-    tagline: 'Need it gone today? Call early and send photos.',
-    description:
-      'Same-day junk removal in Mesa and the East Valley when routes allow. Call early, send photos, and we fit you into the day when we can.',
-    intro:
-      'Sometimes junk cannot wait. When you call early and send photos, we work your job into an existing East Valley route for same-day or next-day pickup, with the same upfront pricing as any other booking.',
-    features: [
-      'Same-day pickup when routes allow',
-      'Photo estimates for a fast quote',
-      'Furniture, appliances, and clutter',
-      'Move-out and last-minute cleanups',
-      'Upfront price before we load',
-    ],
-    related: ['junk-removal', 'furniture-removal', 'appliance-removal', 'mattress-removal'],
+    startingPrice: { amount: 750, currency: 'USD', period: 'month' },
+    featured: false,
+    icon: 'map-pin',
+    related: ['local-seo', 'ppc-management', 'website-development'],
   },
 ];
 
@@ -289,3 +200,16 @@ export const getService = (slug: string): Service | undefined =>
 
 /** All service slugs — used as the default service set for a location. */
 export const allServiceSlugs = services.map((s) => s.slug);
+
+/** The lead offers, badged on the /services hub. */
+export const featuredServices = services.filter((s) => s.featured);
+
+/** Renders a StartingPrice as display copy, e.g. "$1,500/mo" or "$4,500 project". */
+export const formatStartingPrice = (price: StartingPrice): string => {
+  const amount = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: price.currency,
+    maximumFractionDigits: 0,
+  }).format(price.amount);
+  return price.period === 'month' ? `${amount}/mo` : `${amount} project`;
+};

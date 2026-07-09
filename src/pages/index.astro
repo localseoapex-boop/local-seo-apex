@@ -6,35 +6,16 @@
  * not services. Local SEO, websites, GBP, and PPC are the tools, so every
  * headline and CTA leads with the outcome and names the tool second.
  *
- * Section content lives in the arrays below so each section is a single map().
- * Once these repeat on other pages, the card grids should move to components
- * (see the notes in each array).
+ * The service grid reads from data/services.ts so the homepage, the /services
+ * hub, and the generated service pages can never drift apart. Remaining section
+ * content lives in the arrays below so each section is a single map(). Once
+ * these repeat on other pages, the card grids should move to components.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ServiceIcon from '../components/ServiceIcon.astro';
 import { SITE, BUSINESS } from '../config/site';
-
-const services = [
-  {
-    title: 'Local SEO',
-    outcome: 'Show up when people search for your service in your city',
-    text: 'Most home service jobs start with a local search. We build your rankings through on-page work, local content, citations, and reviews so the calls come from people who are ready to book, not price shoppers three towns over.',
-  },
-  {
-    title: 'Website Development',
-    outcome: 'Turn the traffic you already have into booked jobs',
-    text: 'A slow site with no clear next step wastes every visitor you earn. We build fast, SEO-first websites with clean structure and obvious calls to action, so more of the people who land on your site pick up the phone.',
-  },
-  {
-    title: 'Google Business Profile Optimization',
-    outcome: 'Win the map results your competitors are fighting over',
-    text: 'The map pack drives a large share of calls for home service companies. We tune your categories, services, photos, and review strategy so you appear in local results and give homeowners a reason to choose you.',
-  },
-  {
-    title: 'PPC Management',
-    outcome: 'Buy leads at a price that still leaves you a profit',
-    text: 'Paid search puts you in front of buyers who need help today. We manage campaigns around cost per booked job instead of clicks, and we cut the spend that never turns into work.',
-  },
-];
+import { services } from '../data/services';
+import { serviceUrl } from '../lib/urls';
 
 const industries = [
   { name: 'HVAC', text: 'Demand swings hard by season. Your marketing has to capture emergency repairs and planned replacements at the same time.' },
@@ -204,9 +185,10 @@ const faqSchema = {
     <div class="card-grid">
       {services.map((service) => (
         <article class="service-card">
-          <h3>{service.title}</h3>
-          <p class="outcome">{service.outcome}</p>
-          <p>{service.text}</p>
+          <ServiceIcon name={service.icon} class="card-icon" />
+          <h3><a href={serviceUrl(service.slug)}>{service.name}</a></h3>
+          <p class="outcome">{service.tagline}</p>
+          <p>{service.intro}</p>
         </article>
       ))}
     </div>
