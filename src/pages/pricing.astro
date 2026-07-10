@@ -1,0 +1,438 @@
+---
+/**
+ * /pricing — the pricing and investment page.
+ *
+ * This is a professional services page, not a SaaS pricing page. There are no
+ * tiers and no packages. The job is to educate the owner, set honest
+ * expectations about what moves cost, and help them self-qualify into the right
+ * starting point before they book a call.
+ *
+ * Every price and service name is read from data/services.ts. The "best for"
+ * column reuses each service's first idealFor entry from service-content.ts.
+ * Nothing about a service is restated here, so pricing cannot drift between this
+ * page, the /services hub, and the individual service pages.
+ *
+ * House style for this page: no em dashes and no semicolons in prose.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ServiceIcon from '../components/ServiceIcon.astro';
+import { services, formatStartingPrice } from '../data/services';
+import { getServiceContent } from '../data/service-content';
+import { serviceUrl } from '../lib/urls';
+
+// Service name, price, and "best for" all resolve from the catalog and the
+// page-copy file. A renamed or removed service surfaces here at build time.
+const investments = services.map((service) => ({
+  service,
+  price: formatStartingPrice(service.startingPrice),
+  bestFor: getServiceContent(service.slug)?.idealFor[0]?.title ?? service.tagline,
+}));
+
+/**
+ * What moves cost, per service. This is pricing copy rather than a service
+ * fact, so it lives with the page. Keyed by slug so it cannot outlive its
+ * service.
+ */
+const factors: Record<string, string[]> = {
+  'local-seo': [
+    'Number of locations',
+    'Competition in your market',
+    'Existing domain authority',
+    'Website quality and technical debt',
+    'Content needs',
+  ],
+  'website-development': [
+    'Number of pages',
+    'Copywriting',
+    'Integrations',
+    'Custom functionality',
+    'Branding and design scope',
+  ],
+  'ppc-management': [
+    'Number of markets',
+    'Advertising budget',
+    'Competition on your keywords',
+    'Landing pages required',
+    'Campaign complexity',
+  ],
+  'google-business-profile-optimization': [
+    'Number of locations',
+    'Listing health and history',
+    'Review volume and velocity',
+    'Existing optimization',
+    'Local competition',
+  ],
+};
+
+const factorCards = services.map((service) => ({
+  service,
+  items: factors[service.slug] ?? [],
+}));
+
+/** Self-qualification table. Every row resolves to a real route. */
+const startingPoints = [
+  { goal: 'You need leads quickly', slug: 'ppc-management' },
+  { goal: 'Your website is not converting', slug: 'website-development' },
+  { goal: 'You want long term organic growth', slug: 'local-seo' },
+  { goal: 'You need better Google Maps visibility', slug: 'google-business-profile-optimization' },
+];
+
+const recommendations = startingPoints.map((row) => ({
+  goal: row.goal,
+  service: services.find((s) => s.slug === row.slug)!,
+}));
+
+const included = [
+  {
+    title: 'Strategy',
+    text: 'A plan built around your market and your capacity, not a checklist applied to every client the same way.',
+  },
+  {
+    title: 'Communication',
+    text: 'A person who knows your account and answers when you call. You will never wonder what was worked on last month.',
+  },
+  {
+    title: 'Reporting',
+    text: 'Calls, form fills, and booked jobs tied back to the channel that produced them, alongside what each one cost to acquire.',
+  },
+  {
+    title: 'Recommendations',
+    text: 'When we see something outside our scope costing you jobs, we tell you, even when there is no work in it for us.',
+  },
+  {
+    title: 'Performance reviews',
+    text: 'We sit down with the numbers on a regular cadence and decide together what to keep funding and what to cut.',
+  },
+  {
+    title: 'Ongoing optimization',
+    text: 'Budget moves toward what is producing booked jobs and away from what is not. Nothing is set once and forgotten.',
+  },
+];
+
+const engagement = [
+  {
+    title: 'Discovery',
+    text: 'We audit your website, your Google Business Profile, your rankings, and your competitors, then find where leads are actually leaking. Sometimes the answer is that your marketing is fine and your intake is not, and we will say so.',
+  },
+  {
+    title: 'Strategy',
+    text: 'We sequence the work by what moves revenue soonest and scope it against your market. You get a prioritized plan and a real number before you commit to anything.',
+  },
+  {
+    title: 'Implementation',
+    text: 'The website, the local SEO foundation, the profile, and the campaigns get built to work together, so keyword data from paid search informs the organic plan instead of sitting in a separate account.',
+  },
+  {
+    title: 'Optimization',
+    text: 'We measure booked jobs and cost per job, then move budget toward what is working. The plan changes as your market and your capacity change.',
+  },
+];
+
+const faqs = [
+  {
+    question: 'Do I need every service?',
+    answer:
+      'No. The services reinforce each other, so a single channel run alone usually underperforms what the same budget would do across two. But plenty of companies start with one. If your website converts poorly, adding paid traffic to it mostly buys more expensive disappointment, and we will tell you which single lever to pull first.',
+  },
+  {
+    question: 'Can I start with one service and add others later?',
+    answer:
+      'Yes, and most owners do. We usually recommend fixing whatever is capping the others first, which is often the website or the Google Business Profile, then layering in the channels that drive traffic to them. Growing the engagement over time costs less than rebuilding a foundation you skipped.',
+  },
+  {
+    question: 'Is ad spend included in the PPC management fee?',
+    answer:
+      'No. Google bills you directly for advertising spend and our management fee is separate. That keeps the incentives clean and means you always see what the platform costs against what we cost. You keep ownership of the ad accounts and their full history even if we stop working together.',
+  },
+  {
+    question: 'Can you work with my current website?',
+    answer:
+      'Often yes. If your site loads quickly, sits on a platform we can properly optimize, and already turns visitors into calls, rebuilding it is wasted money. If the structure fights against search or visitors leave without calling, we will show you exactly where and let you decide whether a rebuild is worth it.',
+  },
+  {
+    question: 'Do you support multi-location companies?',
+    answer:
+      'Yes. Multi-location work is mostly a coordination problem. Each location needs its own Google Business Profile tuned to its own service area, the website needs a structure that lets each market rank without competing against itself, and reporting has to separate performance by location. Location count is one of the largest factors in final pricing.',
+  },
+  {
+    question: 'How long until I see results?',
+    answer:
+      'Paid channels can produce leads within days. Local SEO and Google Business Profile work usually start moving rankings and calls within a few months and compound from there, depending on how competitive your city is and how strong your site is today. Anyone promising page one in 30 days is guessing.',
+  },
+  {
+    question: 'Are there long-term contracts?',
+    answer:
+      'No. We work month to month. The work has to keep earning your business, and you keep ownership of your website, ad accounts, and data if you ever decide to leave.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+---
+
+<BaseLayout
+  title="Digital Marketing Pricing for Home Service Companies"
+  description="Transparent starting investments for Local SEO, website development, PPC management, and Google Business Profile optimization. See what influences pricing and where to invest first."
+>
+  <article class="container page">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Pricing' }]} />
+
+    {/* 1. Hero */}
+    <header class="page-hero">
+      <p class="eyebrow">Pricing</p>
+      <h1>Digital Marketing Pricing for Home Service Companies</h1>
+      <p class="lede">
+        Every home service business has different goals, competition, and opportunities. We believe
+        pricing should be transparent, even if every engagement is customized. Explore our starting
+        investments, learn what influences pricing, and discover which services are the best fit for
+        your business.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+        <a class="button outline" href="/contact">Get a Free SEO Audit</a>
+      </div>
+    </header>
+
+    <div class="service-flow">
+      {/* 2. Starting investments, read from the catalog. */}
+      <section class="service-section">
+        <h2>Starting Investments</h2>
+        <p class="intro-line">
+          You do not buy SEO. You buy qualified leads, booked jobs, and revenue. These are the entry
+          points for the tools that produce them.
+        </p>
+
+        <div class="table-scroll">
+          <table class="investment-table">
+            <thead>
+              <tr>
+                <th scope="col">Service</th>
+                <th scope="col">Starting Investment</th>
+                <th scope="col">Best For</th>
+                <th scope="col">What It Does</th>
+              </tr>
+            </thead>
+            <tbody>
+              {investments.map(({ service, price, bestFor }) => (
+                <tr>
+                  <th scope="row">
+                    <a href={serviceUrl(service.slug)}>{service.name}</a>
+                  </th>
+                  <td class="price-cell">{price}</td>
+                  <td>{bestFor}</td>
+                  <td>{service.tagline}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="warning-section">
+          <p>
+            These starting investments provide general guidance. Final pricing depends on your goals,
+            competition, number of locations, project scope, and existing marketing assets.
+          </p>
+        </div>
+      </section>
+
+      {/* 3. What influences pricing. */}
+      <section class="service-section">
+        <h2>What Influences Pricing?</h2>
+        <p class="intro-line">
+          Two companies buying the same service rarely pay the same amount, because they are rarely
+          solving the same problem. These are the variables that move a quote.
+        </p>
+        <div class="detail-grid">
+          {factorCards.map(({ service, items }) => (
+            <div class="detail-card">
+              <h3>
+                <ServiceIcon name={service.icon} class="card-icon" />
+                {service.name}
+              </h3>
+              <ul>
+                {items.map((item) => <li>{item}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. Self-qualification. */}
+      <section class="service-section">
+        <h2>What Should You Invest In First?</h2>
+        <p class="intro-line">
+          Where you start depends on what is broken and how fast you need the phone to ring.
+        </p>
+
+        <div class="table-scroll">
+          <table class="investment-table">
+            <thead>
+              <tr>
+                <th scope="col">Your Goal</th>
+                <th scope="col">Recommended Starting Point</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recommendations.map(({ goal, service }) => (
+                <tr>
+                  <th scope="row">{goal}</th>
+                  <td>
+                    <a href={serviceUrl(service.slug)}>{service.name}</a>
+                    <span class="row-price">from {formatStartingPrice(service.startingPrice)}</span>
+                  </td>
+                </tr>
+              ))}
+              <tr>
+                <th scope="row">You need help deciding</th>
+                <td>
+                  <a href="/contact">Schedule a Strategy Call</a>
+                  <span class="row-price">no cost</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* 5. What every engagement includes. */}
+      <section class="service-section">
+        <h2>What Is Included With Every Engagement?</h2>
+        <p class="intro-line">
+          Whatever you hire us for, the way we work does not change.
+        </p>
+        <div class="detail-grid">
+          {included.map((item) => (
+            <div class="detail-card">
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. Engagement process. */}
+      <section class="service-section">
+        <h2>Typical Engagement Process</h2>
+        <ol class="number-list">
+          {engagement.map((step) => (
+            <li>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* 7. Trust: why no packages. */}
+      <section class="service-section">
+        <h2>Why We Do Not Offer One Size Fits All Packages</h2>
+        <div class="copy-stack">
+          <p>
+            A packaged tier is easy to buy and easy to sell. It is also the fastest way to charge a
+            single location plumber for work that only a five location roofing company needs, or to
+            sell a company in a brutally competitive metro the same budget that wins a quiet suburb.
+          </p>
+          <p>
+            Every home service business arrives with different goals, different competition,
+            different markets, different existing assets, and a different budget. A roofing company
+            with a strong Google Business Profile and a broken website needs close to the opposite of
+            an HVAC company with a fast site and no local visibility. Selling both of them the same
+            package means one of them is paying for work they do not need.
+          </p>
+          <p>
+            The starting investments above exist so you know roughly what this costs before you talk
+            to anyone. What we recommend after that gets tailored to what your business actually
+            needs. You will get a scoped number and a prioritized plan before you commit to anything.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    {/* 8. FAQs. */}
+    <section class="service-section faq-block">
+      <h2>Pricing FAQs</h2>
+      <div class="faq-list">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.question}</summary>
+            <p>{f.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    {/* 9. Final CTA. */}
+    <section class="cta-band">
+      <div>
+        <h2>Let Us Build the Right Marketing Plan for Your Business</h2>
+        <p>
+          Every home service company has different goals, competition, and budgets. Schedule a
+          strategy call and we will help identify the marketing investment that makes the most sense
+          for your business.
+        </p>
+      </div>
+      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+    </section>
+
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+  </article>
+</BaseLayout>
+
+<style>
+  /* Wide tables scroll inside their own container rather than the page body. */
+  .table-scroll {
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .investment-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 34rem;
+    text-align: left;
+  }
+
+  .investment-table th,
+  .investment-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--line, rgba(0, 0, 0, 0.1));
+    vertical-align: top;
+  }
+
+  .investment-table thead th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .investment-table tbody th {
+    font-weight: 700;
+  }
+
+  .price-cell {
+    font-weight: 700;
+    color: var(--green-dark);
+    white-space: nowrap;
+  }
+
+  .row-price {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+
+  /* Icon sits inline with the service name on the pricing factor cards. */
+  .detail-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+</style>
