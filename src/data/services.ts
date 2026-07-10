@@ -4,8 +4,11 @@
  * One entry per service line. This drives:
  *   - the homepage service grid
  *   - /services/[service] pages (one per entry)
- *   - /locations/[city]/[service] pages (entry × location)
  *   - "Related services" internal links
+ *
+ * There are NO per-city service pages. /services/[service] is the single
+ * canonical URL for each service, and the /locations/[city] pages link across
+ * to it (see data/locations.ts).
  *
  * `related` holds sibling slugs for cross-linking. The deeper, page-level copy
  * (overview paragraphs, what's-included groups, problem/solution pairs, and

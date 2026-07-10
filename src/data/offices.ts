@@ -10,10 +10,10 @@
  * `primaryOffice` (offices[0]) feeds the org-level BUSINESS defaults in
  * src/config/site.ts, so there's no duplicated business data anywhere.
  *
- * NOTE: Load Logic's Mesa street address is pending final move-in, so `street`
- * and `postalCode` are intentionally omitted. The footer and LocalBusiness
- * schema render the address with addressLocality ("Mesa") + region ("AZ") only,
- * which is the correct, Google-safe state until the full address is published.
+ * NOTE: the Mesa street address is pending final move-in, so `street` and
+ * `postalCode` are intentionally omitted. The footer and LocalBusiness schema
+ * render the address with addressLocality ("Mesa") + region ("AZ") only, which
+ * is the correct, Google-safe state until the full address is published.
  */
 export interface OfficeHours {
   days: string[];

@@ -49,13 +49,20 @@ export const BUSINESS = {
   areaServed: ['Phoenix', 'Mesa', 'Chandler', 'Gilbert', 'Scottsdale'],
 } as const;
 
-/** Primary navigation links rendered in the header. */
+/**
+ * Primary navigation links rendered in the header.
+ *
+ * Blog is intentionally absent. The blog architecture still exists
+ * (src/pages/blog/[...slug].astro + the `blog` content collection) but there are
+ * zero published posts, so the hub page was removed rather than ship an empty,
+ * thin page for Google to index. Restore the link here and in FOOTER_LINKS, and
+ * re-add src/pages/blog/index.astro, once real articles are written.
+ */
 export const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Industries', href: '/industries' },
-  { label: 'Blog', href: '/blog' },
   { label: 'Locations', href: '/locations' },
   { label: 'About', href: '/about' },
   { label: 'Contact Us', href: '/contact' },
@@ -78,7 +85,6 @@ export const FOOTER_LINKS = [
       { label: 'About', href: '/about' },
       { label: 'Industries', href: '/industries' },
       { label: 'Locations', href: '/locations' },
-      { label: 'Blog', href: '/blog' },
       { label: 'Contact Us', href: '/contact' },
     ],
   },

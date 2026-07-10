@@ -224,8 +224,8 @@ _Source: Methodology Interview, Section 3, Q5._
 
 Defined in `src/lib/urls.ts`, the single source of truth for every path. Change a pattern there and every internal link, breadcrumb, and sitemap entry follows.
 
-- Casing and separators: lowercase, hyphen-separated slugs (for example `/services/same-day-junk-removal`).
-- No trailing slash. Paths end at the final segment (`/services/junk-removal`, not `/services/junk-removal/`). The trailing slashes in the methodology interview examples were illustrative. The code convention is authoritative.
+- Casing and separators: lowercase, hyphen-separated slugs (for example `/services/google-business-profile-optimization`).
+- No trailing slash. Paths end at the final segment (`/services/local-seo`, not `/services/local-seo/`). The trailing slashes in the methodology interview examples were illustrative. The code convention is authoritative.
 - Maximum nesting depth is three path segments.
 - Path patterns:
   - `/services/[service]` — core service page (primary market).

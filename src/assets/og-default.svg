@@ -7,32 +7,35 @@
   rasterizes it to public/og-default.png at 1200x630 — the canonical OG size.
 
   Edit colors/text here, then run `npm run og` (or any build) to regenerate.
+  Editing the PNG directly is pointless: `prebuild` overwrites it from this file.
+
+  Brand palette: navy #000080, coral #FF7F50, white #FFFFFF.
 -->
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background gradient -->
+  <!-- Background gradient, navy to a deeper navy for depth -->
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#123d32" />
-      <stop offset="1" stop-color="#23624d" />
+      <stop offset="0" stop-color="#000080" />
+      <stop offset="1" stop-color="#00004d" />
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)" />
 
   <!-- Accent bar -->
-  <rect x="80" y="232" width="72" height="9" rx="4" fill="#d7ec76" />
+  <rect x="80" y="232" width="72" height="9" rx="4" fill="#FF7F50" />
 
   <!-- Brand name -->
-  <text x="80" y="330" font-family="system-ui, Arial, sans-serif" font-size="78" font-weight="800" fill="#ffffff">
-    Load Logic Junk Removal
+  <text x="80" y="330" font-family="system-ui, Arial, sans-serif" font-size="78" font-weight="800" fill="#FFFFFF">
+    Local SEO Apex
   </text>
 
-  <!-- Tagline -->
-  <text x="80" y="402" font-family="system-ui, Arial, sans-serif" font-size="34" font-weight="400" fill="#cdd6d1">
-    Junk Removal · Cleanouts · Hauling — Mesa &amp; the East Valley
+  <!-- Headline -->
+  <text x="80" y="402" font-family="system-ui, Arial, sans-serif" font-size="34" font-weight="400" fill="#FFFFFF" fill-opacity="0.82">
+    Digital Marketing for Home Service Companies
   </text>
 
   <!-- Footer / domain -->
-  <text x="80" y="540" font-family="system-ui, Arial, sans-serif" font-size="28" font-weight="700" fill="#d7ec76">
-    load-logic.vercel.app
+  <text x="80" y="540" font-family="system-ui, Arial, sans-serif" font-size="28" font-weight="700" fill="#FF7F50">
+    localseoapex.com
   </text>
 </svg>

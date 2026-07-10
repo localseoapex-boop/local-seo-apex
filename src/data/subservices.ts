@@ -2,18 +2,16 @@
  * subservices.ts — individual services offered under a core category (req #1, #2).
  *
  * Each sub-service belongs to ONE parent category (a slug from services.ts) and
- * drives two page tiers:
- *   - /services/[category]/[subservice]            (parent sub-service page)
- *   - /locations/[city]/[category]/[subservice]    (location sub-service page)
+ * drives a single page tier:
+ *   - /services/[category]/[subservice]            (sub-service page)
  *
- * Availability rule (req #9): a sub-service is offered in a city iff that city
- * offers its PARENT category (see locations.ts `services` + lib/links). So we
- * never store per-city sub-service flags — coverage is inherited from the
- * category, which keeps the model small and impossible to get inconsistent.
+ * There are no location sub-service pages. Sub-services are national in scope
+ * here: the category page carries the local targeting, and the sub-service page
+ * captures the long-tail query beneath it.
  *
  * This tier splits each category into the two highest-intent searches beneath
  * it, capturing long-tail queries the category page cannot rank for on its own.
- * Adding a row here automatically generates its pages and links — no new files.
+ * Adding a row here automatically generates its page and links — no new files.
  */
 export interface SubService {
   slug: string;

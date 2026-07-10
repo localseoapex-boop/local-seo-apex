@@ -8,6 +8,12 @@
  *
  * Add a .md file to src/content/blog and its page appears here automatically —
  * no new route file, validated against the schema at build time.
+ *
+ * There are currently ZERO posts, so this route generates no pages and the build
+ * warns that the `blog` collection is empty. That is expected. The /blog hub
+ * page was removed rather than ship an empty listing for Google to index, so
+ * re-add src/pages/blog/index.astro (and the nav links in config/site.ts) at the
+ * same time as the first real article.
  */
 import { getCollection, render } from 'astro:content';
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
