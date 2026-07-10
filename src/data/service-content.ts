@@ -23,6 +23,15 @@ export interface ServiceContent {
   prepTip: string;
   /** Scope / expectation-setting note. */
   specialNote: string;
+  /**
+   * How this service supports the other three. Every service page must argue
+   * for the coordinated system, never for a standalone tactic.
+   */
+  systemRole: string;
+  /** Strong-fit buyer profiles for this specific service. */
+  idealFor: { title: string; text: string }[];
+  /** What moves final scope and cost above the catalog starting price. */
+  pricingNote: string;
   /** Service-specific FAQs (merged with shared FAQs at render time). */
   faqs: { question: string; answer: string }[];
 }
@@ -30,7 +39,7 @@ export interface ServiceContent {
 /** Four-step "how it works" process, shared across service pages. */
 export const serviceProcess = [
   { title: 'Book a strategy call', text: 'Tell us about your market, your crews, and the work you want more of.' },
-  { title: 'We audit what you have', text: 'Rankings, site, profile, and competitors — we find what is actually holding you back.' },
+  { title: 'We audit what you have', text: 'Rankings, site, profile, and competitors. We find what is actually holding you back.' },
   { title: 'Get a plan and a price', text: 'A prioritized scope with clear deliverables and no long-term lock-in.' },
   { title: 'We build and report', text: 'Work ships every month, and reporting ties it back to calls and booked jobs.' },
 ];
@@ -39,7 +48,7 @@ export const serviceProcess = [
 export const whyChoose = [
   'Reporting on calls and booked jobs, not vanity metrics',
   'SEO-first architecture planned before design begins',
-  'Home service specialists — not a generalist agency',
+  'Home service specialists, not a generalist agency',
   'No long-term contracts holding the work hostage',
   'You own your website, accounts, and data',
 ];
@@ -76,7 +85,7 @@ export const serviceContent: Record<string, ServiceContent> = {
     overview: [
       'Local SEO is how a home service business gets found by the people already searching for what it does, in the cities it actually serves. It is the difference between showing up when a homeowner searches at the moment their water heater fails, and being invisible to them entirely.',
       'The work splits into three parts: making your website technically sound and structured around the services and cities you serve, earning local relevance through citations and reviews, and publishing content that answers what buyers in your market are actually searching for.',
-      'None of it is fast, and that is the point. Rankings you earn are rankings you keep. Unlike ads, the traffic does not stop the day you pause the budget — which is why local SEO usually becomes the cheapest lead source a home service company has.',
+      'None of it is fast, and that is the point. Rankings you earn are rankings you keep. Unlike ads, the traffic does not stop the day you pause the budget. That is why local SEO usually becomes the cheapest lead source a home service company has.',
     ],
     reasons: [
       'Competitors outrank us',
@@ -117,6 +126,24 @@ export const serviceContent: Record<string, ServiceContent> = {
     prepTip: 'Bring your Google Business Profile access and any past SEO reports to the first call.',
     specialNote:
       'Local SEO compounds over months, not days. If you need leads this week, pair it with PPC or Local Services Ads while the organic work matures. We will tell you honestly which one your situation calls for.',
+    systemRole:
+      'Local SEO is the layer that lowers what every lead costs you over time, but it does not work alone. It needs a fast, well structured website to rank, because rankings point at pages and a slow page wastes the click. It shares its local relevance with your Google Business Profile, since the categories, services, and reviews that lift the map pack also feed organic results. And it borrows from PPC, because the keywords that paid search proves will turn into booked jobs are the ones worth targeting organically. Run on its own, local SEO is a long bet. Run alongside the other three, it is the reason your blended cost per lead falls every quarter.',
+    idealFor: [
+      {
+        title: 'Established companies too dependent on paid ads',
+        text: 'Every lead currently costs ad spend. The moment the budget pauses the phone stops. Organic rankings turn that fixed cost into an asset you own.',
+      },
+      {
+        title: 'Companies expanding into a new service area',
+        text: 'A new city means starting from zero on local relevance. The page architecture and citation work decide how long that takes.',
+      },
+      {
+        title: 'Businesses out-ranked by newer competitors',
+        text: 'You have the reviews and the tenure, and someone with neither is above you in the results. That gap is almost always technical and structural.',
+      },
+    ],
+    pricingNote:
+      'Scope moves with the size of your market, how many cities and services you need to rank for, how much technical debt sits on your current site, and how hard your competitors are working. A single city with three services costs meaningfully less than a metro footprint with eight.',
     faqs: [
       {
         question: 'How is local SEO different from regular SEO?',
@@ -175,7 +202,25 @@ export const serviceContent: Record<string, ServiceContent> = {
     ],
     prepTip: 'Have your domain registrar and current hosting logins handy before the build kicks off.',
     specialNote:
-      'You own the site, the domain, the code, and the analytics — during the project and after it. We do not build on proprietary platforms that hold your business hostage if you decide to leave.',
+      'You own the site, the domain, the code, and the analytics, during the project and after it. We do not build on proprietary platforms that hold your business hostage if you decide to leave.',
+    systemRole:
+      'The website is the floor every other channel stands on. Local SEO rankings send people to it, your Google Business Profile sends people to it, and every paid click you buy lands on it. If the site loads slowly or hides the phone number, all three of those channels get more expensive at once, because you are paying the same acquisition cost for a visitor who leaves. Fixing the site does not just improve the site. It raises the return on the rankings you have already earned and lowers the cost of every click you will ever buy.',
+    idealFor: [
+      {
+        title: 'Companies paying for traffic that does not convert',
+        text: 'The visits arrive and the calls do not. When the traffic is qualified, the problem is the page it lands on.',
+      },
+      {
+        title: 'Businesses on a platform that fights back',
+        text: 'A builder that cannot produce clean URLs, fast pages, or proper schema puts a ceiling on everything else we would do.',
+      },
+      {
+        title: 'Companies planning a rebuild or a new market launch',
+        text: 'A redesign is the easiest moment to lose the rankings you already have, and the easiest moment to win the ones you do not.',
+      },
+    ],
+    pricingNote:
+      'Scope moves with how many services and cities need their own pages, whether content and photography exist already, how much has to migrate from the old site, and whether the build needs booking, payments, or field service integrations.',
     faqs: [
       {
         question: 'Will a redesign hurt my current rankings?',
@@ -235,6 +280,24 @@ export const serviceContent: Record<string, ServiceContent> = {
     prepTip: 'Bring admin access to your existing Google Ads account so we can review historical spend.',
     specialNote:
       'Ad spend is billed by Google directly and is separate from our management fee. You keep ownership of the ad accounts and all their history, even if we part ways.',
+    systemRole:
+      'PPC is the only channel that produces leads in days, which makes it the bridge that carries the phone while local SEO and your Google Business Profile mature underneath it. It also pays a second dividend that most owners never collect. Paid search tells you exactly which keywords turn into booked jobs and which ones only produce clicks, and that data is what makes the organic plan sharp instead of speculative. It works in the other direction too. A strong profile and strong rankings mean you stop buying clicks for searches you would have won for free, so paid budget concentrates where it is genuinely needed.',
+    idealFor: [
+      {
+        title: 'Companies that need booked jobs this month',
+        text: 'Capacity is sitting idle now. Organic work will not fill next week, and paid search will.',
+      },
+      {
+        title: 'Businesses leaving an agency that reports clicks',
+        text: 'If nobody can tell you what a booked job cost to acquire, the account is being managed against the wrong number.',
+      },
+      {
+        title: 'Companies with sharp seasonal swings',
+        text: 'Demand spikes and collapses. Paid search is the lever that can move with it inside a single week.',
+      },
+    ],
+    pricingNote:
+      'The management fee scales with how many campaigns, service lines, and locations need managing, and with the size of the ad budget behind them. Advertising spend itself is billed to you directly by Google and is never included in the fee.',
     faqs: [
       {
         question: 'Is my ad spend included in the management fee?',
@@ -253,7 +316,7 @@ export const serviceContent: Record<string, ServiceContent> = {
     overview: [
       'For most home service searches, the map pack sits above the organic results and takes the majority of the calls. Your Google Business Profile decides whether you appear there, and it is the single most underworked asset in local marketing.',
       'Ranking in the map pack comes down to relevance, distance, and prominence. We work the parts you control: the categories and services on your profile, the completeness and accuracy of every field, the photo and post cadence, and above all the reviews.',
-      'It is also the cheapest local ranking win available to most companies. A profile that has been neglected for years usually has category errors, missing services, and duplicate listings quietly suppressing it — all fixable.',
+      'It is also the cheapest local ranking win available to most companies. A profile that has been neglected for years usually has category errors, missing services, and duplicate listings quietly suppressing it. All of that is fixable.',
     ],
     reasons: [
       'Not showing in the map pack',
@@ -280,7 +343,7 @@ export const serviceContent: Record<string, ServiceContent> = {
     problems: [
       {
         problem: 'You rank organically but never in the map.',
-        solution: 'Map rankings run on different signals. We fix categories, services, and review velocity — the levers that actually move the map pack.',
+        solution: 'Map rankings run on different signals. We fix categories, services, and review velocity, the levers that actually move the map pack.',
       },
       {
         problem: 'Competitors outrank you with fake listings.',
@@ -291,9 +354,27 @@ export const serviceContent: Record<string, ServiceContent> = {
         solution: 'We build a request process your crews will actually follow, so reviews arrive steadily instead of in occasional bursts.',
       },
     ],
-    prepTip: 'Have the Google account that owns your profile ready — or tell us if nobody knows who owns it.',
+    prepTip: 'Have the Google account that owns your profile ready, or tell us if nobody knows who owns it.',
     specialNote:
       'Google Business Profile results depend partly on the searcher’s distance from your address, which no agency controls. We are direct about which cities your profile can realistically rank in and where organic service pages have to carry the work instead.',
+    systemRole:
+      'The profile is where local visibility and buyer trust come from the same asset. It sits above the organic results in the map pack, and the reviews attached to it are what a homeowner reads before choosing between you and the next contractor. It shares its signals with local SEO, because the categories, services, and review velocity that lift the map also strengthen organic rankings. It makes paid search cheaper, because every call the map earns is a click you did not have to buy. And it leans on the website, since the profile links there and a slow page loses the visitor the map just handed you.',
+    idealFor: [
+      {
+        title: 'Companies invisible in the map pack',
+        text: 'You rank organically and still never appear in the three results above them. Map rankings run on different signals entirely.',
+      },
+      {
+        title: 'Businesses with a neglected or suspended profile',
+        text: 'Category errors, missing services, and duplicate listings quietly suppress a profile for years. This is usually the fastest available win.',
+      },
+      {
+        title: 'Multi-location brands',
+        text: 'Each location needs its own profile tuned to its own service area, and each one competes on its own proximity.',
+      },
+    ],
+    pricingNote:
+      'Scope moves with how many locations and profiles need managing, whether reinstatement or duplicate cleanup is required, and how much review generation and response volume you want us handling each month.',
     faqs: [
       {
         question: 'Can you rank my profile in cities I do not have an office in?',
@@ -303,7 +384,7 @@ export const serviceContent: Record<string, ServiceContent> = {
       {
         question: 'What if my listing was suspended?',
         answer:
-          'We audit what triggered it — usually a category, address, or name violation — correct the underlying issue, and file the reinstatement request with the documentation Google asks for.',
+          'We audit what triggered it, usually a category, address, or name violation, then correct the underlying issue and file the reinstatement request with the documentation Google asks for.',
       },
     ],
   },

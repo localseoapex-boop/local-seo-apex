@@ -73,7 +73,7 @@ export const services: Service[] = [
     tagline: 'Show up when people search for your service in your city',
     heroTitle: 'Local SEO That Fills Your Schedule',
     heroSubtitle:
-      'Rank for the searches homeowners actually use when they are ready to book — not vanity keywords that never turn into work.',
+      'Rank for the searches homeowners actually use when they are ready to book, not vanity keywords that never turn into work.',
     description:
       'Local SEO for home service companies. On-page work, local content, citations, and reviews that grow rankings and bring in calls from ready-to-book customers.',
     intro:
@@ -105,7 +105,7 @@ export const services: Service[] = [
     tagline: 'Turn the traffic you already have into booked jobs',
     heroTitle: 'SEO-First Websites Built to Convert',
     heroSubtitle:
-      'Fast, clean, and structured for search from the first wireframe — because retrofitting SEO onto a finished site costs more and works worse.',
+      'Fast, clean, and structured for search from the first wireframe, because retrofitting SEO onto a finished site costs more and works worse.',
     description:
       'Custom website development for home service businesses. Fast, SEO-first builds with clean structure and clear calls to action that turn visitors into phone calls.',
     intro:

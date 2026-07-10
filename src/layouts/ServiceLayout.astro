@@ -3,14 +3,18 @@
  * ServiceLayout.astro — template for /services/[service] pages.
  *
  * DATA-DRIVEN: it takes a Service object and derives everything (title,
- * breadcrumbs, internal links, schema) from the catalog + the rich page copy in
- * service-content.ts. The page file just hands over the data — so all service
- * pages share identical SEO structure and a new service needs zero template work.
+ * breadcrumbs, internal links, schema) from the catalog plus the rich page copy
+ * in service-content.ts. The page file just hands over the data, so all four
+ * service pages share identical structure and a new service needs zero template
+ * work. Nothing about a service is written here. If a fact belongs to a service,
+ * it lives in services.ts or service-content.ts.
  *
- * Renders the full service page: hero + trust, overview, what's included,
- * benefits, scope notes, how-it-works, why-choose, problem/solution,
- * internal-link blocks, FAQs (with FAQPage schema), and a final CTA band. Emits
- * Service + FAQPage JSON-LD alongside the Breadcrumb schema.
+ * Section order (1 to 10): hero, business outcome, what is included, how it
+ * supports the system, sub-services, process, pricing, who it is for, FAQs with
+ * FAQPage schema, final CTA. Emits Service + Offer + FAQPage JSON-LD alongside
+ * the BreadcrumbList schema from Breadcrumbs.astro.
+ *
+ * House style for visible prose on this page: no em dashes and no semicolons.
  */
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
@@ -35,8 +39,9 @@ interface Props {
 const { service } = Astro.props;
 const content = getServiceContent(service.slug);
 const faqs = getServiceFaqs(service.slug);
+const priceLabel = formatStartingPrice(service.startingPrice);
 
-// These are the canonical Mesa service pages — title targets Mesa explicitly.
+// These are the canonical Mesa service pages, so the title targets Mesa.
 const title = `${service.name} in Mesa, AZ`;
 const description = service.description;
 
@@ -46,28 +51,19 @@ const crumbs = [
   { name: service.name },
 ];
 
-// Sub-services in this category (e.g. Local SEO Audits / Citation Building).
-const subServiceLinks = subServicesForCategory(service.slug).map((sub) => ({
-  label: sub.name,
-  href: subServiceUrl(service.slug, sub.slug),
-  description: sub.tagline,
-}));
+// The two sub-services in this category, rendered as cards in section 5.
+const subServices = subServicesForCategory(service.slug);
 
-// "Available in these areas" — the city pages for every city offering this
-// service. Links go to the city page itself; there is no per-city service page.
+// The other three services, pulled from the catalog so names, taglines, and
+// links cannot drift from services.ts.
+const siblingServices = relatedServices(service.slug, 3);
+
+// "Available in these areas" links to the city pages. There are no per-city
+// service pages, so the city page itself is the destination.
 const areaLinks = locationsForService(service.slug).map((loc) => ({
   label: `${loc.city}, ${loc.region}`,
   href: cityUrl(loc.slug),
 }));
-
-// "Related services" — curated siblings, backfilled.
-const relatedLinks = relatedServices(service.slug).map((s) => ({
-  label: s.name,
-  href: serviceUrl(s.slug),
-  description: s.tagline,
-}));
-
-const priceLabel = formatStartingPrice(service.startingPrice);
 
 // Service structured data, referencing the primary business node. The Offer
 // exposes the same entry price the hero shows, so markup and copy cannot drift.
@@ -87,7 +83,7 @@ const serviceSchema = {
   },
 };
 
-// FAQPage schema — only the FAQs visible on this page.
+// FAQPage schema, covering exactly the FAQs visible on this page.
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -103,6 +99,7 @@ const faqSchema = {
   <article class="container page">
     <Breadcrumbs items={crumbs} />
 
+    {/* 1. Hero */}
     <header class="page-hero service-hero">
       <p class="eyebrow">
         <ServiceIcon name={service.icon} class="eyebrow-icon" />
@@ -113,7 +110,7 @@ const faqSchema = {
       <p class="starting-price">Starting at <strong>{priceLabel}</strong></p>
       <div class="hero-actions">
         <a class="button primary" href="/contact">Schedule a Strategy Call</a>
-        <a class="button outline" href={`tel:${BUSINESS.phone}`}>Call {BUSINESS.phoneDisplay}</a>
+        <a class="button outline" href="/contact">Get a Free SEO Audit</a>
       </div>
       <ul class="hero-trust">
         {serviceTrustBullets.map((b) => <li>{b}</li>)}
@@ -121,90 +118,15 @@ const faqSchema = {
     </header>
 
     <div class="service-flow">
-      {/* Overview */}
+      {/* 2. Business outcome: the lead-generation problem this solves. */}
       <section class="service-section">
+        <h2>The lead problem this solves</h2>
         <p class="intro-line">{service.intro}</p>
         <div class="copy-stack">
           {(content?.overview ?? []).map((p) => <p>{p}</p>)}
         </div>
-      </section>
 
-      {/* Outcomes first, deliverables second — owners buy the result. */}
-      <section class="service-section">
-        <h2>What you get out of it</h2>
-        <ul class="check-list">
-          {service.benefits.map((b) => <li>{b}</li>)}
-        </ul>
-      </section>
-
-      {/* What we offer + common reasons */}
-      <section class="service-section">
-        <h2>What we offer</h2>
-        <ul class="check-list">
-          {service.features.map((f) => <li>{f}</li>)}
-        </ul>
-        {content && content.reasons.length > 0 && (
-          <>
-            <h3>Common reasons customers call</h3>
-            <ul class="pill-list">
-              {content.reasons.map((r) => <li>{r}</li>)}
-            </ul>
-          </>
-        )}
-      </section>
-
-      {/* What's included */}
-      {content && content.detailGroups.length > 0 && (
-        <section class="service-section">
-          <h2>What's included</h2>
-          <div class="detail-grid">
-            {content.detailGroups.map((group) => (
-              <div class="detail-card">
-                <h3>{group.title}</h3>
-                <ul>
-                  {group.items.map((item) => <li>{item}</li>)}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Special handling */}
-      {content?.specialNote && (
-        <section class="service-section">
-          <div class="warning-section">
-            <h3>Good to know</h3>
-            <p>{content.specialNote}</p>
-          </div>
-        </section>
-      )}
-
-      {/* How it works */}
-      <section class="service-section">
-        <h2>How it works</h2>
-        <ol class="number-list">
-          {serviceProcess.map((step) => (
-            <li>
-              <h3>{step.title}</h3>
-              <p>{step.text}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* Why choose us */}
-      <section class="service-section">
-        <h2>Why choose {SITE.name}</h2>
-        <ul class="check-list">
-          {whyChoose.map((w) => <li>{w}</li>)}
-        </ul>
-      </section>
-
-      {/* Problem / solution */}
-      {content && content.problems.length > 0 && (
-        <section class="service-section">
-          <h2>We solve the hard part</h2>
+        {content && content.problems.length > 0 && (
           <div class="problem-grid">
             {content.problems.map((p) => (
               <div class="problem-card">
@@ -215,17 +137,148 @@ const faqSchema = {
               </div>
             ))}
           </div>
+        )}
+
+        {content && content.reasons.length > 0 && (
+          <>
+            <h3>Common reasons owners call us</h3>
+            <ul class="pill-list">
+              {content.reasons.map((r) => <li>{r}</li>)}
+            </ul>
+          </>
+        )}
+      </section>
+
+      {/* 3. What is included: outcomes first, then deliverables, then detail. */}
+      <section class="service-section">
+        <h2>What is included</h2>
+
+        <h3>What you get out of it</h3>
+        <ul class="check-list">
+          {service.benefits.map((b) => <li>{b}</li>)}
+        </ul>
+
+        <h3>What we do</h3>
+        <ul class="check-list">
+          {service.features.map((f) => <li>{f}</li>)}
+        </ul>
+
+        {content && content.detailGroups.length > 0 && (
+          <div class="detail-grid">
+            {content.detailGroups.map((group) => (
+              <div class="detail-card">
+                <h3>{group.title}</h3>
+                <ul>
+                  {group.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* 4. How this service supports the larger system. */}
+      {content?.systemRole && (
+        <section class="service-section">
+          <h2>How {service.name} fits the larger system</h2>
+          <p>{content.systemRole}</p>
+          <h3>The channels it works with</h3>
+          <div class="detail-grid">
+            {siblingServices.map((s) => (
+              <div class="detail-card">
+                <h3>{s.name}</h3>
+                <p>{s.tagline}</p>
+                <a href={serviceUrl(s.slug)}>Explore {s.name}</a>
+              </div>
+            ))}
+          </div>
         </section>
       )}
+
+      {/* 5. Sub-services. */}
+      {subServices.length > 0 && (
+        <section class="service-section">
+          <h2>{service.name} services</h2>
+          <div class="detail-grid">
+            {subServices.map((sub) => (
+              <div class="detail-card">
+                <h3>{sub.name}</h3>
+                <p>{sub.tagline}</p>
+                <ul>
+                  {sub.features.slice(0, 3).map((f) => <li>{f}</li>)}
+                </ul>
+                <a href={subServiceUrl(service.slug, sub.slug)}>Explore {sub.name}</a>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 6. Process. */}
+      <section class="service-section">
+        <h2>How we get you more booked jobs</h2>
+        <ol class="number-list">
+          {serviceProcess.map((step) => (
+            <li>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* 7. Pricing guidance. */}
+      <section class="service-section">
+        <h2>What {service.name} costs</h2>
+        <p class="intro-line">
+          {service.name} starts at {priceLabel}. That is an entry point, not a quote.
+        </p>
+        {content?.pricingNote && <p>{content.pricingNote}</p>}
+        <p>
+          On a strategy call we scope the work against your market and give you a real number before
+          you commit to anything.
+        </p>
+      </section>
+
+      {/* 8. Who it is for. */}
+      {content && content.idealFor.length > 0 && (
+        <section class="service-section">
+          <h2>Who {service.name} is for</h2>
+          <div class="detail-grid">
+            {content.idealFor.map((f) => (
+              <div class="detail-card">
+                <h3>{f.title}</h3>
+                <p>{f.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Scope and expectation setting. */}
+      {content?.specialNote && (
+        <section class="service-section">
+          <div class="warning-section">
+            <h3>Good to know</h3>
+            <p>{content.specialNote}</p>
+          </div>
+        </section>
+      )}
+
+      {/* Why choose us. */}
+      <section class="service-section">
+        <h2>Why choose {SITE.name}</h2>
+        <ul class="check-list">
+          {whyChoose.map((w) => <li>{w}</li>)}
+        </ul>
+      </section>
 
       <slot />
     </div>
 
-    <InternalLinks title={`${service.name} options`} links={subServiceLinks} />
     <InternalLinks title="Available in these areas" links={areaLinks} />
-    <InternalLinks title="Related services" links={relatedLinks} />
 
-    {/* FAQs */}
+    {/* 9. FAQs. */}
     <section class="service-section faq-block">
       <h2>{service.name} FAQs</h2>
       <div class="faq-list">
@@ -238,11 +291,15 @@ const faqSchema = {
       </div>
     </section>
 
-    {/* Final CTA */}
+    {/* 10. Final CTA. */}
     <section class="cta-band">
       <div>
         <h2>Ready for more booked jobs?</h2>
-        <p>Get a {service.name.toLowerCase()} plan built around your market, starting at {priceLabel}.</p>
+        <p>
+          Book a strategy call and we will audit your visibility, your website, and your Google
+          Business Profile before we speak. You will leave knowing where your leads are leaking and
+          what we would fix first, whether or not you hire us.
+        </p>
       </div>
       <a class="button primary" href="/contact">Schedule a Strategy Call</a>
     </section>
@@ -263,5 +320,12 @@ const faqSchema = {
   .starting-price {
     margin: 0 0 1.25rem;
     color: var(--green-dark);
+  }
+
+  .detail-card a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
   }
 </style>
