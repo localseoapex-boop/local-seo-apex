@@ -1,0 +1,392 @@
+---
+/**
+ * /about — the trust page.
+ *
+ * Answers one question: why should I trust Local SEO Apex? It is deliberately
+ * not a founder story. The brand is the subject, so no individual is named
+ * anywhere on this page and none should be added later.
+ *
+ * Structure follows the trust ladder: what we do, why we exist, what we
+ * believe, what makes us different, who we serve, and how we keep score. The
+ * FAQ handles the objections an owner raises before they book a call.
+ *
+ * Every layout class here already exists in BaseLayout's global stylesheet.
+ * The page adds no CSS of its own, so it inherits future design-system changes
+ * automatically.
+ *
+ * House style for this page: no em dashes and no semicolons in prose.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import InternalLinks from '../components/InternalLinks.astro';
+
+/** The philosophy, stated as principles rather than promises. */
+const beliefs = [
+  {
+    title: 'Outcome First',
+    text: 'You do not buy SEO. You buy qualified leads, booked jobs, and revenue. We start with the business outcome and work backward to the tactic that produces it, never the other way around.',
+  },
+  {
+    title: 'Systems Over Services',
+    text: 'Channels that share data beat channels that run alone. A website that converts makes every click you buy worth more. A strong profile means you stop paying for clicks you could have won in the map for free.',
+  },
+  {
+    title: 'Transparency',
+    text: 'We explain every recommendation and we publish our starting investments before you ever talk to us. When something is not working, you hear it from us first rather than finding it buried in a report.',
+  },
+  {
+    title: 'Education',
+    text: 'Teach before selling. Owners make better decisions when they understand why the work matters, so we explain the reasoning behind a recommendation instead of asking you to take it on faith.',
+  },
+  {
+    title: 'Continuous Improvement',
+    text: 'Measure, analyze, improve. Budget moves toward what is producing booked jobs and away from what is not. Nothing gets set up once and then quietly forgotten.',
+  },
+  {
+    title: 'Long-Term Partnerships',
+    text: 'Sustainable growth beats a short spike that fades the month you stop paying for it. We work month to month because the work should keep earning your business rather than locking you into it.',
+  },
+];
+
+/** Differentiators. Claims here must be things we actually do, not adjectives. */
+const differences = [
+  {
+    title: 'Home service specialization',
+    text: 'HVAC, plumbing, electrical, roofing, and the trades around them are all we work on. We are not learning your business on your budget.',
+  },
+  {
+    title: 'SEO-first thinking',
+    text: 'Search structure gets decided at the wireframe, not bolted on after launch. Retrofitting SEO onto a finished site costs more and works worse.',
+  },
+  {
+    title: 'Integrated marketing',
+    text: 'The website, the local SEO work, the profile, and the campaigns are built to feed each other rather than to compete for the same budget.',
+  },
+  {
+    title: 'Data-driven decisions',
+    text: 'Calls and form fills get traced back to the channel that produced them, so spend follows evidence instead of habit or opinion.',
+  },
+  {
+    title: 'Honest communication',
+    text: 'When the problem sits outside our scope, we say so. Sometimes the marketing is fine and the way calls get answered is what costs you jobs.',
+  },
+  {
+    title: 'Long-term growth',
+    text: 'We build the asset you keep. Rankings, a site that converts, and a profile that earns trust outlast any ad budget you turn off.',
+  },
+];
+
+/** Industries we serve. Mirrors the primary audience in docs/brand-positioning.md. */
+const industries = [
+  'HVAC',
+  'Plumbing',
+  'Electrical',
+  'Garage Door',
+  'Roofing',
+  'Landscaping',
+  'Insulation',
+  'Pest Control',
+  'Pool Companies',
+];
+
+/** Buyer-fit signals. Owners self-select here rather than reading a pitch. */
+const businessTypes = [
+  {
+    title: 'Growth-minded companies',
+    text: 'The trucks and the crews already exist. The calendar has gaps. You are ready to invest in filling them.',
+  },
+  {
+    title: 'Multi-location businesses',
+    text: 'Several profiles, several service areas, and rankings that swing wildly by market. Coordination is the whole difficulty.',
+  },
+  {
+    title: 'Established companies',
+    text: 'You have a track record and reviews to build on. The work is compounding what you have, not starting from nothing.',
+  },
+  {
+    title: 'Companies replacing an agency',
+    text: 'You have been handed reports full of impressions and rankings, with no clear answer about how many jobs the work produced.',
+  },
+];
+
+/** How we keep score. Primary metrics vs the ones we refuse to sell as success. */
+const measured = [
+  'Qualified leads',
+  'Booked jobs',
+  'Revenue',
+  'Return on marketing investment',
+];
+
+const notMeasured = [
+  'Rankings on their own',
+  'Traffic on their own',
+  'Impressions and other vanity metrics',
+];
+
+const faqs = [
+  {
+    question: 'What kind of businesses does Local SEO Apex work with?',
+    answer:
+      'Home service companies. HVAC, plumbing, electrical, garage door, roofing, landscaping, insulation, pest control, and pool companies make up the core of the work. Most are established businesses with crews in the field and gaps in the schedule, where the problem is visibility and conversion rather than capacity.',
+  },
+  {
+    question: 'Do you guarantee rankings or a specific number of leads?',
+    answer:
+      'No, and you should be cautious with anyone who does. Nobody controls how Google ranks results, and lead volume also depends on your pricing, your reviews, and how quickly your team answers the phone. What we commit to is explaining every recommendation, measuring the work against booked jobs, and telling you plainly when something is not producing.',
+  },
+  {
+    question: 'Why do you specialize in home service companies?',
+    answer:
+      'Because the work does not transfer cleanly between industries. Ranking a service area business with no storefront, tuning Google Business Profiles across several locations, and tracing a booked job back to the click that produced it are specific problems with specific answers. An agency that also serves dentists and law firms is solving your problem for the first time. We would rather go deep in one industry than stay shallow across ten.',
+  },
+  {
+    question: 'How is Local SEO Apex different from the agency I have now?',
+    answer:
+      'Most agencies sell channels. SEO sits in one contract, ads in another, and the website somewhere else. Each vendor reports on its own numbers and none of them owns the result. We build those channels as one system with one objective, so paid search data sharpens the organic plan and the website converts the traffic every channel earns. The reporting then answers a single question. How many jobs did this produce, and what did each one cost?',
+  },
+  {
+    question: 'How do you measure whether the work is succeeding?',
+    answer:
+      'By qualified leads, booked jobs, revenue, and return on marketing investment. Rankings, traffic, and impressions are useful diagnostic signals and we report them, because they tell us whether the plan is working. They are not the goal. If your traffic climbs and your calendar stays empty, something is wrong and we go find it.',
+  },
+  {
+    question: 'Do you require a long-term contract?',
+    answer:
+      'No. We work month to month. The work has to keep earning your business, and you keep ownership of your website, your ad accounts, and your data if you ever decide to leave.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+/** Next logical steps, per the internal linking philosophy. All routes exist. */
+const nextSteps = [
+  {
+    label: 'Our Services',
+    href: '/services',
+    description: 'How Local SEO, websites, PPC, and Google Business Profile work as one system.',
+  },
+  {
+    label: 'Pricing',
+    href: '/pricing',
+    description: 'Starting investments and what actually moves the final number.',
+  },
+  {
+    label: 'Industries We Help',
+    href: '/industries',
+    description: 'The home service trades we build marketing systems for.',
+  },
+  {
+    label: 'Contact Us',
+    href: '/contact',
+    description: 'Tell us what is not working and we will tell you what we would fix first.',
+  },
+];
+---
+
+<BaseLayout
+  title="About Local SEO Apex"
+  description="Local SEO Apex helps home service companies build marketing systems that generate qualified leads, booked jobs, and long-term business growth."
+>
+  <article class="container page">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'About' }]} />
+
+    {/* 1. Hero. */}
+    <header class="page-hero">
+      <p class="eyebrow">Who We Are</p>
+      <h1>About Local SEO Apex</h1>
+      <p class="lede">
+        Local SEO Apex helps home service companies build marketing systems that generate qualified
+        leads, booked jobs, and long-term business growth. We are not here to sell you rankings. We
+        are here to help you fill the schedule.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+        <a class="button outline" href="/services">Explore Our Services</a>
+      </div>
+    </header>
+
+    <div class="service-flow">
+      {/* 2. Our story. The brand is the subject, never a person. */}
+      <section class="service-section">
+        <h2>Our Story</h2>
+        <div class="copy-stack">
+          <p>
+            Almost nobody sets out to build a disconnected marketing program. It happens one
+            reasonable decision at a time. One company takes over SEO. Someone else runs the ads. A
+            third built the website a few years back. A fourth claims the Google Business Profile.
+          </p>
+          <p>
+            Every vendor reports on its own numbers. The SEO report shows rankings. The ad report
+            shows clicks. The website company shows uptime. Not one of them can tell you how many
+            jobs got booked last month, or what each of those jobs cost to win.
+          </p>
+          <p class="intro-line">
+            Local SEO Apex was created around a different idea. Marketing works best when every
+            channel supports the same business objective.
+          </p>
+          <p>
+            In practice that means the website is built to be found and to convert. Local SEO and
+            the Google Business Profile follow one plan instead of quietly competing. Paid search
+            tells us which keywords turn into booked jobs, and that makes the organic work sharper
+            rather than sitting in an account nobody else can see. One system, one objective, and
+            one set of numbers that tie back to revenue.
+          </p>
+        </div>
+
+        <div class="problem-grid">
+          <div class="problem-card">
+            <h3>The usual approach</h3>
+            <p>
+              Separate vendors, separate reports, and separate incentives. Every channel defends its
+              own metric and nobody owns the business outcome.
+            </p>
+          </div>
+          <div class="problem-card">
+            <h3>How we work</h3>
+            <p>
+              One coordinated system where every channel is measured against the same goal, which is
+              booked jobs and the revenue they produce.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Principles. */}
+      <section class="service-section">
+        <h2>What We Believe</h2>
+        <p class="intro-line">
+          These are the principles behind every recommendation we make. When a decision is hard, we
+          come back to this list.
+        </p>
+        <div class="detail-grid">
+          {beliefs.map((belief) => (
+            <div class="detail-card">
+              <h3>{belief.title}</h3>
+              <p>{belief.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. Differentiators. */}
+      <section class="service-section">
+        <h2>What Makes Us Different</h2>
+        <p class="intro-line">
+          Plenty of agencies can build you a website or run your ads. Here is what changes when the
+          same team does both with one objective.
+        </p>
+        <ul class="check-list">
+          {differences.map((item) => (
+            <li>
+              <strong>{item.title}.</strong> {item.text}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* 5. Buyer fit. Industries first, then business shape. */}
+      <section class="service-section">
+        <h2>Who We Work With</h2>
+        <p class="intro-line">
+          We work exclusively with home service companies, because a service area business does not
+          market the way a storefront does.
+        </p>
+        <ul class="pill-list">
+          {industries.map((industry) => (
+            <li>{industry}</li>
+          ))}
+        </ul>
+        <p>
+          If your trade is not listed but your customers find you through local search, the same
+          approach applies. See the <a href="/industries">industries we help</a>.
+        </p>
+
+        <p class="intro-line">The businesses that benefit most from this approach</p>
+        <div class="card-grid">
+          {businessTypes.map((type) => (
+            <div class="detail-card">
+              <h3>{type.title}</h3>
+              <p>{type.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. Scorekeeping. The heart of the trust argument. */}
+      <section class="service-section">
+        <h2>How We Measure Success</h2>
+        <p class="intro-line">
+          Marketing metrics only matter when they connect to business results. Here is where we keep
+          score and where we refuse to.
+        </p>
+
+        <div class="problem-grid">
+          <div class="detail-card">
+            <h3>What we measure</h3>
+            <ul>
+              {measured.map((metric) => (
+                <li>{metric}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="detail-card">
+            <h3>What we will not sell as success</h3>
+            <ul>
+              {notMeasured.map((metric) => (
+                <li>{metric}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div class="warning-section">
+          <h3>Traffic that never books a job is not growth</h3>
+          <p>
+            Rankings and traffic are useful diagnostic signals. They tell us whether the plan is
+            working, and we report them every month. They are not the goal. If your traffic climbs
+            and your calendar stays empty, something is broken and we go find it.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    {/* 7. FAQs. */}
+    <section class="service-section faq-block">
+      <h2>Questions Owners Ask Before They Trust an Agency</h2>
+      <div class="faq-list">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.question}</summary>
+            <p>{f.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <InternalLinks title="Keep Exploring" links={nextSteps} />
+
+    {/* 8. Final CTA. */}
+    <section class="cta-band">
+      <div>
+        <h2>Let's Build a Marketing System That Supports Your Business Goals</h2>
+        <p>
+          Every home service company has different goals, competition, and constraints. Schedule a
+          strategy call and we will look at your website, your visibility, and your Google Business
+          Profile before we talk. You will leave knowing where your leads are leaking and what we
+          would fix first, whether or not you hire us.
+        </p>
+      </div>
+      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+    </section>
+
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+  </article>
+</BaseLayout>

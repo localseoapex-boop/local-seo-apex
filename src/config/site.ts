@@ -57,6 +57,7 @@ export const NAV_LINKS = [
   { label: 'Industries', href: '/industries' },
   { label: 'Blog', href: '/blog' },
   { label: 'Locations', href: '/locations' },
+  { label: 'About', href: '/about' },
   { label: 'Contact Us', href: '/contact' },
 ] as const;
 
@@ -74,6 +75,7 @@ export const FOOTER_LINKS = [
   {
     title: 'Company',
     links: [
+      { label: 'About', href: '/about' },
       { label: 'Industries', href: '/industries' },
       { label: 'Locations', href: '/locations' },
       { label: 'Blog', href: '/blog' },

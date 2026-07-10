@@ -1,25 +1,351 @@
 ---
 /**
- * /contact — contact landing page.
+ * /contact — the conversion page.
  *
- * Placeholder for now: the form and contact details land here later.
+ * Answers one question: what happens after I contact Local SEO Apex? The whole
+ * page is built to remove uncertainty before the ask. The four-step timeline is
+ * the load-bearing section, so it sits directly under the hero.
+ *
+ * Phone, email, address, and hours all resolve from data/offices.ts through
+ * BUSINESS, so the NAP shown here can never drift from the footer or the
+ * LocalBusiness schema. Nothing about the office is restated as a literal.
+ *
+ * Every layout class here already exists in BaseLayout's global stylesheet.
+ *
+ * House style for this page: no em dashes and no semicolons in prose.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import InternalLinks from '../components/InternalLinks.astro';
+import { BUSINESS } from '../config/site';
+import { primaryOffice } from '../data/offices';
+import { serviceUrl } from '../lib/urls';
+
+/** "a, b, and c" — used for the service-area line and the geography FAQ. */
+const formatList = (items: readonly string[]): string =>
+  items.length < 2
+    ? items.join('')
+    : `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+
+/** "07:00" -> "7:00 AM". Hours are stored as 24-hour strings for schema.org. */
+const formatTime = (time: string): string => {
+  const [hour, minute] = time.split(':').map(Number);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+  return `${displayHour}:${String(minute).padStart(2, '0')} ${period}`;
+};
+
+/** A contiguous run of days collapses to "Monday to Friday". */
+const formatDays = (days: readonly string[]): string =>
+  days.length === 1 ? days[0] : `${days[0]} to ${days[days.length - 1]}`;
+
+const areaServed = formatList(BUSINESS.areaServed);
+
+const officeHours = primaryOffice.hours.map((block) => ({
+  days: formatDays(block.days),
+  time: `${formatTime(block.opens)} to ${formatTime(block.closes)}`,
+}));
+
+/** The four-step timeline. Educational, not a sales sequence. */
+const steps = [
+  {
+    title: 'You Contact Us',
+    text: 'Call, email, or send a short note about what is not working. You do not need a brief, a budget, or a list of services. A sentence about why the phone is not ringing enough is a fine place to start.',
+  },
+  {
+    title: 'We Learn About Your Business',
+    text: 'We ask about your services, your markets, your crews, and where leads come from today. Then we look at your website, your Google Business Profile, and your rankings before we ever talk, so the conversation starts with facts instead of a questionnaire.',
+  },
+  {
+    title: 'We Build Recommendations',
+    text: 'We find where leads are leaking and decide what we would fix first, sequenced by what moves revenue soonest. Sometimes the finding is that your marketing is fine and your intake process is what costs you jobs. If that is what we see, that is what we say.',
+  },
+  {
+    title: 'We Discuss the Best Path Forward',
+    text: 'We walk you through what we found, what it would take to fix, and what it would cost. You leave with a clear picture of where you stand and what to do next, whether or not you decide to work with us.',
+  },
+];
+
+/**
+ * Self-qualification cards. Each links to the page that answers the need, so
+ * the section doubles as an internal-linking hub. Every href resolves.
+ */
+const reasons = [
+  {
+    title: 'You need more qualified leads',
+    text: 'The crews have capacity and the calendar has gaps. The problem is visibility and conversion rather than the work itself.',
+    href: '/services',
+    linkLabel: 'See how the channels work together',
+  },
+  {
+    title: 'You are replacing an agency',
+    text: 'You have been getting reports full of impressions and rankings, with no clear answer about how many jobs the work actually produced.',
+    href: '/pricing',
+    linkLabel: 'See what this costs',
+  },
+  {
+    title: 'You are launching a new website',
+    text: 'A rebuild is the moment search visibility is easiest to win and easiest to lose by accident. Structure gets decided at the wireframe.',
+    href: serviceUrl('website-development'),
+    linkLabel: 'Website Development',
+  },
+  {
+    title: 'You are expanding into new markets',
+    text: 'A new service area needs its own visibility plan, not a copy of the page that ranks in the city next door.',
+    href: serviceUrl('local-seo'),
+    linkLabel: 'Local SEO',
+  },
+  {
+    title: 'You are managing multiple locations',
+    text: 'Several profiles, several service areas, and rankings that swing by market. Multi-location work is mostly a coordination problem.',
+    href: serviceUrl('local-seo'),
+    linkLabel: 'Local SEO',
+  },
+  {
+    title: 'You want better Google Maps visibility',
+    text: 'The map pack sits above the organic results for most home service searches. Your profile decides whether you appear in it.',
+    href: serviceUrl('google-business-profile-optimization'),
+    linkLabel: 'Google Business Profile Optimization',
+  },
+];
+
+/** Useful to have on the call. Explicitly optional, per the conversion philosophy. */
+const bring = [
+  {
+    title: 'Your website',
+    text: 'Even if you are unhappy with it. It tells us how search engines see your business today.',
+  },
+  {
+    title: 'Your business goals',
+    text: 'More booked jobs, a new market, a revenue target. Anything concrete gives the plan something to aim at.',
+  },
+  {
+    title: 'Your service areas',
+    text: 'The cities you actually serve shape the entire local strategy, including which pages get built first.',
+  },
+  {
+    title: 'Your marketing questions',
+    text: 'If you have ever wondered whether something is worth paying for, ask. That is what the call is for.',
+  },
+  {
+    title: 'Your current challenges',
+    text: 'Slow months, low quality leads, an agency that stopped returning calls. Start wherever it hurts most.',
+  },
+];
+
+const faqs = [
+  {
+    question: 'Is there any cost to reach out?',
+    answer:
+      'No. The first conversation is free and there is no obligation attached to it. Before we talk we look at your website, your Google Business Profile, and your rankings, so the call is spent on what we actually found rather than on a discovery questionnaire.',
+  },
+  {
+    question: 'What happens on a strategy call?',
+    answer:
+      'We ask about your services, your markets, and where your leads come from today. Then we walk you through what we saw when we looked at your online presence, where we think leads are leaking, and what we would fix first. You leave with a clear picture of where you stand, whether or not you hire us.',
+  },
+  {
+    question: 'How quickly do you respond?',
+    answer:
+      'We reply to every message. Our office hours are listed on this page, and anything that arrives outside them gets answered once we are back. If you would rather not wait, calling is the fastest way to reach a person.',
+  },
+  {
+    question: 'Do I need to know which service I want before I contact you?',
+    answer:
+      'Not at all. Most owners reach out knowing that something is not working rather than knowing which channel to buy. Working out whether the real problem is your website, your local visibility, your Google Business Profile, or your ad spend is our job, not yours.',
+  },
+  {
+    question: `Do you only work with businesses in the ${primaryOffice.address.city} area?`,
+    answer: `Our office is in ${primaryOffice.address.city}, ${primaryOffice.address.region}, and we work across ${areaServed}. If you run a home service company outside those markets, reach out anyway. We will tell you honestly whether we are the right fit for where you operate.`,
+  },
+  {
+    question: 'Will I be pressured into signing a contract?',
+    answer:
+      'No. We work month to month, and we would rather tell you that you do not need us than sell you something that will not pay for itself. If the honest answer is that your marketing is fine and your intake process is costing you jobs, that is what you will hear.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+/** Next logical steps, per the internal linking philosophy. All routes exist. */
+const nextSteps = [
+  {
+    label: 'About Local SEO Apex',
+    href: '/about',
+    description: 'How we think about marketing and how we measure whether it worked.',
+  },
+  {
+    label: 'Our Services',
+    href: '/services',
+    description: 'Local SEO, websites, PPC, and Google Business Profile as one system.',
+  },
+  {
+    label: 'Pricing',
+    href: '/pricing',
+    description: 'Starting investments and what moves the final number.',
+  },
+  {
+    label: 'Areas We Serve',
+    href: '/locations',
+    description: `Home service marketing across ${areaServed}.`,
+  },
+];
 ---
 
 <BaseLayout
   title="Contact Local SEO Apex"
-  description="Ready to grow your home service business? Contact Local SEO Apex to discuss Local SEO, website builds, PPC, and marketing systems."
+  description="Talk to Local SEO Apex about SEO, websites, PPC, or a complete marketing strategy for your home service business. No cost, no obligation, no pressure."
 >
-  <div class="container page">
+  <article class="container page">
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Contact' }]} />
+
+    {/* 1. Hero. */}
     <header class="page-hero">
+      <p class="eyebrow">Contact</p>
       <h1>Contact Local SEO Apex</h1>
       <p class="lede">
-        Ready to grow your home service business? Contact Local SEO Apex to discuss Local SEO,
-        website builds, PPC, and marketing systems.
+        Whether you are looking for better SEO, a new website, stronger PPC campaigns, or a complete
+        marketing strategy, we would love to learn about your business.
       </p>
+      <div class="hero-actions">
+        <a class="button primary" href={`tel:${BUSINESS.phone}`}>Schedule a Strategy Call</a>
+        <a class="button outline" href={`mailto:${BUSINESS.email}`}>Email Us</a>
+      </div>
     </header>
-  </div>
+
+    {/* 2. Contact methods, resolved from the office record. */}
+    <section class="service-section">
+      <h2>How to Reach Us</h2>
+      <div class="card-grid">
+        <div class="detail-card">
+          <h3>Call</h3>
+          <p>The fastest way to reach a person and the easiest way to book a strategy call.</p>
+          <p><a href={`tel:${BUSINESS.phone}`}>{BUSINESS.phoneDisplay}</a></p>
+        </div>
+        <div class="detail-card">
+          <h3>Email</h3>
+          <p>Send a note about what is not working. Include your website if you have one.</p>
+          <p><a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></p>
+        </div>
+        <div class="detail-card">
+          <h3>Where We Work</h3>
+          <p>
+            Based in {primaryOffice.address.city}, {primaryOffice.address.region}, serving {areaServed}.
+          </p>
+          <p><a href="/locations">Areas we serve</a></p>
+        </div>
+        <div class="detail-card">
+          <h3>Office Hours</h3>
+          <ul>
+            {officeHours.map((block) => (
+              <li>
+                {block.days}
+                <br />
+                {block.time}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="service-flow">
+      {/* 3. The load-bearing section: what happens after you reach out. */}
+      <section class="service-section">
+        <h2>What Happens Next?</h2>
+        <p class="intro-line">
+          Reaching out to a marketing agency should not feel like a risk. Here is exactly what
+          follows, step by step.
+        </p>
+        <ol class="number-list">
+          {steps.map((step) => (
+            <li>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* 4. Self-qualification. Doubles as an internal-linking hub. */}
+      <section class="service-section">
+        <h2>Who Should Contact Us?</h2>
+        <p class="intro-line">
+          If any of these sound like your business, a conversation is probably worth your time.
+        </p>
+        <div class="detail-grid">
+          {reasons.map((reason) => (
+            <div class="detail-card">
+              <h3>{reason.title}</h3>
+              <p>{reason.text}</p>
+              <a href={reason.href}>{reason.linkLabel}</a>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. What to bring. Explicitly optional. */}
+      <section class="service-section">
+        <h2>What To Bring</h2>
+        <p class="intro-line">
+          The more we know about your business, the more useful the first conversation is. None of
+          this is required.
+        </p>
+        <ul class="check-list">
+          {bring.map((item) => (
+            <li>
+              <strong>{item.title}.</strong> {item.text}
+            </li>
+          ))}
+        </ul>
+
+        <div class="warning-section">
+          <h3>Nothing prepared? Reach out anyway.</h3>
+          <p>
+            Plenty of owners get in touch with nothing more than a feeling that the phone should be
+            ringing more often. That is enough to work with. Bring what you have and we will sort out
+            the rest together.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    {/* 6. FAQs. */}
+    <section class="service-section faq-block">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.question}</summary>
+            <p>{f.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <InternalLinks title="Before You Reach Out" links={nextSteps} />
+
+    {/* 7. Final CTA. */}
+    <section class="cta-band">
+      <div>
+        <h2>Ready to Start the Conversation?</h2>
+        <p>
+          Every home service business is different, so every recommendation starts with understanding
+          your goals, your markets, and what is already working. Tell us what you are trying to fix
+          and we will tell you what we would do first.
+        </p>
+      </div>
+      <a class="button primary" href={`tel:${BUSINESS.phone}`}>Schedule a Strategy Call</a>
+    </section>
+
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+  </article>
 </BaseLayout>
