@@ -1,56 +1,314 @@
 ---
 /**
- * /services — hub page listing every service.
+ * /services — the services sales page.
  *
- * Acts as the breadcrumb parent for service pages and a crawl hub that links to
- * all of them, helping search engines discover the full set. Cards are rendered
- * here rather than via InternalLinks because the hub shows the extra catalog
- * fields (icon, starting price, featured badge) a plain link grid cannot.
+ * Not a directory. The job of this page is to explain that Local SEO, websites,
+ * PPC, and Google Business Profile work as one coordinated lead-generation
+ * system, then send the owner to a strategy call. It is also the breadcrumb
+ * parent and crawl hub for /services/[service].
+ *
+ * All service facts (name, tagline, intro, benefits, price, icon) come from
+ * data/services.ts. Nothing about a service is restated here, so the hub, the
+ * homepage, and the individual service pages cannot drift apart.
+ *
+ * House style for this page: no em dashes and no semicolons in prose.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
 import { services, formatStartingPrice } from '../../data/services';
 import { serviceUrl } from '../../lib/urls';
+
+// How each channel contributes to the same funnel. Keyed to a service slug so a
+// renamed or removed service surfaces here instead of leaving orphaned copy.
+const strategy = [
+  {
+    slug: 'website-development',
+    role: 'The website converts the traffic',
+    text: 'Every other channel sends people to your site. If it loads slowly or hides the phone number, you pay for the visit and lose the job. The site is the floor that everything else stands on, so it gets fixed first.',
+  },
+  {
+    slug: 'local-seo',
+    role: 'Local SEO builds visibility that compounds',
+    text: 'Organic rankings take months to earn and then keep producing without a cost per click. This is the channel that lowers your blended cost per lead over time, which is why we start it early even when paid search is carrying the phone.',
+  },
+  {
+    slug: 'google-business-profile-optimization',
+    role: 'Google Business Profile wins the map and the trust',
+    text: 'The map pack sits above the organic results for most home service searches, and the reviews attached to it are what a homeowner reads before choosing between you and the next contractor. Visibility and credibility come from the same asset.',
+  },
+  {
+    slug: 'ppc-management',
+    role: 'PPC generates demand immediately',
+    text: 'Paid search puts you in front of buyers who need help today, which covers the gap while organic work matures. It also tells us which keywords actually convert into booked jobs, and that data makes the SEO work sharper.',
+  },
+];
+
+// Buyer-fit signals. Owners self-select here rather than reading a pitch.
+const fit = [
+  {
+    title: 'Established companies that need better lead flow',
+    text: 'The trucks and the crews exist. The calendar has gaps. The problem is visibility and conversion, not capacity.',
+  },
+  {
+    title: 'Multi-location brands',
+    text: 'Several profiles, several service areas, and rankings that vary wildly by market. Coordination across locations is the whole difficulty.',
+  },
+  {
+    title: 'Companies replacing an underperforming agency',
+    text: 'You have been getting reports full of impressions and rankings, and no clear answer about how many jobs the work produced.',
+  },
+  {
+    title: 'Businesses launching a new website or market',
+    text: 'A rebuild or a new service area is the moment where search visibility is easiest to win and easiest to lose by accident.',
+  },
+  {
+    title: 'Companies that need real reporting and attribution',
+    text: 'You want to know which channel produced which booked job, and what that job cost to acquire, before you decide where the next dollar goes.',
+  },
+];
+
+const process = [
+  {
+    title: 'Diagnose',
+    text: 'We audit your site, your Google Business Profile, your rankings, and your competitors, and we find where leads are actually leaking. Sometimes the answer is that your marketing is fine and your intake is not, and we will say so.',
+  },
+  {
+    title: 'Prioritize',
+    text: 'We sequence the work by what moves revenue soonest. Fixing the profile that is suppressing your map rankings comes before publishing content nobody has searched for yet.',
+  },
+  {
+    title: 'Build',
+    text: 'The website, the local SEO foundation, the profile, and the campaigns get built to work together, so the keyword data from paid search informs the organic plan rather than sitting in a separate account.',
+  },
+  {
+    title: 'Measure and improve',
+    text: 'Calls and form fills get tracked back to the channel that produced them. We report on booked jobs and cost per job, then move budget toward what is working and away from what is not.',
+  },
+];
+
+const faqs = [
+  {
+    question: 'Do I need every service, or can I start with one?',
+    answer:
+      'You can start with one, and plenty of companies do. The honest answer is that the services reinforce each other, so a single channel run alone usually underperforms what the same budget would do across two. If your website converts poorly, adding paid traffic to it mostly buys you more expensive disappointment. We tell you which single lever to pull first if that is where the budget is.',
+  },
+  {
+    question: 'How long does Local SEO take to work?',
+    answer:
+      'Most home service companies see movement in rankings and calls within a few months, and the results keep compounding after that. The timeline depends on how competitive your city is, how strong your website is today, and how established your Google Business Profile already is. Anyone promising you page one in 30 days is guessing.',
+  },
+  {
+    question: 'Can you work with my existing website?',
+    answer:
+      'Often yes. If your site loads quickly, sits on a platform we can properly optimize, and already turns visitors into calls, rebuilding it is wasted money. If the structure fights against search or visitors leave without calling, we will show you exactly where and let you decide whether a rebuild is worth it.',
+  },
+  {
+    question: 'Is ad spend included in the PPC management fee?',
+    answer:
+      'No. Google bills you directly for ad spend and our management fee is separate. That keeps the incentives clean and means you always see what the platform costs against what we cost. You keep ownership of the ad accounts and their full history even if we stop working together.',
+  },
+  {
+    question: 'Do you work with multi-location companies?',
+    answer:
+      'Yes. Multi-location work is mostly a coordination problem. Each location needs its own Google Business Profile tuned to its own service area, the website needs a structure that lets each market rank without competing against itself, and reporting has to separate performance by location so you can see which market is actually carrying the business.',
+  },
+  {
+    question: 'How do you measure success?',
+    answer:
+      'By calls, form submissions, and booked jobs, tracked back to the channel that produced them, and by what each of those jobs cost to acquire. Rankings and traffic are useful diagnostic signals but they are not the goal. If traffic climbs and your calendar stays empty, something is wrong and we go find it.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+/** Pairs the strategy copy with its catalog entry so names and links stay in sync. */
+const strategyWithService = strategy.map((s) => ({
+  ...s,
+  service: services.find((svc) => svc.slug === s.slug)!,
+}));
 ---
 
 <BaseLayout
   title="Digital Marketing Services for Home Service Businesses"
-  description="Local SEO, website development, PPC management, and Google Business Profile optimization for home service companies — built around booked jobs, not vanity metrics."
+  description="Local SEO, website development, PPC management, and Google Business Profile optimization, built as one coordinated lead generation system for home service companies."
 >
-  <div class="container page">
+  <article class="container page">
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Services' }]} />
+
     <header class="page-hero">
-      <h1>Digital Marketing Services</h1>
-      <p class="lede">Four tools, one outcome: more booked jobs for your home service business.</p>
+      <p class="eyebrow">Digital Marketing for Home Service Companies</p>
+      <h1>Digital Marketing That Generates Qualified Leads and Booked Jobs</h1>
+      <p class="lede">
+        Local SEO Apex builds Local SEO, website development, PPC management, and Google Business
+        Profile optimization into one connected lead generation system for HVAC, plumbing,
+        electrical, garage door, roofing, landscaping, and insulation companies.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+        <a class="button outline" href="/contact">Get a Free SEO Audit</a>
+      </div>
     </header>
 
-    <div class="card-grid">
-      {services.map((service) => (
-        <article class="service-card">
-          <ServiceIcon name={service.icon} class="card-icon" />
-          <h2>
+    {/* 2. Service overview, rendered entirely from the catalog. */}
+    <section class="service-section">
+      <h2>Four services, one lead generation system</h2>
+      <p class="intro-line">
+        Each of these earns its keep on its own. Run together, they compound, because the traffic one
+        channel earns is converted by another and measured by a third.
+      </p>
+
+      <div class="card-grid">
+        {services.map((service) => (
+          <article class="service-card">
+            <ServiceIcon name={service.icon} class="card-icon" />
+            <h3>
+              <a href={serviceUrl(service.slug)}>{service.name}</a>
+              {service.featured && <span class="badge">Most popular</span>}
+            </h3>
+            <p class="outcome">{service.tagline}</p>
+            <p>{service.intro}</p>
+            <ul class="check-list compact">
+              {service.benefits.slice(0, 3).map((b) => <li>{b}</li>)}
+            </ul>
+            <p class="starting-price">
+              Starting at <strong>{formatStartingPrice(service.startingPrice)}</strong>
+            </p>
+            <a class="card-link" href={serviceUrl(service.slug)}>
+              Explore {service.name}
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* 3. How the channels support one another. */}
+    <section class="service-section">
+      <h2>Why coordinated channels produce better leads</h2>
+      <p class="intro-line">
+        Most agencies sell these as four separate line items. Run in isolation they compete for the
+        same budget and none of them can tell you what a booked job actually cost.
+      </p>
+
+      <div class="detail-grid">
+        {strategyWithService.map((item) => (
+          <div class="detail-card">
+            <h3>{item.role}</h3>
+            <p>{item.text}</p>
+            <a href={serviceUrl(item.service.slug)}>{item.service.name}</a>
+          </div>
+        ))}
+      </div>
+
+      <div class="warning-section">
+        <h3>Coordination is where the waste disappears</h3>
+        <p>
+          When paid search knows which keywords turn into booked jobs, the organic plan targets those
+          first instead of guessing. When the website converts, every click you buy is worth more.
+          When the Google Business Profile is strong, you stop paying for clicks you would have won
+          in the map for free. Channels that share data raise lead quality and cut spend that was
+          never going to produce work.
+        </p>
+      </div>
+    </section>
+
+    {/* 4. Buyer fit. */}
+    <section class="service-section">
+      <h2>Who this is built for</h2>
+      <div class="detail-grid">
+        {fit.map((f) => (
+          <div class="detail-card">
+            <h3>{f.title}</h3>
+            <p>{f.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* 5. Process. */}
+    <section class="service-section">
+      <h2>How we get you more booked jobs</h2>
+      <ol class="number-list">
+        {process.map((step) => (
+          <li>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* 6. Pricing guidance, priced from the catalog. */}
+    <section class="service-section">
+      <h2>What it costs to build the system</h2>
+      <p class="intro-line">
+        These are entry points, not quotes. Where you land depends on the size of your market, how
+        hard your competitors are working, how many locations you run, how much website scope the
+        build requires, and how aggressive you want to be with advertising.
+      </p>
+
+      <ul class="check-list">
+        {services.map((service) => (
+          <li>
             <a href={serviceUrl(service.slug)}>{service.name}</a>
-            {service.featured && <span class="badge">Most popular</span>}
-          </h2>
-          <p class="outcome">{service.tagline}</p>
-          <p>{service.intro}</p>
-          <p class="starting-price">
-            Starting at <strong>{formatStartingPrice(service.startingPrice)}</strong>
-          </p>
-        </article>
-      ))}
-    </div>
-  </div>
+            {' starts at '}
+            <strong>{formatStartingPrice(service.startingPrice)}</strong>
+          </li>
+        ))}
+      </ul>
+
+      <p>
+        Advertising spend is billed to you directly by Google and sits outside the PPC management
+        fee. On a strategy call we scope the work against your market and give you a real number
+        before you commit to anything.
+      </p>
+    </section>
+
+    {/* 7. FAQs. */}
+    <section class="service-section faq-block">
+      <h2>Questions owners ask before they hire an agency</h2>
+      <div class="faq-list">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.question}</summary>
+            <p>{f.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    {/* 8. Final CTA. */}
+    <section class="cta-band">
+      <div>
+        <h2>Ready to turn searches into booked jobs?</h2>
+        <p>
+          Book a strategy call and we will audit your visibility, your website, and your Google
+          Business Profile before we talk. You will leave the call knowing where your leads are
+          leaking and what we would fix first, whether or not you hire us.
+        </p>
+      </div>
+      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+    </section>
+
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+  </article>
 </BaseLayout>
 
 <style>
-  .service-card h2 {
+  .service-card h3 {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 
   .badge {
@@ -72,8 +330,17 @@ import { serviceUrl } from '../../lib/urls';
     margin: 0 0 0.6rem;
   }
 
+  .check-list.compact {
+    margin: 0 0 0.9rem;
+  }
+
   .starting-price {
-    margin-bottom: 0;
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-link {
+    font-weight: 700;
     font-size: 0.9rem;
   }
 </style>
