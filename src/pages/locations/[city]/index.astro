@@ -3,14 +3,15 @@
  * /locations/[city] — dynamic route generating ONE page per city.
  *
  * getStaticPaths() fans out over the locations catalog. Add a city to
- * data/locations.ts and its page (plus its location-service pages) appears.
+ * data/locations.ts and its page appears. There are no nested location-service
+ * routes — services live only at /services/[service].
  */
 import CityLayout from '../../../layouts/CityLayout.astro';
 import { serviceAreaLocations } from '../../../lib/links';
 
 export function getStaticPaths() {
-  // serviceAreaLocations excludes the home-market city (Mesa), so no
-  // /locations/mesa-az page is ever generated.
+  // With SITE.excludeHomeCityFromServiceAreas = false, serviceAreaLocations is
+  // every market including the home city, so Mesa gets its own page.
   return serviceAreaLocations.map((location) => ({
     params: { city: location.slug },
     props: { location },

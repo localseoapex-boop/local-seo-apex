@@ -26,8 +26,11 @@ export const SITE = {
    * When true, the PRIMARY office's home city (offices[0].homeCitySlug) is NOT
    * generated as a /locations/* service-area page — it is represented directly
    * by the homepage and the canonical /services/* pages instead.
+   *
+   * FALSE for this project: Mesa is the home market AND gets its own location
+   * page, so all five markets are represented consistently under /locations.
    */
-  excludeHomeCityFromServiceAreas: true,
+  excludeHomeCityFromServiceAreas: false,
 } as const;
 
 export const BUSINESS = {
@@ -42,18 +45,8 @@ export const BUSINESS = {
   address: primaryOffice.address,
   geo: primaryOffice.geo,
   openingHours: primaryOffice.hours,
-  /** All cities/markets served — handy for area-served lists. */
-  areaServed: [
-    'Mesa',
-    'Phoenix',
-    'Scottsdale',
-    'Chandler',
-    'Gilbert',
-    'Tempe',
-    'Queen Creek',
-    'San Tan Valley',
-    'Apache Junction',
-  ],
+  /** All markets served — must match the five entries in data/locations.ts. */
+  areaServed: ['Phoenix', 'Mesa', 'Chandler', 'Gilbert', 'Scottsdale'],
 } as const;
 
 /** Primary navigation links rendered in the header. */

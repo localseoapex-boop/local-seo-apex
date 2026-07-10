@@ -1,8 +1,9 @@
 ---
 /**
- * /locations — hub page listing every city served.
+ * /locations — hub page listing every market served.
  *
  * Breadcrumb parent for city pages and a crawl hub linking to all of them.
+ * Mesa is our home market AND gets its own page, so every market appears here.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
@@ -10,7 +11,6 @@ import InternalLinks from '../../components/InternalLinks.astro';
 import { serviceAreaLocations } from '../../lib/links';
 import { cityUrl } from '../../lib/urls';
 
-// Only surrounding service areas — the home market (Mesa) lives on the homepage.
 const links = serviceAreaLocations.map((loc) => ({
   label: `${loc.city}, ${loc.region}`,
   href: cityUrl(loc.slug),
@@ -19,18 +19,28 @@ const links = serviceAreaLocations.map((loc) => ({
 
 <BaseLayout
   title="Areas We Serve"
-  description="Beyond our home base in Mesa, Local SEO Apex serves home service businesses across the East Valley — Chandler, Gilbert, Tempe, Queen Creek, San Tan Valley, Apache Junction, Gold Canyon, Scottsdale, and Ahwatukee."
+  description="Local SEO Apex serves home service businesses across Phoenix, Mesa, Chandler, Gilbert, and Scottsdale — local SEO, websites, PPC, and Google Business Profile optimization."
 >
   <div class="container page">
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Areas We Serve' }]} />
     <header class="page-hero">
       <h1>Areas We Serve</h1>
       <p class="lede">
-        Local SEO Apex is based in Mesa and serves home service businesses across the surrounding
-        East Valley. Looking for Mesa? That is right here on our
-        <a href="/services">services</a> pages.
+        Local SEO Apex works with home service companies across the Phoenix metro from our office in
+        Mesa. Every market below competes differently, so the plan changes with it.
       </p>
     </header>
-    <InternalLinks title="Surrounding cities we serve" links={links} />
+
+    <div class="page-body">
+      <p>
+        We do not keep an office in each of these cities, and we would not claim otherwise — local
+        rankings are earned through your Google Business Profile, your website, and the local
+        relevance you build, not through a mailbox address. Pick your market to see how competition
+        in it actually works, or
+        <a href="/contact">schedule a strategy call</a> and we will walk your market with you.
+      </p>
+    </div>
+
+    <InternalLinks title="Markets we serve" links={links} />
   </div>
 </BaseLayout>

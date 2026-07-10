@@ -2,15 +2,17 @@
 /**
  * CityLayout.astro — template for /locations/[city] pages.
  *
- * Data-driven from a Location object. Builds the city hero, breadcrumbs, unique
- * local intro + neighborhoods, the list of services available in that city (each
- * linking to the dedicated location-service page), and nearby-city links. The
- * serving office's phone is resolved via officeId so the CTA is locally relevant.
+ * Data-driven from a Location object. Builds the city hero, breadcrumbs, the
+ * market's unique intro + positioning + neighborhoods, links across to the
+ * canonical /services/[service] pages, and nearby-market links. The serving
+ * office's phone is resolved via officeId so the CTA is locally relevant.
+ *
+ * The body copy comes from the Location, never from a template string with the
+ * city name interpolated — five near-identical city pages would be thin content.
  */
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import InternalLinks from '../components/InternalLinks.astro';
-import { SITE } from '../config/site';
 import type { Location } from '../data/locations';
 import { getOffice, primaryOffice } from '../data/offices';
 import { servicesForLocation, nearbyCities } from '../lib/links';
@@ -63,14 +65,11 @@ const nearbyLinks = nearbyCities(location.slug).map((loc) => ({
     </header>
 
     <div class="page-body">
-      <p>
-        {SITE.name} is a Mesa-based marketing team helping home service businesses in {location.city}
-        and the surrounding East Valley win local search. We build the rankings, the website, and the
-        campaigns that turn searches into booked jobs — and we report on the calls, not on clicks.
-      </p>
+      {location.positioning && <p>{location.positioning}</p>}
       {location.neighborhoods && location.neighborhoods.length > 0 && (
         <p class="areas-line">
-          <strong>Areas we serve in {location.city}:</strong> {location.neighborhoods.join(' · ')}
+          <strong>Areas we help {location.city} clients rank in:</strong>{' '}
+          {location.neighborhoods.join(' · ')}
         </p>
       )}
     </div>
