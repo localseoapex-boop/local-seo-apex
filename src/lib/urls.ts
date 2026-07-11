@@ -12,6 +12,13 @@ export const serviceUrl = (slug: string): string => `/services/${slug}`;
 
 export const cityUrl = (slug: string): string => `/locations/${slug}`;
 
+/**
+ * /industries/[industry]. These pages do not exist yet — only industries with
+ * `hasPage: true` in data/industries.ts should be linked with this, so the hub
+ * never ships a link to an unbuilt route.
+ */
+export const industryUrl = (slug: string): string => `/industries/${slug}`;
+
 /** /services/[category]/[subservice] — parent sub-service page. */
 export const subServiceUrl = (categorySlug: string, subSlug: string): string =>
   `/services/${categorySlug}/${subSlug}`;

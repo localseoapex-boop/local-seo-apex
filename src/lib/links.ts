@@ -16,6 +16,7 @@
 import { services, getService, allServiceSlugs, type Service } from '../data/services';
 import { locations, getLocation, type Location } from '../data/locations';
 import { subServices, type SubService } from '../data/subservices';
+import { type Industry } from '../data/industries';
 import { primaryOffice } from '../data/offices';
 import { SITE } from '../config/site';
 
@@ -110,3 +111,21 @@ export const nearbyCities = (citySlug: string, limit = 4): Location[] => {
  */
 export const subServicesForCategory = (categorySlug: string): SubService[] =>
   subServices.filter((s) => s.parent === categorySlug);
+
+/**
+ * The services we would build first for an industry, resolved from its
+ * `priorityServices` slugs and returned in THAT order (the recommendation is the
+ * sequence, so catalog order would destroy the meaning).
+ *
+ * This is how industry pages recommend services without restating what any
+ * service is. The name, tagline, and URL all come from the service catalog, so
+ * a service can never describe itself differently on an industry page than it
+ * does on its own. A slug that no longer exists is dropped rather than rendered
+ * as a broken link.
+ */
+export const servicesForIndustry = (industry: Industry, limit?: number): Service[] => {
+  const result = industry.priorityServices
+    .map(getService)
+    .filter((s): s is Service => Boolean(s));
+  return limit ? result.slice(0, limit) : result;
+};

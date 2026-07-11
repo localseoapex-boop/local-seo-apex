@@ -1,26 +1,357 @@
 ---
 /**
- * /industries — hub page for the industries we serve.
+ * /industries — the Industries Hub.
  *
- * Placeholder for now: breadcrumb parent and landing surface. Industry links
- * get added once the industry pages exist.
+ * Not a directory. The job of this page is to prove we understand how demand
+ * actually behaves in each trade, then route the owner to the service we would
+ * build first for them. It is also the breadcrumb parent and crawl hub for the
+ * future /industries/[industry] pages.
+ *
+ * FULLY DATA-DRIVEN. Every trade fact comes from data/industries.ts and every
+ * service fact comes from data/services.ts (resolved through servicesForIndustry).
+ * Nothing about a trade or a service is restated here, so this hub, the homepage
+ * industry grid, and the service pages cannot drift apart.
+ *
+ * Adding a trade means adding ONE entry to data/industries.ts. It appears in the
+ * grid, joins the right demand-shape group, and gets a service recommendation
+ * with zero edits to this file. When an industry page is built, flip `hasPage`
+ * and the cards here start linking to it.
+ *
+ * House style for this page: no em dashes and no semicolons in prose.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { industries, industriesByDemandShape } from '../../data/industries';
+import { services } from '../../data/services';
+import { servicesForIndustry } from '../../lib/links';
+import { serviceUrl, industryUrl } from '../../lib/urls';
+
+const demandGroups = industriesByDemandShape();
+
+/** Pairs each trade with its resolved priority services, in recommended order. */
+const recommendations = industries.map((industry) => ({
+  industry,
+  services: servicesForIndustry(industry),
+}));
+
+// FAQs unique to this page. The homepage and /services already answer the
+// general agency questions, so these only cover what an owner asks about their
+// TRADE. No duplicate questions across the site, so no competing FAQ rich result.
+const faqs = [
+  {
+    question: 'My trade is not on this list. Can you still help?',
+    answer:
+      'Probably, and we will tell you honestly if not. The trades above are where we have done the most work, but the underlying problem is the same across home services: local visibility, a website that converts, and a Google Business Profile that wins the map. Pest control, pool service, cleaning, and similar residential trades fit that model. If your business is not a home service business, we are the wrong agency and we will say so on the call rather than take the work.',
+  },
+  {
+    question: 'What actually changes between marketing an HVAC company and a roofing company?',
+    answer:
+      'The sequence and the emphasis. An HVAC repair search is decided in minutes by whoever is visible and easy to call, so the Google Business Profile and page speed carry most of the weight. A roof is a large, considered decision a homeowner researches over weeks, so the website has to build credibility across several visits before the phone ever rings. Same four services, deliberately different order, because putting a roofing budget entirely into map pack visibility would waste most of it.',
+  },
+  {
+    question: 'Do you work with competing companies in the same trade and city?',
+    answer:
+      'No. Ranking two plumbers against each other in the same market means one of them is paying us to lose, and there is no honest way to sell that. Ask about your market on the call and we will tell you right away whether it is open.',
+  },
+  {
+    question: 'I run more than one trade under one brand. How does that work?',
+    answer:
+      'It is common and it works, but the site structure has to reflect it. A company doing both plumbing and HVAC needs each trade to have its own service pages and its own keyword targeting, and often its own campaigns, because the searches, the buyers, and the job values are all different. What it does not need is two websites. One site with a clean trade structure will outrank two thin ones, because the authority compounds in one place instead of being split across two.',
+  },
+  {
+    question: 'Does knowing my trade matter more than knowing SEO?',
+    answer:
+      'Neither one works without the other, but trade knowledge is the part an agency usually lacks. A generalist can run a technically clean campaign and still target the keywords that bring in the cheap work instead of the profitable work, or push the wrong offer in the wrong season. Knowing that a broken spring search converts and a generic garage door search mostly does not is the difference between a busy phone and a full schedule.',
+  },
+  {
+    question: 'Which service should my trade start with?',
+    answer:
+      'It depends on the trade and on what you already have. For emergency-driven trades we usually start with the Google Business Profile and Local SEO, because the map pack is where urgent calls are won. For high ticket, considered purchases we usually start with the website, because credibility is what earns the estimate. The recommendations on this page are our starting point, not a fixed rule, and we confirm them against your actual site, profile, and rankings before we quote anything.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
 ---
 
 <BaseLayout
-  title="Industries"
-  description="Local SEO Apex helps home service businesses grow through Local SEO, websites, PPC, and marketing systems."
+  title="Industries We Serve"
+  description="Local SEO, websites, and PPC for HVAC, plumbing, electrical, garage door, roofing, landscaping, and insulation companies, built around how each trade is actually bought."
 >
-  <div class="container page">
+  <article class="container page">
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Industries' }]} />
+
     <header class="page-hero">
-      <h1>Industries We Help</h1>
+      <p class="eyebrow">Industries We Serve</p>
+      <h1>Marketing Built Around How Your Trade Is Actually Bought</h1>
       <p class="lede">
-        Local SEO Apex helps home service businesses grow through Local SEO, websites, PPC, and
-        marketing systems.
+        A homeowner with a burst pipe and a homeowner pricing a new roof search differently, decide
+        differently, and are worth different amounts. Local SEO Apex works only in home services, so
+        we start from what your buyer already does instead of learning it on your budget.
       </p>
+      <div class="hero-actions">
+        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+        <a class="button outline" href="/contact">Get a Free SEO Audit</a>
+      </div>
     </header>
-  </div>
+
+    {/* 2. The trade grid, rendered entirely from data/industries.ts. */}
+    <section class="service-section trades">
+      <h2>The trades we work in</h2>
+      <p class="intro-line">
+        Each one has a different buyer, a different urgency, and a different reason leads leak. Here
+        is what defines the marketing problem in each.
+      </p>
+
+      <div class="card-grid industry-grid">
+        {industries.map((industry) => (
+          <article class="service-card">
+            <h3>
+              {industry.hasPage ? (
+                <a href={industryUrl(industry.slug)}>{industry.name}</a>
+              ) : (
+                industry.name
+              )}
+            </h3>
+            <p class="outcome">{industry.tagline}</p>
+            <p>{industry.cardText}</p>
+            <ul class="challenge-list">
+              {industry.challenges.slice(0, 2).map((c) => <li>{c}</li>)}
+            </ul>
+            {industry.hasPage && (
+              <a class="card-link" href={industryUrl(industry.slug)}>
+                {industry.name} marketing
+              </a>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* 3. Why one playbook cannot serve every trade. Groups come from the data. */}
+    <section class="service-section">
+      <h2>Why the same playbook does not work for every trade</h2>
+      <p class="intro-line">
+        Trades do not differ because of the tools in the truck. They differ by how long the homeowner
+        takes to decide, and that single factor changes where your money should go first.
+      </p>
+
+      <div class="detail-grid">
+        {demandGroups.map((group) => (
+          <div class="detail-card">
+            <h3>{group.label}</h3>
+            <p>{group.text}</p>
+            <ul class="pill-list">
+              {group.industries.map((i) => <li>{i.name}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div class="warning-section">
+        <h3>Spending the same way in every trade is how budget disappears</h3>
+        <p>
+          Pouring a roofing budget into map pack visibility ignores the weeks a homeowner spends
+          comparing bids on your website. Selling a plumber a content program while their Google
+          Business Profile sits unverified leaves them invisible in the exact moment the call is
+          decided. The four services do not change between trades. What changes is which one you fix
+          first, and getting that order wrong is the most expensive mistake in local marketing.
+        </p>
+      </div>
+    </section>
+
+    {/* 4. Service recommendations per trade, resolved from the service catalog. */}
+    <section class="service-section">
+      <h2>Where we start, by trade</h2>
+      <p class="intro-line">
+        Every trade eventually runs the full system. These are the services we would build first for
+        each one, and the reason that order gets to booked jobs soonest.
+      </p>
+
+      <div class="rec-list">
+        {recommendations.map(({ industry, services: recommended }) => (
+          <div class="rec-card">
+            <h3>{industry.name}</h3>
+            <ol class="rec-services">
+              {recommended.map((service) => (
+                <li>
+                  <a href={serviceUrl(service.slug)}>{service.name}</a>
+                </li>
+              ))}
+            </ol>
+            <p>{industry.serviceRationale}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* 5. The shared system. Links every service without restating any of them. */}
+    <section class="service-section">
+      <h2>The system is the same. The sequence is not.</h2>
+      <p>
+        Whatever the trade, the same four services do the work, and they are strongest run together
+        rather than bought as separate line items. Paid search shows which keywords turn into booked
+        jobs and the organic plan targets those first. A website that converts makes every click you
+        buy worth more. A strong Google Business Profile stops you paying for clicks you would have
+        won in the map for free.
+      </p>
+
+      <ul class="check-list">
+        {services.map((service) => (
+          <li>
+            <a href={serviceUrl(service.slug)}>{service.name}</a>
+            {': '}
+            {service.tagline}
+          </li>
+        ))}
+      </ul>
+
+      <p class="services-link">
+        <a href="/services">See how the four services work as one system →</a>
+      </p>
+    </section>
+
+    {/* 6. FAQs, unique to this page. */}
+    <section class="service-section faq-block">
+      <h2>Questions owners ask about their trade</h2>
+      <div class="faq-list">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.question}</summary>
+            <p>{f.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    {/* 7. Final CTA. */}
+    <section class="cta-band">
+      <div>
+        <h2>Let us talk about your trade and your market</h2>
+        <p>
+          Book a strategy call and we will look at where you rank today, what the other companies in
+          your trade are doing, and which service would move your schedule soonest. You will leave
+          knowing what we would fix first, whether or not you hire us.
+        </p>
+      </div>
+      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+    </section>
+
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+  </article>
 </BaseLayout>
+
+<style>
+  /* Seven trades read better 3-up than in the global 4-column card grid. */
+  .industry-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .service-card h3 {
+    font-size: 1.2rem;
+  }
+
+  /* Outcome line sits above the explanation so the benefit reads first. */
+  .service-card .outcome {
+    color: var(--green-dark);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 0 0 0.6rem;
+  }
+
+  .challenge-list {
+    color: var(--muted);
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .card-link {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 0.9rem;
+  }
+
+  /* Recommendations: trade on the left, ranked services and rationale on the right. */
+  .rec-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .rec-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0.4rem 1.25rem;
+    padding: 1.2rem 1.4rem;
+    align-items: start;
+  }
+  .rec-card h3 {
+    font-size: 1.05rem;
+    margin: 0;
+    grid-row: span 2;
+  }
+  .rec-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: rec;
+  }
+  .rec-services li {
+    counter-increment: rec;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  .rec-services li::before {
+    content: counter(rec) '. ';
+    color: var(--green);
+    font-weight: 900;
+  }
+  .rec-card p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .services-link {
+    font-weight: 800;
+    margin-top: 1.5rem;
+  }
+  .services-link a {
+    text-decoration: none;
+  }
+
+  @media (max-width: 900px) {
+    .industry-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .rec-card {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+    .rec-card h3 {
+      grid-row: auto;
+    }
+  }
+  @media (max-width: 600px) {
+    .industry-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

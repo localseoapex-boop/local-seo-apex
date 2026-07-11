@@ -6,26 +6,18 @@
  * not services. Local SEO, websites, GBP, and PPC are the tools, so every
  * headline and CTA leads with the outcome and names the tool second.
  *
- * The service grid reads from data/services.ts so the homepage, the /services
- * hub, and the generated service pages can never drift apart. Remaining section
- * content lives in the arrays below so each section is a single map(). Once
- * these repeat on other pages, the card grids should move to components.
+ * The service grid reads from data/services.ts and the industry grid from
+ * data/industries.ts, so the homepage, the /services hub, and the /industries
+ * hub can never drift apart. Remaining section content lives in the arrays below
+ * so each section is a single map(). Once these repeat on other pages, the card
+ * grids should move to components.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { SITE, BUSINESS } from '../config/site';
 import { services } from '../data/services';
+import { industries } from '../data/industries';
 import { serviceUrl } from '../lib/urls';
-
-const industries = [
-  { name: 'HVAC', text: 'Demand swings hard by season. Your marketing has to capture emergency repairs and planned replacements at the same time.' },
-  { name: 'Plumbing', text: 'Emergency searches convert in minutes. Whoever is visible and easy to call gets the job.' },
-  { name: 'Electrical', text: 'Panel upgrades, EV chargers, and small repairs each attract a different buyer with a different budget.' },
-  { name: 'Garage Doors', text: 'A broken spring is urgent and the search is specific. Ranking for those terms is the whole game.' },
-  { name: 'Roofing', text: 'High ticket work and heavy competition. Local proof and trust signals decide who gets the estimate.' },
-  { name: 'Landscaping', text: 'Recurring maintenance and one-time projects are two different funnels that need two different offers.' },
-  { name: 'Insulation', text: 'Rebates and energy savings drive the research. Content that answers those questions earns the lead.' },
-];
 
 const principles = [
   {
@@ -209,7 +201,7 @@ const faqSchema = {
       {industries.map((industry) => (
         <article class="city-card">
           <h3>{industry.name}</h3>
-          <p>{industry.text}</p>
+          <p>{industry.cardText}</p>
         </article>
       ))}
     </div>
