@@ -1,0 +1,55 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/contact-us",
+      "destination": "/contact",
+      "statusCode": 301
+    },
+    {
+      "source": "/industries-served",
+      "destination": "/industries",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/mesa-web-design",
+      "destination": "/services/website-development",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/website-hosting-mesa-az",
+      "destination": "/services/website-development",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/organic-seo",
+      "destination": "/services/local-seo",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/ppc-marketing-mesa-az",
+      "destination": "/services/ppc-management",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/reputation-management-mesa",
+      "destination": "/services/google-business-profile-optimization",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/social-media-management-mesa",
+      "destination": "/services",
+      "statusCode": 301
+    },
+    {
+      "source": "/locations/mesa",
+      "destination": "/locations/mesa-az",
+      "statusCode": 301
+    },
+    {
+      "source": "/locations/queen-creek",
+      "destination": "/locations/queen-creek-az",
+      "statusCode": 301
+    }
+  ]
+}

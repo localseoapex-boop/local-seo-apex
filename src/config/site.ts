@@ -45,8 +45,8 @@ export const BUSINESS = {
   address: primaryOffice.address,
   geo: primaryOffice.geo,
   openingHours: primaryOffice.hours,
-  /** All markets served — must match the five entries in data/locations.ts. */
-  areaServed: ['Phoenix', 'Mesa', 'Chandler', 'Gilbert', 'Scottsdale'],
+  /** All markets served — must match the six entries in data/locations.ts. */
+  areaServed: ['Phoenix', 'Mesa', 'Chandler', 'Gilbert', 'Scottsdale', 'Queen Creek'],
 } as const;
 
 /**

@@ -106,6 +106,19 @@ export const locations: Location[] = [
       'When a single booked job is worth several thousand dollars, paid search gets expensive quickly and a careless campaign burns budget on tire-kickers. Scottsdale accounts get managed tightly around cost per booked job rather than cost per click. The website carries more weight too — an affluent homeowner comparing contractors for a high-ticket project judges credibility from the site before the first call, so presentation and speed are not cosmetic concerns.',
     neighborhoods: ['Old Town', 'McCormick Ranch', 'Gainey Ranch', 'North Scottsdale', 'DC Ranch'],
   },
+  {
+    slug: 'queen-creek-az',
+    city: 'Queen Creek',
+    region: 'AZ',
+    geo: { latitude: 33.2487, longitude: -111.6343 },
+    officeId: 'mesa',
+    nearby: ['gilbert-az', 'chandler-az', 'mesa-az', 'phoenix-az'],
+    intro:
+      'Queen Creek is spread out and still filling in. Most of the companies working here drive in from somewhere else, which leaves the local search results more winnable than the competition suggests.',
+    positioning:
+      'Queen Creek rewards proximity in a way the denser valley markets do not. A large share of the companies chasing this work are headquartered in Gilbert or Mesa, and the map pack keeps handing an advantage to businesses that are actually close to the searcher. If you are based here, that is a real edge and most of your competitors cannot buy their way past it. The catch is that the town covers a lot of ground and keeps adding rooftops, so one Google Business Profile will never reach every corner of it on proximity alone. The work is to press the profile advantage where it exists, then extend past it with service and area pages that reach the newer stretches of town, because homeowners who just moved into a new build have no contractor they already call and are choosing entirely from what they find in search.',
+    neighborhoods: ['Encanterra', 'Hastings Farms', 'Harvest', 'Sossaman Estates', 'Barney Farms'],
+  },
 ];
 
 export const getLocation = (slug: string): Location | undefined =>

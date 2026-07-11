@@ -91,8 +91,8 @@ export const offices: Office[] = [
       { days: ['Saturday'], opens: '07:00', closes: '18:00' },
       { days: ['Sunday'], opens: '08:00', closes: '16:00' },
     ],
-    // Must match the slugs in data/locations.ts. One office serves all five.
-    serves: ['phoenix-az', 'mesa-az', 'chandler-az', 'gilbert-az', 'scottsdale-az'],
+    // Must match the slugs in data/locations.ts. One office serves all six.
+    serves: ['phoenix-az', 'mesa-az', 'chandler-az', 'gilbert-az', 'scottsdale-az', 'queen-creek-az'],
   },
 ];
 
