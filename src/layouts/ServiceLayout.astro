@@ -21,7 +21,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import InternalLinks from '../components/InternalLinks.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { BUSINESS, SITE } from '../config/site';
-import { formatStartingPrice, type Service } from '../data/services';
+import { formatStartingPrice, offerPriceSpecification, type Service } from '../data/services';
 import {
   getServiceContent,
   getServiceFaqs,
@@ -67,6 +67,9 @@ const areaLinks = locationsForService(service.slug).map((loc) => ({
 
 // Service structured data, referencing the primary business node. The Offer
 // exposes the same entry price the hero shows, so markup and copy cannot drift.
+// The price is carried by priceSpecification (a minPrice, plus a monthly billing
+// period for retainers) rather than a flat `price`, because every number we
+// publish is a starting point rather than a fixed cost. See offerPriceSpecification.
 const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
@@ -77,9 +80,10 @@ const serviceSchema = {
   url: absoluteUrl(serviceUrl(service.slug)),
   offers: {
     '@type': 'Offer',
-    price: service.startingPrice.amount,
     priceCurrency: service.startingPrice.currency,
     availability: 'https://schema.org/InStock',
+    url: absoluteUrl(serviceUrl(service.slug)),
+    priceSpecification: offerPriceSpecification(service.startingPrice),
   },
 };
 

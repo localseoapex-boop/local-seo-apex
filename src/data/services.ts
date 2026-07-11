@@ -56,8 +56,12 @@ export interface Service {
   /** Outcome-oriented bullets — what the client gets out of it. */
   benefits: string[];
   /**
-   * PLACEHOLDER PRICING — confirm with the business before launch. These render
-   * publicly on service pages and in schema.org Offer data.
+   * OFFICIAL entry price. Renders publicly on the service page, the /services
+   * hub, the homepage, and /pricing, and is the minPrice in the schema.org Offer.
+   *
+   * This is a floor, never a quote. Every surface that renders it must frame it
+   * as "starting at", because the real number depends on scope and is only given
+   * after a discovery conversation.
    */
   startingPrice: StartingPrice;
   /** Flags the lead offers; badged on the /services hub. */
@@ -95,7 +99,7 @@ export const services: Service[] = [
       'Calls from buyers instead of price shoppers',
       'A traffic base that outlasts your ad budget',
     ],
-    startingPrice: { amount: 1500, currency: 'USD', period: 'month' },
+    startingPrice: { amount: 1000, currency: 'USD', period: 'month' },
     featured: true,
     icon: 'search',
     related: ['google-business-profile-optimization', 'website-development', 'ppc-management'],
@@ -127,7 +131,7 @@ export const services: Service[] = [
       'Structure search engines can actually crawl',
       'A foundation every other channel depends on',
     ],
-    startingPrice: { amount: 4500, currency: 'USD', period: 'project' },
+    startingPrice: { amount: 3500, currency: 'USD', period: 'project' },
     featured: true,
     icon: 'code',
     related: ['local-seo', 'google-business-profile-optimization', 'ppc-management'],
@@ -159,7 +163,7 @@ export const services: Service[] = [
       'Budget pulled off keywords that never convert',
       'Clear numbers on what a job actually costs you',
     ],
-    startingPrice: { amount: 1200, currency: 'USD', period: 'month' },
+    startingPrice: { amount: 500, currency: 'USD', period: 'month' },
     featured: false,
     icon: 'target',
     related: ['local-seo', 'website-development', 'google-business-profile-optimization'],
@@ -191,7 +195,7 @@ export const services: Service[] = [
       'A profile that stops leaking calls to competitors',
       'Local relevance no ad budget can buy',
     ],
-    startingPrice: { amount: 750, currency: 'USD', period: 'month' },
+    startingPrice: { amount: 500, currency: 'USD', period: 'month' },
     featured: false,
     icon: 'map-pin',
     related: ['local-seo', 'ppc-management', 'website-development'],
@@ -207,12 +211,44 @@ export const allServiceSlugs = services.map((s) => s.slug);
 /** The lead offers, badged on the /services hub. */
 export const featuredServices = services.filter((s) => s.featured);
 
-/** Renders a StartingPrice as display copy, e.g. "$1,500/mo" or "$4,500 project". */
+/** Renders a StartingPrice as display copy, e.g. "$1,000/mo" or "$3,500 per project". */
 export const formatStartingPrice = (price: StartingPrice): string => {
   const amount = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: price.currency,
     maximumFractionDigits: 0,
   }).format(price.amount);
-  return price.period === 'month' ? `${amount}/mo` : `${amount} project`;
+  return price.period === 'month' ? `${amount}/mo` : `${amount} per project`;
 };
+
+/**
+ * The schema.org priceSpecification for a service's Offer.
+ *
+ * Two things this gets right that a bare `price` on the Offer does not:
+ *
+ *   1. `minPrice` rather than `price`. Every number we publish is a floor
+ *      ("starting at"), not a quote. A flat `price` asserts an exact cost we do
+ *      not actually charge, so the markup would contradict the page copy.
+ *
+ *   2. Monthly retainers emit UnitPriceSpecification with a MON billing period,
+ *      so a parser reads "$1,000 per month, billed monthly" instead of a
+ *      one-time $1,000 purchase. Project work stays a plain PriceSpecification,
+ *      because a website build genuinely IS a single, non-recurring price.
+ *
+ * Both layouts read this, so the Offer can never drift from what the page shows.
+ */
+export const offerPriceSpecification = (price: StartingPrice) =>
+  price.period === 'month'
+    ? {
+        '@type': 'UnitPriceSpecification',
+        minPrice: price.amount,
+        priceCurrency: price.currency,
+        unitCode: 'MON',
+        billingDuration: 1,
+        billingIncrement: 1,
+      }
+    : {
+        '@type': 'PriceSpecification',
+        minPrice: price.amount,
+        priceCurrency: price.currency,
+      };

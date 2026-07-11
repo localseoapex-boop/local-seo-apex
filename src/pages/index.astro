@@ -15,7 +15,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { SITE, BUSINESS } from '../config/site';
-import { services } from '../data/services';
+import { services, formatStartingPrice } from '../data/services';
 import { industries } from '../data/industries';
 import { serviceUrl } from '../lib/urls';
 
@@ -62,10 +62,18 @@ const proofCards = [
   },
 ];
 
+/**
+ * Homepage price cards. The price is NOT written here: it is keyed to a service
+ * slug and resolved from the catalog, so the homepage, /pricing, the /services
+ * hub, and the service pages can never publish different numbers.
+ *
+ * `note` carries the one caveat a bare number cannot ("plus ad spend"). These
+ * are not tiers or packages, just the entry point for three of the services.
+ */
 const packages = [
   {
+    slug: 'local-seo',
     title: 'Local SEO',
-    priceNote: 'a custom monthly retainer',
     text: 'Best for companies that want steady, compounding lead flow in their service area.',
     includes: [
       'Local keyword and competitor research',
@@ -76,8 +84,8 @@ const packages = [
     ],
   },
   {
+    slug: 'website-development',
     title: 'SEO-First Website',
-    priceNote: 'a fixed project quote',
     text: 'Best for companies whose current site is slow, dated, or does not turn visitors into calls.',
     includes: [
       'Site architecture and page mapping',
@@ -88,8 +96,9 @@ const packages = [
     ],
   },
   {
+    slug: 'ppc-management',
     title: 'PPC Management',
-    priceNote: 'a monthly fee plus ad spend',
+    note: 'plus ad spend, billed to you by Google',
     text: 'Best for companies that need qualified calls now while their organic rankings build.',
     includes: [
       'Campaign build and keyword strategy',
@@ -99,7 +108,10 @@ const packages = [
       'Cost per booked job reporting',
     ],
   },
-];
+].map((pkg) => ({
+  ...pkg,
+  price: formatStartingPrice(services.find((s) => s.slug === pkg.slug)!.startingPrice),
+}));
 
 const faqs = [
   {
@@ -254,8 +266,8 @@ const faqSchema = {
       <p class="eyebrow">Pricing</p>
       <h2>What working together looks like</h2>
       <p>
-        Every market and every website is different, so we quote after we understand your situation.
-        Here is what each engagement includes.
+        These are starting points, not quotes. Pricing depends on project scope, so custom proposals
+        are provided after a discovery conversation. Here is what each engagement includes.
       </p>
     </div>
 
@@ -264,7 +276,8 @@ const faqSchema = {
         <article class="detail-card">
           <h3>{pkg.title}</h3>
           <p class="price-label">Starting at</p>
-          <p class="price-value">{pkg.priceNote}</p>
+          <p class="price-value">{pkg.price}</p>
+          {pkg.note && <p class="price-note">{pkg.note}</p>}
           <p class="price-text">{pkg.text}</p>
           <ul>
             {pkg.includes.map((item) => <li>{item}</li>)}
@@ -338,7 +351,16 @@ const faqSchema = {
     color: var(--green-dark);
     font-size: 1.15rem;
     font-weight: 800;
-    margin: 0 0 0.75rem;
+    margin: 0;
+  }
+  .price-note {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0.15rem 0 0;
+  }
+  .price-value + .price-text,
+  .price-note + .price-text {
+    margin-top: 0.75rem;
   }
   .price-text {
     color: var(--muted);
