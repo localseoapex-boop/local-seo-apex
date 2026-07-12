@@ -68,7 +68,25 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
       />
     </a>
 
-    <ul class="nav-links">
+    {/* Mobile only. Collapses the whole nav so the sticky header stays compact
+        instead of shipping a 1000px wall of links above every page. */}
+    <button
+      type="button"
+      class="nav-burger"
+      aria-expanded="false"
+      aria-controls="primary-nav"
+      aria-label="Open navigation menu"
+    >
+      <svg class="icon-open" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <svg class="icon-close" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </button>
+
+    <div class="nav-panel" id="primary-nav">
+      <ul class="nav-links">
       {
         NAV_LINKS.map((link) => {
           const menu = MENUS[link.href];
@@ -133,7 +151,8 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
           );
         })
       }
-    </ul>
+      </ul>
+    </div>
 
     <a class="cta" href={`tel:${BUSINESS.phone}`}>Call {BUSINESS.phoneDisplay}</a>
   </nav>
@@ -250,19 +269,25 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
      .is-open, NOT by :focus-within: :focus-within cannot be cancelled, so Escape
      could not close a panel while focus remained on the toggle inside it, and the
      visible state would drift out of sync with aria-expanded. */
-  .has-menu:hover .menu,
   .has-menu.is-open .menu {
     display: block;
   }
-  /* Bridges the gap between trigger and panel so the pointer can travel down. */
-  .has-menu:hover .menu::before,
-  .has-menu.is-open .menu::before {
-    content: '';
-    position: absolute;
-    top: -0.5rem;
-    left: 0;
-    right: 0;
-    height: 0.5rem;
+  /* Hover opening is DESKTOP ONLY. Unscoped, a touch tap leaves :hover latched on
+     mobile and the accordion can never be closed again. */
+  @media (min-width: 901px) {
+    .has-menu:hover .menu {
+      display: block;
+    }
+    /* Bridges the gap between trigger and panel so the pointer can travel down. */
+    .has-menu:hover .menu::before,
+    .has-menu.is-open .menu::before {
+      content: '';
+      position: absolute;
+      top: -0.5rem;
+      left: 0;
+      right: 0;
+      height: 0.5rem;
+    }
   }
   .menu a {
     display: block;
@@ -322,19 +347,77 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
   .cta:hover {
     background: var(--brand-secondary-dark);
   }
-  /* ───────────── Mobile: no dropdowns, everything expanded inline ─────────────
-     Hover menus are a poor fit for touch, so below 900px the panels become plain
-     nested lists that are always visible and the toggle buttons are removed from
-     the page entirely (display:none also drops them from the a11y tree, so there
-     is no invisible control to tab into). */
+  /* Hamburger. Hidden on desktop, where the dropdown bar is the navigation. */
+  .nav-burger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: none;
+    border: 1px solid var(--brand-border);
+    border-radius: 8px;
+    color: var(--brand-primary);
+    cursor: pointer;
+  }
+  .nav-burger svg {
+    width: 20px;
+    height: 20px;
+  }
+  /* aria-expanded is the single source of truth for the open/close glyph, so the
+     icon can never disagree with what assistive tech is told. */
+  .nav-burger[aria-expanded='false'] .icon-close,
+  .nav-burger[aria-expanded='true'] .icon-open {
+    display: none;
+  }
+  .nav-burger[aria-expanded='true'] {
+    background: var(--brand-tint);
+  }
+
+  /* ───────────── Mobile: collapsed drawer + accordions ─────────────
+     Below 900px the header row stays compact (logo, call CTA, hamburger). The nav
+     is an absolutely positioned drawer, so an open menu never inflates the sticky
+     header. Services and Locations collapse into accordions driven by the SAME
+     .menu-toggle buttons the desktop dropdowns use. */
   @media (max-width: 900px) {
     .nav {
-      flex-wrap: wrap;
-      gap: 0.75rem;
+      flex-wrap: nowrap;
+      gap: 0.6rem;
     }
+    .brand {
+      order: 1;
+      margin-right: auto;
+    }
+    .cta {
+      order: 2;
+    }
+    .nav-burger {
+      display: inline-flex;
+      order: 3;
+    }
+
+    .nav-panel {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--brand-white);
+      border-top: 1px solid var(--brand-border);
+      box-shadow: var(--shadow);
+      padding: 0.5rem 1rem 1.25rem;
+      /* The drawer scrolls itself rather than the page behind it. */
+      max-height: calc(100vh - 100%);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .nav-panel.is-open {
+      display: block;
+    }
+
     .nav-links {
       margin-left: 0;
-      order: 3;
       width: 100%;
       flex-direction: column;
       align-items: stretch;
@@ -343,20 +426,36 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
     .has-menu {
       position: static;
     }
-    .menu-toggle {
-      display: none;
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
     }
     .nav-links > li > a,
     .nav-item > a {
       display: block;
-      padding: 0.5rem 0;
+      padding: 0.6rem 0;
       font-size: 1rem;
+      flex: 1 1 auto;
     }
-    /* Always open on mobile, regardless of aria-expanded state. */
-    .menu,
-    .has-menu:hover .menu,
-    .has-menu.is-open .menu {
-      display: block;
+    /* A real 44px touch target, and it stays a SEPARATE control from the parent
+       link so /services and /locations remain independently tappable. */
+    .menu-toggle {
+      display: inline-flex;
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+    }
+    .menu-toggle svg {
+      width: 12px;
+      height: 8px;
+    }
+
+    /* Accordion panels: collapsed by default, opened only via .is-open. */
+    .menu {
+      display: none;
       position: static;
       min-width: 0;
       border: 0;
@@ -364,74 +463,143 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
       background: transparent;
       padding: 0 0 0.5rem 0.75rem;
       border-left: 2px solid var(--brand-border);
-      margin-left: 0.15rem;
+      margin: 0 0 0.35rem 0.15rem;
     }
     .menu a {
-      padding: 0.45rem 0.5rem;
+      padding: 0.5rem;
     }
   }
 </style>
 
+<style is:global>
+  /* Scroll lock while the mobile drawer is open. The drawer is an overlay, so the
+     page behind it must not scroll away underneath the user. */
+  body.nav-locked {
+    overflow: hidden;
+  }
+</style>
+
 <script>
-  // Progressive enhancement. Hover and :focus-within already open the panels in
-  // CSS, so the menus work with zero JS. This only adds the explicit disclosure
-  // state (aria-expanded), Escape-to-close, and click-outside-to-close.
+  // Progressive enhancement.
+  //
+  // DESKTOP (>900px): CSS :hover already opens the dropdowns with zero JS. This adds
+  // the disclosure state (aria-expanded), open-on-keyboard-focus, and Escape.
+  //
+  // MOBILE (<=900px): the hamburger owns a collapsed drawer, and the same
+  // .menu-toggle buttons act as accordion disclosures inside it. Only one accordion
+  // is open at a time. Escape closes the open accordion FIRST, then the drawer.
   const DESKTOP = window.matchMedia('(min-width: 901px)');
 
-  document.querySelectorAll<HTMLButtonElement>('.menu-toggle').forEach((toggle) => {
-    const item = toggle.closest('.has-menu');
-    if (!item) return;
+  const header = document.querySelector<HTMLElement>('.site-header');
+  const burger = document.querySelector<HTMLButtonElement>('.nav-burger');
+  const panel = document.querySelector<HTMLElement>('#primary-nav');
+  const items = Array.from(document.querySelectorAll<HTMLElement>('.has-menu'));
 
-    const close = () => {
-      toggle.setAttribute('aria-expanded', 'false');
-      item.classList.remove('is-open');
-    };
-    const open = () => {
-      toggle.setAttribute('aria-expanded', 'true');
-      item.classList.add('is-open');
-    };
+  // Escape marks an item dismissed so the focusin handler does not instantly reopen
+  // the panel it just closed (focus is still sitting on the toggle at that point).
+  const dismissed = new WeakSet<HTMLElement>();
+  const toggleOf = (item: HTMLElement) => item.querySelector<HTMLButtonElement>('.menu-toggle');
 
-    // Escape sets this so the focusin handler below does not instantly reopen the
-    // panel it just closed (focus is still sitting on the toggle at that point).
-    let dismissed = false;
+  const closeSub = (item: HTMLElement) => {
+    item.classList.remove('is-open');
+    toggleOf(item)?.setAttribute('aria-expanded', 'false');
+  };
 
+  const openSub = (item: HTMLElement) => {
+    // One submenu at a time: opening Services closes Locations, and vice versa.
+    items.forEach((other) => other !== item && closeSub(other));
+    item.classList.add('is-open');
+    toggleOf(item)?.setAttribute('aria-expanded', 'true');
+  };
+
+  const openSubmenu = () => items.find((i) => i.classList.contains('is-open')) ?? null;
+
+  const drawerOpen = () => panel?.classList.contains('is-open') ?? false;
+
+  const closeDrawer = () => {
+    panel?.classList.remove('is-open');
+    burger?.setAttribute('aria-expanded', 'false');
+    burger?.setAttribute('aria-label', 'Open navigation menu');
+    document.body.classList.remove('nav-locked');
+    items.forEach(closeSub);
+  };
+
+  const openDrawer = () => {
+    panel?.classList.add('is-open');
+    burger?.setAttribute('aria-expanded', 'true');
+    burger?.setAttribute('aria-label', 'Close navigation menu');
+    document.body.classList.add('nav-locked');
+  };
+
+  burger?.addEventListener('click', () => {
+    drawerOpen() ? closeDrawer() : openDrawer();
+  });
+
+  items.forEach((item) => {
+    const toggle = toggleOf(item);
+    if (!toggle) return;
+
+    // Enter and Space both fire click on a <button>, so this covers both.
     toggle.addEventListener('click', () => {
-      if (!DESKTOP.matches) return;
       if (toggle.getAttribute('aria-expanded') === 'true') {
-        dismissed = true;
-        close();
+        dismissed.add(item);
+        closeSub(item);
       } else {
-        dismissed = false;
-        open();
+        dismissed.delete(item);
+        openSub(item);
       }
     });
 
-    // Requirement: dropdowns open on keyboard focus, not only on click. Tabbing
-    // into the toggle or into any link inside the panel opens and keeps it open.
+    // Desktop only: dropdowns open on keyboard focus, not just on click.
     item.addEventListener('focusin', () => {
-      if (!DESKTOP.matches || dismissed) return;
-      open();
+      if (!DESKTOP.matches || dismissed.has(item)) return;
+      openSub(item);
     });
 
     item.addEventListener('focusout', (event) => {
+      if (!DESKTOP.matches) return;
       const next = (event as FocusEvent).relatedTarget as Node | null;
       if (!next || !item.contains(next)) {
-        dismissed = false; // leaving the item resets the dismissal
-        close();
+        dismissed.delete(item); // leaving the item resets the dismissal
+        closeSub(item);
       }
     });
+  });
 
-    item.addEventListener('keydown', (event) => {
-      if ((event as KeyboardEvent).key !== 'Escape') return;
-      dismissed = true;
-      close();
-      toggle.focus();
+  // Escape is handled ONCE, here. Putting it on the items too would close the
+  // submenu and then let the same keystroke bubble up and close the drawer as well.
+  document.addEventListener('keydown', (event) => {
+    if ((event as KeyboardEvent).key !== 'Escape') return;
+
+    const open = openSubmenu();
+    if (open) {
+      dismissed.add(open);
+      closeSub(open);
+      toggleOf(open)?.focus();
+      return;
+    }
+
+    if (drawerOpen()) {
+      closeDrawer();
+      burger?.focus();
+    }
+  });
+
+  // Clicking away should not leave anything stuck open.
+  document.addEventListener('click', (event) => {
+    const target = event.target as Node | null;
+    if (!target) return;
+
+    items.forEach((item) => {
+      if (!item.contains(target)) closeSub(item);
     });
 
-    // Pointer users who click away should not leave a menu stuck open.
-    document.addEventListener('click', (event) => {
-      const target = event.target as Node | null;
-      if (target && !item.contains(target)) close();
-    });
+    if (drawerOpen() && header && !header.contains(target)) closeDrawer();
+  });
+
+  // Rotating a phone to landscape can cross the breakpoint. Reset to a clean
+  // desktop state so a leftover scroll lock or open drawer cannot strand the page.
+  DESKTOP.addEventListener('change', (event) => {
+    if (event.matches) closeDrawer();
   });
 </script>

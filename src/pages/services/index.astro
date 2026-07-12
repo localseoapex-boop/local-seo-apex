@@ -166,7 +166,7 @@ const strategyWithService = strategy.map((s) => ({
         channel earns is converted by another and measured by a third.
       </p>
 
-      <div class="card-grid">
+      <div class="card-grid service-grid">
         {services.map((service) => (
           <article class="service-card">
             <ServiceIcon name={service.icon} class="card-icon" />
@@ -176,8 +176,18 @@ const strategyWithService = strategy.map((s) => ({
             </h3>
             <p class="outcome">{service.tagline}</p>
             <p>{service.intro}</p>
-            <ul class="check-list compact">
-              {service.benefits.slice(0, 3).map((b) => <li>{b}</li>)}
+            {/* Deliberately NOT .check-list: that global is a 2-column grid of bordered
+                mini-cards, which collapses to one word per line inside a ~255px card.
+                The global is used on six other pages, so this list is local instead. */}
+            <ul class="feature-list">
+              {service.benefits.slice(0, 3).map((b) => (
+                <li class="feature-item">
+                  <span class="check" aria-hidden="true">
+                    ✓
+                  </span>
+                  <span class="feature-text">{b}</span>
+                </li>
+              ))}
             </ul>
             <p class="starting-price">
               Starting at <strong>{formatStartingPrice(service.startingPrice)}</strong>
@@ -330,8 +340,92 @@ const strategyWithService = strategy.map((s) => ({
     margin: 0 0 0.6rem;
   }
 
-  .check-list.compact {
-    margin: 0 0 0.9rem;
+  /* ───────────── Service card grid ─────────────
+     Explicit breakpoints rather than auto-fit: at ~1024px an auto-fit track would
+     settle on THREE columns, and the brief calls for a clean 4 -> 2 step so cards
+     are never compressed below a readable width. Below 1100px the container cannot
+     give four cards ~250px each, so that is where it drops to two. */
+  .service-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  /* Four columns inside the 1100px article container would leave each card ~237px,
+     which is too tight for names like "Google Business Profile Optimization" while
+     wide margins sit unused either side. Above 1200px the grid steps outside the
+     container (up to 1280px, viewport-clamped so it can never cause h-overflow),
+     which buys each card ~300px. This is a width change only: markup, routes and
+     card order are untouched. */
+  @media (min-width: 1200px) {
+    .service-grid {
+      width: min(1280px, calc(100vw - 4rem));
+      max-width: none;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Below 1200px four cards cannot hold a practical width, so step straight to two
+     rather than compressing them (and never to a cramped three). */
+  @media (max-width: 1199px) {
+    .service-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 600px) {
+    .service-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Cards share a row height (equal visual weight) without their innards being
+     stretched: the link is pushed to the bottom so ragged benefit lengths collect
+     their slack in one place instead of leaving gaps mid-card. */
+  .service-grid .service-card {
+    display: flex;
+    flex-direction: column;
+  }
+  .service-grid .service-card .card-link {
+    margin-top: auto;
+  }
+
+  /* ───────────── Benefit checklist ─────────────
+     One benefit per row: check glyph in a non-shrinking column, text left-aligned
+     and free to wrap onto normal lines. No boxes, no centring, no fixed widths. */
+  .feature-list {
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+    margin: 0 0 1.1rem;
+    padding: 0;
+  }
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    color: var(--brand-text);
+    line-height: 1.5;
+    font-size: 0.92rem;
+    text-align: left;
+  }
+  .feature-item .check {
+    flex: 0 0 auto;
+    color: var(--brand-primary);
+    font-weight: 700;
+    line-height: inherit;
+  }
+  /* Benefit copy reads as body text, not as a link.
+     BaseLayout has a global `.service-card span { color: navy; font-weight: 700 }`
+     (specificity 0,1,1) meant for the old "Learn more" span. It targets the span
+     directly, so it beats the colour inherited from .feature-item and renders every
+     benefit bold navy. `.feature-item .feature-text` (0,2,0) outranks it.
+     min-width:0 lets a long unbroken term wrap instead of widening the card. */
+  .feature-item .feature-text {
+    color: var(--brand-text);
+    font-weight: 400;
+    font-size: inherit;
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .starting-price {
