@@ -23,6 +23,9 @@ const graph = offices.map((office) => ({
   email: office.email,
   priceRange: office.priceRange,
   image: new URL(SITE.defaultOgImage, SITE.url).href,
+  // Dedicated logo node: Google prefers `logo` over `image` for the brand mark.
+  // Uses the horizontal lockup — the format Google expects for organization logos.
+  logo: new URL('/brand/local-seo-apex-logo.png', SITE.url).href,
   address: {
     '@type': 'PostalAddress',
     // streetAddress / postalCode are omitted until the real Mesa address is published.

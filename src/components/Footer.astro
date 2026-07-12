@@ -16,7 +16,14 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-brand-col">
-      <p class="footer-brand">{SITE.name}</p>
+      <img
+        src="/brand/local-seo-apex-logo.png"
+        alt={SITE.name}
+        width="250"
+        height="120"
+        class="footer-logo"
+        loading="lazy"
+      />
       <p class="footer-tagline">{SITE.description}</p>
     </div>
 
@@ -62,9 +69,14 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
+  /* Light surface by design: the brand logo is dark-on-transparent and there is no
+     reversed/knockout variant, so a dark footer would need a filter or a plaque.
+     Adjusting the surface keeps the logo pixel-accurate. Revisit if a reversed
+     logo is supplied. --brand-footer (#575860) carries the text at 7.1:1. */
   .site-footer {
-    background: var(--ink);
-    color: #cdd6d1;
+    background: var(--brand-white);
+    border-top: 1px solid var(--brand-border);
+    color: var(--brand-footer);
     margin-top: 0;
   }
   .footer-inner {
@@ -78,16 +90,17 @@ const year = new Date().getFullYear();
   .footer-brand-col {
     min-width: 220px;
   }
-  .footer-brand {
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 0.5rem;
-    font-size: 1.1rem;
+  .footer-logo {
+    display: block;
+    height: 52px;
+    width: auto;
+    margin: 0 0 0.75rem;
   }
   .footer-tagline {
     margin: 0;
     font-size: 0.9rem;
     line-height: 1.6;
+    color: var(--brand-footer);
   }
   address {
     font-style: normal;
@@ -95,8 +108,9 @@ const year = new Date().getFullYear();
     font-size: 0.9rem;
   }
   .footer-heading {
+    font-family: var(--font-heading);
     font-weight: 600;
-    color: #fff;
+    color: var(--brand-primary);
     margin: 0 0 0.75rem;
   }
   .footer-group ul {
@@ -106,18 +120,19 @@ const year = new Date().getFullYear();
     line-height: 1.9;
   }
   .site-footer a {
-    color: #cdd6d1;
+    color: var(--brand-footer);
     text-decoration: none;
   }
   .site-footer a:hover {
-    color: var(--lime);
+    color: var(--brand-primary);
+    text-decoration: underline;
   }
   .footer-legal {
     max-width: 1100px;
     margin: 0 auto;
     padding: 1.5rem 1rem;
-    border-top: 1px solid #374151;
+    border-top: 1px solid var(--brand-border);
     font-size: 0.85rem;
-    color: #9ca3af;
+    color: var(--brand-muted);
   }
 </style>

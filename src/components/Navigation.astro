@@ -16,7 +16,17 @@ const isActive = (href: string) =>
 
 <header class="site-header">
   <nav class="nav" aria-label="Primary">
-    <a href="/" class="brand">{SITE.name}</a>
+    <a href="/" class="brand">
+      {/* alt doubles as the link's accessible name, so no extra sr-only text is needed. */}
+      <img
+        src="/brand/local-seo-apex-logo.png"
+        alt={SITE.name}
+        width="250"
+        height="120"
+        class="brand-logo"
+        fetchpriority="high"
+      />
+    </a>
 
     <ul class="nav-links">
       {
@@ -36,8 +46,8 @@ const isActive = (href: string) =>
 
 <style>
   .site-header {
-    border-bottom: 1px solid var(--line);
-    background: rgba(251, 252, 248, 0.94);
+    border-bottom: 1px solid var(--brand-border);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: saturate(180%) blur(6px);
     position: sticky;
     top: 0;
@@ -52,10 +62,22 @@ const isActive = (href: string) =>
     gap: 1.5rem;
   }
   .brand {
-    font-weight: 800;
-    font-size: 1.15rem;
-    color: var(--green-dark);
+    display: flex;
+    align-items: center;
     text-decoration: none;
+    flex-shrink: 0;
+  }
+  /* width/height attrs on the <img> lock the 250x120 aspect ratio, so scaling by
+     height alone reserves the right box up front and causes no layout shift. */
+  .brand-logo {
+    display: block;
+    height: 44px;
+    width: auto;
+  }
+  @media (max-width: 640px) {
+    .brand-logo {
+      height: 36px;
+    }
   }
   .nav-links {
     display: flex;
@@ -66,27 +88,29 @@ const isActive = (href: string) =>
     margin-left: auto;
   }
   .nav-links a {
-    color: var(--muted);
+    color: var(--brand-muted);
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 700;
   }
   .nav-links a:hover,
   .nav-links a[aria-current='page'] {
-    color: var(--green);
+    color: var(--brand-primary);
   }
+  /* Coral surface, navy label — never white-on-coral (2.5:1). */
   .cta {
-    background: var(--lime);
-    color: var(--ink);
+    background: var(--brand-secondary);
+    color: var(--brand-primary);
     text-decoration: none;
     padding: 0.55rem 0.95rem;
     border-radius: 8px;
     font-size: 0.9rem;
-    font-weight: 800;
+    font-weight: 700;
     white-space: nowrap;
+    transition: background-color 0.15s ease;
   }
   .cta:hover {
-    background: #c9e25e;
+    background: var(--brand-secondary-dark);
   }
   @media (max-width: 640px) {
     .nav {

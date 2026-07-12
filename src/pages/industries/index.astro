@@ -260,14 +260,14 @@ const faqSchema = {
 
   /* Outcome line sits above the explanation so the benefit reads first. */
   .service-card .outcome {
-    color: var(--green-dark);
+    color: var(--brand-primary-dark);
     font-weight: 700;
     font-size: 0.95rem;
     margin: 0 0 0.6rem;
   }
 
   .challenge-list {
-    color: var(--muted);
+    color: var(--brand-muted);
     display: grid;
     gap: 0.35rem;
     font-size: 0.9rem;
@@ -289,8 +289,8 @@ const faqSchema = {
     margin-top: 1.25rem;
   }
   .rec-card {
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
     box-shadow: var(--shadow);
     display: grid;
@@ -320,17 +320,17 @@ const faqSchema = {
   }
   .rec-services li::before {
     content: counter(rec) '. ';
-    color: var(--green);
-    font-weight: 900;
+    color: var(--brand-primary);
+    font-weight: 700;
   }
   .rec-card p {
-    color: var(--muted);
+    color: var(--brand-muted);
     font-size: 0.95rem;
     margin: 0;
   }
 
   .services-link {
-    font-weight: 800;
+    font-weight: 700;
     margin-top: 1.5rem;
   }
   .services-link a {

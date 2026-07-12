@@ -47,44 +47,70 @@ const { title, description, image, type, noindex } = Astro.props;
 <style is:global>
   :root {
     --content-width: 1100px;
-    --ink: #18201d;
-    --muted: #5d6964;
-    --line: #dce3df;
-    --paper: #fbfcf8;
-    --white: #ffffff;
-    --green: #23624d;
-    --green-dark: #123d32;
-    --lime: #d7ec76;
-    --clay: #c85f3f;
-    --sky: #eef5f1;
-    --shadow: 0 18px 50px rgba(18, 61, 50, 0.12);
-    /* Backward-compat: components that reference --accent now read green. */
-    --accent: var(--green);
+
+    /* ── Brand palette (see localseoapex_migration/branding) ── */
+    --brand-primary: #000080; /* canonical navy */
+    --brand-primary-dark: #00005c; /* darker navy: gradients, hovers */
+    --brand-secondary: #ff7f50; /* canonical coral */
+    --brand-secondary-dark: #f2662f; /* coral hover — still passes AA with navy text */
+    --brand-accent: #ff7f50a6; /* coral @ 65% — overlays/accents only */
+    /* Not in the brand packet. Form errors need a colour that (a) reads as an
+       error and (b) passes AA on white — coral is 2.5:1 and cannot. This is the
+       coral hue darkened until it passes (5.2:1). Needs brand sign-off. */
+    --brand-danger: #c2410c;
+    --brand-text: #3a3a3a; /* body copy (11.3:1 on white) */
+    /* Brand's documented muted gray is #808080, but that is 3.95:1 on white and
+       fails WCAG AA for text at any size. Darkened to the nearest gray that
+       passes (5.3:1) so secondary copy stays legible. #808080 is retained below
+       for NON-TEXT use only (rules, dividers, decorative marks). */
+    --brand-muted: #6b6b6b;
+    --brand-muted-decorative: #808080;
+    --brand-border: #d6d6d6;
+    --brand-footer: #575860;
+    --brand-white: #ffffff;
+    --brand-surface: #f7f8fa; /* page background */
+    --brand-tint: #eef0f8; /* pale navy tint: alt sections, pills */
+    --shadow: 0 18px 50px rgba(0, 0, 128, 0.08);
+
+    /* ── Typography ── */
+    --font-heading: 'Spectral', Georgia, 'Times New Roman', serif;
+    --font-body: 'Karla', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   }
   * {
     box-sizing: border-box;
   }
   html {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: var(--ink);
+    font-family: var(--font-body);
+    color: var(--brand-text);
     line-height: 1.6;
     scroll-behavior: smooth;
   }
   body {
     margin: 0;
-    background: var(--paper);
+    background: var(--brand-surface);
   }
   main {
     min-height: 60vh;
   }
   a {
-    color: var(--green);
+    color: var(--brand-primary);
   }
   h1,
   h2,
-  h3 {
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
     line-height: 1.15;
-    color: var(--ink);
+    color: var(--brand-primary);
+  }
+  /* Single global focus ring — visible on both light and coral surfaces. */
+  :focus-visible {
+    outline: 3px solid var(--brand-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
   h1 {
     font-size: clamp(2.2rem, 5vw, 3.4rem);
@@ -112,17 +138,19 @@ const { title, description, image, type, noindex } = Astro.props;
   .page-hero h1 {
     margin: 0.25rem 0 0.75rem;
   }
+  /* Navy on light surfaces: coral on white is 2.5:1 and fails AA for small text.
+     The hero override below restores coral, where it sits on navy (6.4:1). */
   .eyebrow {
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-size: 0.8rem;
-    color: var(--clay);
-    font-weight: 800;
+    color: var(--brand-primary);
+    font-weight: 700;
     margin: 0;
   }
   .lede {
     font-size: 1.2rem;
-    color: var(--muted);
+    color: var(--brand-muted);
     max-width: 62ch;
   }
   .page-body {
@@ -133,12 +161,12 @@ const { title, description, image, type, noindex } = Astro.props;
     margin-top: 2rem;
   }
   .areas-line {
-    color: var(--muted);
+    color: var(--brand-muted);
   }
   .intro-line {
     font-size: 1.15rem;
     font-weight: 600;
-    color: var(--ink);
+    color: var(--brand-text);
   }
 
   /* ───────────── Buttons ───────────── */
@@ -148,41 +176,52 @@ const { title, description, image, type, noindex } = Astro.props;
     justify-content: center;
     border: 2px solid transparent;
     border-radius: 8px;
-    font-weight: 800;
+    font-family: var(--font-body);
+    font-weight: 700;
     min-height: 48px;
     padding: 0.8rem 1.15rem;
     text-decoration: none;
     line-height: 1.1;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
+  /* Primary: coral surface, NAVY label. White-on-coral is only 2.5:1 — never use it. */
   .button.primary {
-    background: var(--lime);
-    color: var(--ink);
+    background: var(--brand-secondary);
+    color: var(--brand-primary);
   }
   .button.primary:hover {
-    background: #c9e25e;
+    background: var(--brand-secondary-dark);
   }
   .button.secondary {
-    background: var(--white);
-    color: var(--green-dark);
-    border-color: var(--line);
+    background: var(--brand-white);
+    color: var(--brand-primary);
+    border-color: var(--brand-border);
+  }
+  .button.secondary:hover {
+    border-color: var(--brand-primary);
+    background: var(--brand-tint);
   }
   .button.outline {
-    border-color: var(--green);
-    color: var(--green-dark);
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
   }
   .button.outline:hover {
-    background: var(--sky);
+    background: var(--brand-primary);
+    color: var(--brand-white);
   }
   /* Legacy .cta still styled in case any page uses it. */
   .cta {
     display: inline-block;
     margin-top: 1rem;
-    background: var(--green);
-    color: #fff;
+    background: var(--brand-primary);
+    color: var(--brand-white);
     text-decoration: none;
     padding: 0.8rem 1.25rem;
     border-radius: 8px;
     font-weight: 700;
+  }
+  .cta:hover {
+    background: var(--brand-primary-dark);
   }
   .hero-actions {
     display: flex;
@@ -193,8 +232,8 @@ const { title, description, image, type, noindex } = Astro.props;
 
   /* ───────────── Homepage hero ───────────── */
   .hero {
-    background: linear-gradient(135deg, var(--green-dark), var(--green));
-    color: var(--white);
+    background: linear-gradient(135deg, var(--brand-primary-dark), var(--brand-primary));
+    color: var(--brand-white);
     padding: clamp(3.5rem, 8vw, 6.5rem) clamp(1.1rem, 4vw, 3.5rem);
   }
   .hero-content {
@@ -202,10 +241,10 @@ const { title, description, image, type, noindex } = Astro.props;
     margin: 0 auto;
   }
   .hero .eyebrow {
-    color: var(--lime);
+    color: var(--brand-secondary);
   }
   .hero h1 {
-    color: var(--white);
+    color: var(--brand-white);
     margin: 0.5rem 0 1rem;
   }
   .lead {
@@ -224,7 +263,7 @@ const { title, description, image, type, noindex } = Astro.props;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 8px;
-    color: var(--white);
+    color: var(--brand-white);
     font-weight: 700;
     font-size: 0.92rem;
     padding: 0.85rem;
@@ -235,7 +274,7 @@ const { title, description, image, type, noindex } = Astro.props;
     padding: clamp(3rem, 7vw, 6rem) clamp(1.1rem, 4vw, 3.5rem);
   }
   .section.alt {
-    background: var(--sky);
+    background: var(--brand-tint);
   }
   .section-heading {
     max-width: 760px;
@@ -245,7 +284,7 @@ const { title, description, image, type, noindex } = Astro.props;
     margin: 0.25rem 0 0.5rem;
   }
   .section-heading p {
-    color: var(--muted);
+    color: var(--brand-muted);
     margin: 0;
   }
 
@@ -260,8 +299,8 @@ const { title, description, image, type, noindex } = Astro.props;
   .service-card,
   .city-card,
   .proof-card {
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
     box-shadow: var(--shadow);
     padding: 1.4rem;
@@ -272,7 +311,7 @@ const { title, description, image, type, noindex } = Astro.props;
   .service-card:hover,
   .city-card:hover {
     transform: translateY(-2px);
-    border-color: var(--green);
+    border-color: var(--brand-primary);
   }
   .service-card h3,
   .city-card h3 {
@@ -280,13 +319,13 @@ const { title, description, image, type, noindex } = Astro.props;
   }
   .service-card p,
   .city-card p {
-    color: var(--muted);
+    color: var(--brand-muted);
     margin: 0 0 0.75rem;
     font-size: 0.95rem;
   }
   .service-card span {
-    color: var(--green);
-    font-weight: 800;
+    color: var(--brand-primary);
+    font-weight: 700;
     font-size: 0.9rem;
   }
   .testimonial-grid {
@@ -300,8 +339,8 @@ const { title, description, image, type, noindex } = Astro.props;
     font-size: 1.02rem;
   }
   .proof-card cite {
-    color: var(--green-dark);
-    font-weight: 800;
+    color: var(--brand-primary-dark);
+    font-weight: 700;
     font-style: normal;
   }
 
@@ -318,8 +357,8 @@ const { title, description, image, type, noindex } = Astro.props;
   }
   .number-list li {
     counter-increment: steps;
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
     padding: 1.2rem;
   }
@@ -328,10 +367,10 @@ const { title, description, image, type, noindex } = Astro.props;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--green);
-    color: var(--white);
+    background: var(--brand-primary);
+    color: var(--brand-white);
     border-radius: 999px;
-    font-weight: 800;
+    font-weight: 700;
     height: 30px;
     width: 30px;
     margin-bottom: 0.75rem;
@@ -341,7 +380,7 @@ const { title, description, image, type, noindex } = Astro.props;
     margin: 0 0 0.35rem;
   }
   .number-list p {
-    color: var(--muted);
+    color: var(--brand-muted);
     margin: 0;
     font-size: 0.95rem;
   }
@@ -354,8 +393,8 @@ const { title, description, image, type, noindex } = Astro.props;
     padding: 0;
   }
   .check-list li {
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
     padding: 0.85rem 1rem 0.85rem 2.2rem;
     position: relative;
@@ -364,8 +403,8 @@ const { title, description, image, type, noindex } = Astro.props;
     content: '✓';
     position: absolute;
     left: 0.85rem;
-    color: var(--green);
-    font-weight: 900;
+    color: var(--brand-primary);
+    font-weight: 700;
   }
   .pill-list {
     display: flex;
@@ -376,12 +415,12 @@ const { title, description, image, type, noindex } = Astro.props;
     padding: 0;
   }
   .pill-list li {
-    background: var(--sky);
+    background: var(--brand-tint);
     border-radius: 999px;
     padding: 0.45rem 0.9rem;
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--green-dark);
+    color: var(--brand-primary-dark);
   }
 
   /* ───────────── Service page flow ───────────── */
@@ -394,10 +433,10 @@ const { title, description, image, type, noindex } = Astro.props;
     padding: 0;
   }
   .service-hero .hero-trust li {
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
-    color: var(--green-dark);
+    color: var(--brand-primary-dark);
     font-weight: 700;
     font-size: 0.9rem;
     padding: 0.7rem 0.85rem;
@@ -420,7 +459,7 @@ const { title, description, image, type, noindex } = Astro.props;
   }
   .copy-stack p {
     font-size: 1.05rem;
-    color: var(--ink);
+    color: var(--brand-text);
     margin: 0;
   }
   .detail-grid {
@@ -430,8 +469,8 @@ const { title, description, image, type, noindex } = Astro.props;
     margin-top: 1.25rem;
   }
   .detail-card {
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
     box-shadow: var(--shadow);
     padding: 1.2rem;
@@ -447,22 +486,23 @@ const { title, description, image, type, noindex } = Astro.props;
     padding-left: 1.1rem;
   }
   .detail-card li {
-    color: var(--muted);
+    color: var(--brand-muted);
   }
   .warning-section {
-    background: var(--white);
-    border: 1px solid rgba(200, 95, 63, 0.32);
-    border-left: 4px solid var(--clay);
+    background: var(--brand-white);
+    border: 1px solid rgba(255, 127, 80, 0.4);
+    border-left: 4px solid var(--brand-secondary);
     border-radius: 8px;
     padding: 1.25rem 1.4rem;
   }
+  /* Coral stays as the left rule (decorative); the heading itself is navy for contrast. */
   .warning-section h3 {
     margin: 0 0 0.5rem;
-    color: var(--clay);
+    color: var(--brand-primary);
   }
   .warning-section p {
     margin: 0;
-    color: var(--muted);
+    color: var(--brand-muted);
   }
   .problem-grid {
     display: grid;
@@ -471,14 +511,14 @@ const { title, description, image, type, noindex } = Astro.props;
     margin-top: 1.25rem;
   }
   .problem-card {
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
     box-shadow: var(--shadow);
     padding: 1.2rem;
   }
   .problem-card h3 {
-    color: var(--green);
+    color: var(--brand-primary);
     font-size: 0.78rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -489,7 +529,7 @@ const { title, description, image, type, noindex } = Astro.props;
   }
   .problem-card p {
     margin: 0;
-    color: var(--muted);
+    color: var(--brand-muted);
   }
 
   /* ───────────── FAQ ───────────── */
@@ -504,25 +544,25 @@ const { title, description, image, type, noindex } = Astro.props;
     margin-top: 2.5rem;
   }
   details {
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
     padding: 1.1rem 1.25rem;
   }
   summary {
     cursor: pointer;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 1.05rem;
   }
   details p {
-    color: var(--muted);
+    color: var(--brand-muted);
     margin: 0.75rem 0 0;
   }
 
   /* ───────────── CTA band ───────────── */
   .cta-band {
-    background: var(--green-dark);
-    color: var(--white);
+    background: var(--brand-primary-dark);
+    color: var(--brand-white);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -533,7 +573,7 @@ const { title, description, image, type, noindex } = Astro.props;
     border-radius: 8px;
   }
   .cta-band h2 {
-    color: var(--white);
+    color: var(--brand-white);
     margin: 0 0 0.35rem;
   }
   .cta-band p {
@@ -587,21 +627,21 @@ const { title, description, image, type, noindex } = Astro.props;
       grid-template-columns: 1fr 1fr;
       gap: 0.5rem;
       padding: 0.6rem;
-      background: var(--white);
-      border-top: 1px solid var(--line);
+      background: var(--brand-white);
+      border-top: 1px solid var(--brand-border);
     }
     .mobile-sticky a {
       text-align: center;
-      font-weight: 800;
+      font-weight: 700;
       padding: 0.75rem;
       border-radius: 8px;
       text-decoration: none;
-      background: var(--green);
-      color: var(--white);
+      background: var(--brand-primary);
+      color: var(--brand-white);
     }
     .mobile-sticky a:last-child {
-      background: var(--lime);
-      color: var(--ink);
+      background: var(--brand-secondary);
+      color: var(--brand-primary);
     }
     main {
       padding-bottom: 4rem;

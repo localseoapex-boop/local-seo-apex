@@ -696,8 +696,8 @@ const nextSteps = [
   }
 
   .lead-form fieldset {
-    background: var(--white);
-    border: 1px solid var(--line);
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
     box-shadow: var(--shadow);
     margin: 0 0 1rem;
@@ -705,9 +705,9 @@ const nextSteps = [
   }
 
   .lead-form legend {
-    color: var(--green-dark);
+    color: var(--brand-primary-dark);
     font-size: 0.8rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.06em;
     padding: 0 0.5rem;
     text-transform: uppercase;
@@ -732,17 +732,17 @@ const nextSteps = [
   }
 
   .lead-form abbr {
-    color: var(--clay);
+    color: var(--brand-primary);
     text-decoration: none;
   }
 
   .lead-form input,
   .lead-form select,
   .lead-form textarea {
-    border: 1px solid var(--line);
+    border: 1px solid var(--brand-border);
     border-radius: 8px;
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--brand-surface);
+    color: var(--brand-text);
     font: inherit;
     /* 16px minimum stops iOS Safari zooming the viewport on focus. */
     font-size: 1rem;
@@ -760,7 +760,7 @@ const nextSteps = [
   .lead-form select:focus-visible,
   .lead-form textarea:focus-visible,
   .lead-form button:focus-visible {
-    outline: 3px solid var(--green);
+    outline: 3px solid var(--brand-primary);
     outline-offset: 2px;
   }
 
@@ -768,11 +768,11 @@ const nextSteps = [
   .lead-form input:user-invalid,
   .lead-form select:user-invalid,
   .lead-form textarea:user-invalid {
-    border-color: var(--clay);
+    border-color: var(--brand-danger);
   }
 
   .hint {
-    color: var(--muted);
+    color: var(--brand-muted);
     font-size: 0.85rem;
   }
 
@@ -793,7 +793,7 @@ const nextSteps = [
 
   .checkbox-list input {
     /* Override the full-width text-input sizing above. */
-    accent-color: var(--green);
+    accent-color: var(--brand-primary);
     height: 20px;
     min-height: 0;
     padding: 0;
@@ -810,8 +810,8 @@ const nextSteps = [
   }
 
   .form-error {
-    border-left: 3px solid var(--clay);
-    color: var(--clay);
+    border-left: 3px solid var(--brand-danger);
+    color: var(--brand-danger);
     font-weight: 600;
     margin: 0 0 1rem;
     padding-left: 0.75rem;
