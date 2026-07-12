@@ -17,7 +17,7 @@ import ServiceIcon from '../components/ServiceIcon.astro';
 import { SITE, BUSINESS } from '../config/site';
 import { services, formatStartingPrice } from '../data/services';
 import { industries } from '../data/industries';
-import { serviceUrl } from '../lib/urls';
+import { serviceUrl, contactUrl } from '../lib/urls';
 
 const principles = [
   {
@@ -164,8 +164,8 @@ const faqSchema = {
         with better leads.
       </p>
       <div class="hero-actions">
-        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
-        <a class="button secondary" href="/contact">Get a Free SEO Audit</a>
+        <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
+        <a class="button secondary" href={contactUrl('audit')}>Get a Free SEO Audit</a>
       </div>
       <div class="hero-strip">
         <span>Local SEO</span>
@@ -311,12 +311,12 @@ const faqSchema = {
         doing, and where the fastest wins are. No pressure and no obligation.
       </p>
     </div>
-    <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+    <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
   </section>
 
   <div class="mobile-sticky">
     <a href={`tel:${BUSINESS.phone}`}>Call now</a>
-    <a href="/contact">Strategy Call</a>
+    <a href={contactUrl('strategy')}>Strategy Call</a>
   </div>
 
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />

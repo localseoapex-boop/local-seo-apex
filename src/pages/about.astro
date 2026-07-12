@@ -19,6 +19,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import InternalLinks from '../components/InternalLinks.astro';
+import { contactUrl } from '../lib/urls';
 
 /** The philosophy, stated as principles rather than promises. */
 const beliefs = [
@@ -185,7 +186,7 @@ const nextSteps = [
   },
   {
     label: 'Contact Us',
-    href: '/contact',
+    href: contactUrl(),
     description: 'Tell us what is not working and we will tell you what we would fix first.',
   },
 ];
@@ -208,7 +209,7 @@ const nextSteps = [
         are here to help you fill the schedule.
       </p>
       <div class="hero-actions">
-        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+        <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
         <a class="button outline" href="/services">Explore Our Services</a>
       </div>
     </header>
@@ -384,7 +385,7 @@ const nextSteps = [
           would fix first, whether or not you hire us.
         </p>
       </div>
-      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+      <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
     </section>
 
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />

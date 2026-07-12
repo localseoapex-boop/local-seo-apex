@@ -17,7 +17,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
 import { services, formatStartingPrice } from '../../data/services';
-import { serviceUrl } from '../../lib/urls';
+import { serviceUrl, contactUrl } from '../../lib/urls';
 
 // How each channel contributes to the same funnel. Keyed to a service slug so a
 // renamed or removed service surfaces here instead of leaving orphaned copy.
@@ -153,8 +153,8 @@ const strategyWithService = strategy.map((s) => ({
         electrical, garage door, roofing, landscaping, and insulation companies.
       </p>
       <div class="hero-actions">
-        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
-        <a class="button outline" href="/contact">Get a Free SEO Audit</a>
+        <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
+        <a class="button outline" href={contactUrl('audit')}>Get a Free SEO Audit</a>
       </div>
     </header>
 
@@ -295,7 +295,7 @@ const strategyWithService = strategy.map((s) => ({
           leaking and what we would fix first, whether or not you hire us.
         </p>
       </div>
-      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+      <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
     </section>
 
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />

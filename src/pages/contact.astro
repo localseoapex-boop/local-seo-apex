@@ -20,6 +20,22 @@ import InternalLinks from '../components/InternalLinks.astro';
 import { BUSINESS } from '../config/site';
 import { primaryOffice } from '../data/offices';
 import { serviceUrl } from '../lib/urls';
+import {
+  CONTACT_FORM,
+  isFormConfigured,
+  industryOptions,
+  serviceOptions,
+  locationCountOptions,
+  budgetOptions,
+  HIDDEN_FIELDS,
+} from '../data/contact-form';
+
+/**
+ * The form submits only once CONTACT_FORM.endpoint is set (see data/contact-form.ts).
+ * Until then it renders disabled with an explanation, rather than accepting a
+ * lead it has nowhere to send.
+ */
+const formReady = isFormConfigured();
 
 /** "a, b, and c" — used for the service-area line and the geography FAQ. */
 const formatList = (items: readonly string[]): string =>
@@ -221,7 +237,210 @@ const nextSteps = [
       </div>
     </header>
 
-    {/* 2. Contact methods, resolved from the office record. */}
+    {/* 2. The lead form. Endpoint comes from config, never hardcoded here. */}
+    <section class="service-section form-section" id="contact-form" aria-labelledby="form-heading">
+      <h2 id="form-heading">Tell Us About Your Business</h2>
+      <p class="intro-line">
+        The more we know before we talk, the more useful the first conversation is. Everything marked
+        with an asterisk is required. Nothing here is shared with anyone.
+      </p>
+
+      {!formReady && (
+        <div class="warning-section" role="status">
+          <h3>This form is not connected yet</h3>
+          <p>
+            No submission endpoint has been configured, so the form is disabled rather than accepting
+            a message it cannot deliver. Call or email in the meantime, and see
+            src/data/contact-form.ts to connect it.
+          </p>
+        </div>
+      )}
+
+      <form
+        class="lead-form"
+        action={CONTACT_FORM.endpoint || undefined}
+        method={CONTACT_FORM.method}
+        novalidate={false}
+        data-lead-form
+        data-redirect={CONTACT_FORM.redirectPath}
+      >
+        {/* Attribution. Populated on load by the script at the foot of this page. */}
+        {HIDDEN_FIELDS.map((field) => (
+          <input type="hidden" name={field} id={`field-${field}`} value="" />
+        ))}
+
+        {/* Where the provider should send the visitor after a successful POST. */}
+        <input type="hidden" name="_next" value={CONTACT_FORM.redirectPath} />
+
+        {/*
+          Honeypot. Hidden from humans and from assistive tech, but present in the
+          DOM for bots to fill. Server must reject any submission where it is set.
+          Moved off-screen rather than display:none, which bots increasingly detect.
+        */}
+        <div class="hp-field" aria-hidden="true">
+          <label for="field-hp">Do not fill this in</label>
+          <input
+            type="text"
+            id="field-hp"
+            name={CONTACT_FORM.honeypotField}
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </div>
+
+        <fieldset>
+          <legend>Your Contact Details</legend>
+          <div class="field-grid">
+            <p class="field">
+              <label for="first-name">First name <abbr title="required">*</abbr></label>
+              <input
+                type="text"
+                id="first-name"
+                name="first_name"
+                autocomplete="given-name"
+                required
+              />
+            </p>
+            <p class="field">
+              <label for="last-name">Last name <abbr title="required">*</abbr></label>
+              <input
+                type="text"
+                id="last-name"
+                name="last_name"
+                autocomplete="family-name"
+                required
+              />
+            </p>
+            <p class="field">
+              <label for="company">Company <abbr title="required">*</abbr></label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                autocomplete="organization"
+                required
+              />
+            </p>
+            <p class="field">
+              <label for="website">Website <abbr title="required">*</abbr></label>
+              <input
+                type="url"
+                id="website"
+                name="website"
+                autocomplete="url"
+                inputmode="url"
+                placeholder="https://"
+                aria-describedby="website-hint"
+                required
+              />
+              <span class="hint" id="website-hint">
+                If you do not have one yet, put the profile or page you use instead.
+              </span>
+            </p>
+            <p class="field">
+              <label for="email">Email <abbr title="required">*</abbr></label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                inputmode="email"
+                required
+              />
+            </p>
+            <p class="field">
+              <label for="phone">Phone <abbr title="required">*</abbr></label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                autocomplete="tel"
+                inputmode="tel"
+                required
+              />
+            </p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Your Business</legend>
+          <div class="field-grid">
+            <p class="field">
+              <label for="industry">Industry <abbr title="required">*</abbr></label>
+              <select id="industry" name="industry" required>
+                <option value="">Select your trade</option>
+                {industryOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+              </select>
+            </p>
+            <p class="field">
+              <label for="locations">Number of locations <abbr title="required">*</abbr></label>
+              <select id="locations" name="locations" required>
+                <option value="">Select a number</option>
+                {locationCountOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+              </select>
+            </p>
+          </div>
+        </fieldset>
+
+        <fieldset aria-describedby="services-hint">
+          <legend>Services Interested In <abbr title="required">*</abbr></legend>
+          <span class="hint" id="services-hint">
+            Choose at least one. If you are not sure which you need, say so and we will work it out.
+          </span>
+          <ul class="checkbox-list" data-service-group>
+            {serviceOptions.map((o) => (
+              <li>
+                <input
+                  type="checkbox"
+                  id={`service-${o.value}`}
+                  name="services"
+                  value={o.value}
+                />
+                <label for={`service-${o.value}`}>{o.label}</label>
+              </li>
+            ))}
+          </ul>
+        </fieldset>
+
+        <fieldset>
+          <legend>Anything Else</legend>
+          <div class="field-grid">
+            <p class="field">
+              <label for="budget">Monthly budget</label>
+              <select id="budget" name="budget">
+                <option value="">Prefer not to say</option>
+                {budgetOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+              </select>
+            </p>
+          </div>
+          <p class="field">
+            <label for="message">Message</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="5"
+              aria-describedby="message-hint"
+            ></textarea>
+            <span class="hint" id="message-hint">
+              A sentence about why the phone is not ringing enough is a fine place to start.
+            </span>
+          </p>
+        </fieldset>
+
+        {/*
+          Submission error. Empty and hidden until a POST fails. role="alert"
+          announces it the moment it is filled, so a screen reader user is told
+          the send failed without having to go looking for the reason.
+        */}
+        <p class="form-error" role="alert" data-form-error hidden></p>
+
+        <button class="button primary" type="submit" disabled={!formReady}>
+          Send Message
+        </button>
+      </form>
+    </section>
+
+    {/* 3. Contact methods, resolved from the office record. */}
     <section class="service-section">
       <h2>How to Reach Us</h2>
       <div class="card-grid">
@@ -349,3 +568,290 @@ const nextSteps = [
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
   </article>
 </BaseLayout>
+
+<script>
+  /**
+   * Lead form runtime. Two jobs, both of which have to happen in the browser
+   * because a statically built page cannot know the query string it was
+   * requested with.
+   *
+   *   1. ATTRIBUTION. Fill the hidden fields from the URL (offer, utm_*), the
+   *      document referrer, and the landing page, so every lead carries the
+   *      campaign and the CTA that produced it.
+   *
+   *   2. CHECKBOX GROUP VALIDATION. HTML has no native "at least one of this
+   *      group" rule. Marking every box `required` would demand ALL of them, so
+   *      the constraint is applied with setCustomValidity instead, which keeps
+   *      the native error UI and the native focus behaviour.
+   *
+   *   3. SUBMISSION. The lead is POSTed to the webhook with fetch, so a failure
+   *      can be reported in place instead of dumping the visitor on a raw
+   *      webhook response. The endpoint is read off the form's own action, which
+   *      Astro rendered from CONTACT_FORM.endpoint, so the URL still lives in
+   *      exactly one place.
+   *
+   * Progressive enhancement: with JS off, the form still submits and every
+   * required field is still enforced natively. Only attribution and the
+   * at-least-one-service rule are lost, so the server must validate too.
+   */
+  const form = document.querySelector<HTMLFormElement>('[data-lead-form]');
+
+  if (form) {
+    // 1. Attribution.
+    const params = new URLSearchParams(window.location.search);
+    const setField = (name: string, value: string) => {
+      const input = form.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+      if (input && value) input.value = value;
+    };
+
+    for (const key of ['offer', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']) {
+      setField(key, params.get(key) ?? '');
+    }
+    setField('referrer', document.referrer);
+    setField('landing_page', window.location.pathname + window.location.search);
+
+    // 2. Require at least one service.
+    const group = form.querySelector<HTMLElement>('[data-service-group]');
+    const boxes = Array.from(
+      form.querySelectorAll<HTMLInputElement>('input[name="services"]'),
+    );
+
+    const syncServices = () => {
+      const anyChecked = boxes.some((b) => b.checked);
+      // The message rides on the FIRST box, which is the one the browser focuses
+      // and anchors the validation bubble to when the form is submitted invalid.
+      boxes[0]?.setCustomValidity(anyChecked ? '' : 'Select at least one service.');
+      group?.classList.toggle('is-invalid', !anyChecked);
+    };
+
+    boxes.forEach((box) => box.addEventListener('change', syncServices));
+    syncServices();
+
+    // 3. Submission.
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const errorBox = form.querySelector<HTMLElement>('[data-form-error]');
+    const idleLabel = button?.textContent?.trim() ?? 'Send Message';
+
+    let sending = false;
+
+    const showError = (message: string) => {
+      if (!errorBox) return;
+      errorBox.textContent = message;
+      errorBox.hidden = false;
+    };
+
+    const clearError = () => {
+      if (!errorBox) return;
+      errorBox.textContent = '';
+      errorBox.hidden = true;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      // The submit event only fires once the browser's own validation has
+      // passed, so every `required` and every type= rule is still enforced.
+      event.preventDefault();
+
+      // A second click while the first request is in flight would book the lead
+      // twice. The disabled button covers the mouse, this covers Enter.
+      if (sending) return;
+      sending = true;
+
+      clearError();
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Sending...';
+      }
+
+      try {
+        const response = await fetch(form.action, {
+          method: form.method || 'POST',
+          body: new FormData(form),
+        });
+
+        if (!response.ok) throw new Error(`Webhook responded ${response.status}`);
+
+        window.location.assign(form.dataset.redirect || '/thank-you');
+        // Deliberately stay disabled: the navigation is already underway.
+      } catch {
+        sending = false;
+        if (button) {
+          button.disabled = false;
+          button.textContent = idleLabel;
+        }
+        showError(
+          'We could not send your message. Please try again, or call or email us and we will pick it up from there.',
+        );
+      }
+    });
+  }
+</script>
+
+<style>
+  .form-section {
+    max-width: 1000px;
+  }
+
+  .lead-form {
+    margin-top: 1.5rem;
+  }
+
+  .lead-form fieldset {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin: 0 0 1rem;
+    padding: 1.25rem 1.4rem 1.4rem;
+  }
+
+  .lead-form legend {
+    color: var(--green-dark);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    padding: 0 0.5rem;
+    text-transform: uppercase;
+  }
+
+  .field-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 0;
+  }
+
+  .lead-form label {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .lead-form abbr {
+    color: var(--clay);
+    text-decoration: none;
+  }
+
+  .lead-form input,
+  .lead-form select,
+  .lead-form textarea {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--paper);
+    color: var(--ink);
+    font: inherit;
+    /* 16px minimum stops iOS Safari zooming the viewport on focus. */
+    font-size: 1rem;
+    min-height: 48px;
+    padding: 0.7rem 0.85rem;
+    width: 100%;
+  }
+
+  .lead-form textarea {
+    min-height: 8rem;
+    resize: vertical;
+  }
+
+  .lead-form input:focus-visible,
+  .lead-form select:focus-visible,
+  .lead-form textarea:focus-visible,
+  .lead-form button:focus-visible {
+    outline: 3px solid var(--green);
+    outline-offset: 2px;
+  }
+
+  /* Native invalid styling only AFTER the user has interacted, never on load. */
+  .lead-form input:user-invalid,
+  .lead-form select:user-invalid,
+  .lead-form textarea:user-invalid {
+    border-color: var(--clay);
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .checkbox-list {
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+  }
+
+  .checkbox-list li {
+    align-items: center;
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .checkbox-list input {
+    /* Override the full-width text-input sizing above. */
+    accent-color: var(--green);
+    height: 20px;
+    min-height: 0;
+    padding: 0;
+    width: 20px;
+  }
+
+  .checkbox-list label {
+    font-weight: 600;
+  }
+
+  .checkbox-list.is-invalid {
+    /* Silent until submit. The native bubble carries the actual message. */
+    border-left: 3px solid transparent;
+  }
+
+  .form-error {
+    border-left: 3px solid var(--clay);
+    color: var(--clay);
+    font-weight: 600;
+    margin: 0 0 1rem;
+    padding-left: 0.75rem;
+  }
+
+  .form-error[hidden] {
+    display: none;
+  }
+
+  .lead-form button[type='submit'] {
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .lead-form button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  /*
+    Honeypot. Off-screen rather than display:none or hidden, both of which many
+    bots now skip. Still removed from the a11y tree by aria-hidden on the wrapper
+    and from the tab order by tabindex="-1" on the input.
+  */
+  .hp-field {
+    left: -9999px;
+    position: absolute;
+    top: -9999px;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 600px) {
+    .field-grid,
+    .checkbox-list {
+      grid-template-columns: 1fr;
+    }
+    .lead-form button[type='submit'] {
+      width: 100%;
+    }
+  }
+</style>

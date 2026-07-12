@@ -24,7 +24,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { industries, industriesByDemandShape } from '../../data/industries';
 import { services } from '../../data/services';
 import { servicesForIndustry } from '../../lib/links';
-import { serviceUrl, industryUrl } from '../../lib/urls';
+import { serviceUrl, industryUrl, contactUrl } from '../../lib/urls';
 
 const demandGroups = industriesByDemandShape();
 
@@ -97,8 +97,8 @@ const faqSchema = {
         we start from what your buyer already does instead of learning it on your budget.
       </p>
       <div class="hero-actions">
-        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
-        <a class="button outline" href="/contact">Get a Free SEO Audit</a>
+        <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
+        <a class="button outline" href={contactUrl('audit')}>Get a Free SEO Audit</a>
       </div>
     </header>
 
@@ -241,7 +241,7 @@ const faqSchema = {
           knowing what we would fix first, whether or not you hire us.
         </p>
       </div>
-      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+      <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
     </section>
 
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />

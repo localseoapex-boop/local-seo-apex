@@ -1,0 +1,119 @@
+---
+/**
+ * /thank-you — the post-submission landing page.
+ *
+ * Where the lead form sends a visitor after a successful POST
+ * (CONTACT_FORM.redirectPath). It is NOT a page anyone should reach from search:
+ * it is noindexed here and excluded from the sitemap in astro.config.mjs, because
+ * a thank-you page in the index is a thin page that can only disappoint whoever
+ * lands on it.
+ *
+ * It reuses the four-step timeline copy from the contact page's promise: the
+ * visitor has just been told what happens next, so this page confirms it rather
+ * than inventing a new sequence. No form, no second ask.
+ *
+ * House style for this page: no em dashes and no semicolons in prose.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import InternalLinks from '../components/InternalLinks.astro';
+import { BUSINESS } from '../config/site';
+import { primaryOffice } from '../data/offices';
+
+/** What actually happens now. Matches the promise made on /contact. */
+const next = [
+  {
+    title: 'We read what you sent',
+    text: 'A person reads it, not an autoresponder. If you told us what is not working, that is where we start.',
+  },
+  {
+    title: 'We look before we call',
+    text: 'We review your website, your Google Business Profile, and where you rank today, so the first conversation is spent on what we actually found rather than on a discovery questionnaire.',
+  },
+  {
+    title: 'We get back to you',
+    text: 'We reply to every message during office hours. If you would rather not wait, calling is still the fastest way to reach a person.',
+  },
+];
+
+const nextSteps = [
+  {
+    label: 'Our Services',
+    href: '/services',
+    description: 'Local SEO, websites, PPC, and Google Business Profile as one system.',
+  },
+  {
+    label: 'Pricing',
+    href: '/pricing',
+    description: 'Starting investments and what moves the final number.',
+  },
+  {
+    label: 'Industries We Serve',
+    href: '/industries',
+    description: 'How marketing changes from one trade to the next.',
+  },
+  {
+    label: 'About Local SEO Apex',
+    href: '/about',
+    description: 'How we think about marketing and how we measure whether it worked.',
+  },
+];
+---
+
+<BaseLayout
+  title="Thank You"
+  description="Thanks for reaching out to Local SEO Apex. We will review your business and get back to you."
+  noindex={true}
+>
+  <article class="container page">
+    <header class="page-hero">
+      <p class="eyebrow">Message Received</p>
+      <h1>Thanks. We Have Your Message.</h1>
+      <p class="lede">
+        We read every message that comes in and we will get back to you during office hours. If you
+        would rather talk sooner, calling is the fastest way to reach a person.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href={`tel:${BUSINESS.phone}`}>Call {BUSINESS.phoneDisplay}</a>
+        <a class="button outline" href="/services">Explore Our Services</a>
+      </div>
+    </header>
+
+    <section class="service-section">
+      <h2>What Happens Now</h2>
+      <ol class="number-list">
+        {next.map((step) => (
+          <li>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="service-section">
+      <h2>Office Hours</h2>
+      <p>
+        We are based in {primaryOffice.address.city}, {primaryOffice.address.region}. Anything that
+        arrives outside office hours gets answered once we are back.
+      </p>
+      <p>
+        <a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a>
+      </p>
+    </section>
+
+    <InternalLinks title="While You Wait" links={nextSteps} />
+  </article>
+</BaseLayout>
+
+<style>
+  /* Three steps read better 3-up than in the global 4-column number list. */
+  .number-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media (max-width: 900px) {
+    .number-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -14,7 +14,7 @@ import { BUSINESS, SITE } from '../config/site';
 import type { Service } from '../data/services';
 import type { SubService } from '../data/subservices';
 import { subServicesForCategory } from '../lib/links';
-import { serviceUrl, subServiceUrl, absoluteUrl } from '../lib/urls';
+import { serviceUrl, subServiceUrl, absoluteUrl, contactUrl } from '../lib/urls';
 
 interface Props {
   service: Service;
@@ -66,7 +66,7 @@ const serviceSchema = {
       <p class="eyebrow">{service.name}</p>
       <h1>{subService.name}</h1>
       <p class="lede">{subService.tagline}</p>
-      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+      <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
     </header>
 
     <div class="page-body">

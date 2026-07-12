@@ -30,7 +30,7 @@ import {
   serviceTrustBullets,
 } from '../data/service-content';
 import { relatedServices, locationsForService, subServicesForCategory } from '../lib/links';
-import { serviceUrl, cityUrl, subServiceUrl, absoluteUrl } from '../lib/urls';
+import { serviceUrl, cityUrl, subServiceUrl, absoluteUrl, contactUrl } from '../lib/urls';
 
 interface Props {
   service: Service;
@@ -113,8 +113,8 @@ const faqSchema = {
       <p class="lede">{service.heroSubtitle}</p>
       <p class="starting-price">Starting at <strong>{priceLabel}</strong></p>
       <div class="hero-actions">
-        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
-        <a class="button outline" href="/contact">Get a Free SEO Audit</a>
+        <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
+        <a class="button outline" href={contactUrl('audit')}>Get a Free SEO Audit</a>
       </div>
       <ul class="hero-trust">
         {serviceTrustBullets.map((b) => <li>{b}</li>)}
@@ -305,7 +305,7 @@ const faqSchema = {
           what we would fix first, whether or not you hire us.
         </p>
       </div>
-      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+      <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
     </section>
 
     <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} is:inline />

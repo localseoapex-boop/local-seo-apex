@@ -23,5 +23,27 @@ export const industryUrl = (slug: string): string => `/industries/${slug}`;
 export const subServiceUrl = (categorySlug: string, subSlug: string): string =>
   `/services/${categorySlug}/${subSlug}`;
 
+/**
+ * The offers a CTA can carry into the contact form.
+ *
+ * Every CTA on the site routes through contactUrl(), so the form always knows
+ * which promise the visitor clicked. The value lands in the form's hidden
+ * `offer` field and is submitted with the lead, which is what lets you attribute
+ * a lead to the CTA that produced it rather than guessing.
+ *
+ * Adding an offer means adding it here. A typo becomes a build error rather than
+ * a silently untracked lead.
+ */
+export type ContactOffer = 'strategy' | 'audit';
+
+/**
+ * /contact, optionally carrying an offer. contactUrl('audit') -> /contact?offer=audit
+ *
+ * Call this instead of writing "/contact" by hand so the query contract lives in
+ * one place and every CTA stays attributable.
+ */
+export const contactUrl = (offer?: ContactOffer): string =>
+  offer ? `/contact?offer=${offer}` : '/contact';
+
 /** Build an absolute URL from a path, using the configured site origin. */
 export const absoluteUrl = (path: string): string => new URL(path, SITE.url).href;

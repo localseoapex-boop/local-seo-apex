@@ -16,7 +16,7 @@ import InternalLinks from '../components/InternalLinks.astro';
 import type { Location } from '../data/locations';
 import { getOffice, primaryOffice } from '../data/offices';
 import { servicesForLocation, nearbyCities } from '../lib/links';
-import { cityUrl, serviceUrl } from '../lib/urls';
+import { cityUrl, serviceUrl, contactUrl } from '../lib/urls';
 
 interface Props {
   location: Location;
@@ -59,7 +59,7 @@ const nearbyLinks = nearbyCities(location.slug).map((loc) => ({
       <h1>{title}</h1>
       <p class="lede">{location.intro ?? description}</p>
       <div class="hero-actions">
-        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+        <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
         <a class="button outline" href="/services">View all services</a>
       </div>
     </header>

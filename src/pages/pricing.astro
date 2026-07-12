@@ -19,7 +19,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { services, formatStartingPrice } from '../data/services';
 import { getServiceContent } from '../data/service-content';
-import { serviceUrl } from '../lib/urls';
+import { serviceUrl, contactUrl } from '../lib/urls';
 
 // Service name, price, and "best for" all resolve from the catalog and the
 // page-copy file. A renamed or removed service surfaces here at build time.
@@ -196,8 +196,8 @@ const faqSchema = {
         your business.
       </p>
       <div class="hero-actions">
-        <a class="button primary" href="/contact">Schedule a Strategy Call</a>
-        <a class="button outline" href="/contact">Get a Free SEO Audit</a>
+        <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
+        <a class="button outline" href={contactUrl('audit')}>Get a Free SEO Audit</a>
       </div>
     </header>
 
@@ -295,7 +295,7 @@ const faqSchema = {
               <tr>
                 <th scope="row">You need help deciding</th>
                 <td>
-                  <a href="/contact">Schedule a Strategy Call</a>
+                  <a href={contactUrl('strategy')}>Schedule a Strategy Call</a>
                   <span class="row-price">no cost</span>
                 </td>
               </tr>
@@ -381,7 +381,7 @@ const faqSchema = {
           for your business.
         </p>
       </div>
-      <a class="button primary" href="/contact">Schedule a Strategy Call</a>
+      <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
     </section>
 
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
