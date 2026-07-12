@@ -1,0 +1,15 @@
+---
+// Google tag (gtag.js) for Local SEO Apex GA4 property.
+// Mounted once in BaseLayout's <head> — do not add to individual pages.
+const GA_MEASUREMENT_ID = 'G-XMJMCXBJB2';
+---
+
+<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag('js', new Date());
+  gtag('config', 'G-XMJMCXBJB2');
+</script>
