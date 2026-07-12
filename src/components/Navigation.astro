@@ -6,12 +6,45 @@
  * active link by comparing each href against the current path (good for UX and
  * gives crawlers clear, consistent internal linking). A prominent "Call" CTA is
  * standard for home-service sites where phone calls are the main conversion.
+ *
+ * DROPDOWNS are built from the SAME data the routes are generated from
+ * (services + subServicesForCategory, serviceAreaLocations), so a menu entry
+ * cannot point at a route that does not exist. Never hardcode these URLs.
+ *
+ * Industries has NO dropdown on purpose: every entry in data/industries.ts is
+ * `hasPage: false` and there is no /industries/[industry] route, so a submenu
+ * would link to 404s. Flip those to true, add the route, then add the submenu.
  */
 import { SITE, BUSINESS, NAV_LINKS } from '../config/site';
+import { services } from '../data/services';
+import { serviceAreaLocations, subServicesForCategory } from '../lib/links';
+import { serviceUrl, subServiceUrl, cityUrl } from '../lib/urls';
 
 const currentPath = Astro.url.pathname;
 const isActive = (href: string) =>
   href === '/' ? currentPath === '/' : currentPath.startsWith(href.split('/').slice(0, 2).join('/'));
+
+/** Grouped Services menu: each category, then the sub-services beneath it. */
+const serviceGroups = services.map((service) => ({
+  name: service.name,
+  href: serviceUrl(service.slug),
+  children: subServicesForCategory(service.slug).map((sub) => ({
+    name: sub.name,
+    href: subServiceUrl(service.slug, sub.slug),
+  })),
+}));
+
+/** Flat Locations menu, one entry per city page that actually builds. */
+const locationLinks = serviceAreaLocations.map((loc) => ({
+  name: loc.name,
+  href: cityUrl(loc.slug),
+}));
+
+/** Which top-level items own a dropdown, keyed by their NAV_LINKS href. */
+const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
+  '/services': { id: 'menu-services', kind: 'services' },
+  '/locations': { id: 'menu-locations', kind: 'locations' },
+};
 ---
 
 <header class="site-header">
@@ -30,13 +63,66 @@ const isActive = (href: string) =>
 
     <ul class="nav-links">
       {
-        NAV_LINKS.map((link) => (
-          <li>
-            <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
-              {link.label}
-            </a>
-          </li>
-        ))
+        NAV_LINKS.map((link) => {
+          const menu = MENUS[link.href];
+          if (!menu) {
+            return (
+              <li>
+                <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+                  {link.label}
+                </a>
+              </li>
+            );
+          }
+          return (
+            <li class="has-menu">
+              {/* The parent stays a real link. A SEPARATE button owns the disclosure,
+                  so keyboard and screen-reader users can reach /services and /locations
+                  themselves instead of the parent being hijacked into a toggle. */}
+              <span class="nav-item">
+                <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+                  {link.label}
+                </a>
+                <button
+                  type="button"
+                  class="menu-toggle"
+                  aria-expanded="false"
+                  aria-controls={menu.id}
+                  aria-label={`Show ${link.label} menu`}
+                >
+                  <svg viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+                    <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" />
+                  </svg>
+                </button>
+              </span>
+
+              <ul class="menu" id={menu.id}>
+                {menu.kind === 'services'
+                  ? serviceGroups.map((group) => (
+                      <li class="menu-group">
+                        <a class="menu-parent" href={group.href}>
+                          {group.name}
+                        </a>
+                        {group.children.length > 0 && (
+                          <ul class="menu-children">
+                            {group.children.map((child) => (
+                              <li>
+                                <a href={child.href}>{child.name}</a>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    ))
+                  : locationLinks.map((loc) => (
+                      <li>
+                        <a href={loc.href}>{loc.name}</a>
+                      </li>
+                    ))}
+              </ul>
+            </li>
+          );
+        })
       }
     </ul>
 
@@ -81,21 +167,123 @@ const isActive = (href: string) =>
   }
   .nav-links {
     display: flex;
+    align-items: center;
     gap: 1.25rem;
     list-style: none;
     margin: 0;
     padding: 0;
     margin-left: auto;
   }
-  .nav-links a {
+  .nav-links > li > a,
+  .nav-item > a {
     color: var(--brand-muted);
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 700;
   }
-  .nav-links a:hover,
+  .nav-links > li > a:hover,
+  .nav-item > a:hover,
   .nav-links a[aria-current='page'] {
     color: var(--brand-primary);
+  }
+
+  /* ───────────── Dropdowns ───────────── */
+  .has-menu {
+    position: relative;
+  }
+  .nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+  }
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 0;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: var(--brand-muted);
+    border-radius: 4px;
+    line-height: 0;
+  }
+  .menu-toggle svg {
+    width: 10px;
+    height: 6px;
+    transition: transform 0.15s ease;
+  }
+  .has-menu:hover .menu-toggle,
+  .menu-toggle[aria-expanded='true'] {
+    color: var(--brand-primary);
+  }
+  .menu-toggle[aria-expanded='true'] svg {
+    transform: rotate(180deg);
+  }
+
+  .menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 20;
+    min-width: 250px;
+    margin: 0;
+    padding: 0.6rem;
+    list-style: none;
+    background: var(--brand-white);
+    border: 1px solid var(--brand-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    /* Hidden from mouse, keyboard AND assistive tech until opened. */
+    display: none;
+  }
+  /* Hover opens for pointer users. Keyboard opening is driven by the script via
+     .is-open, NOT by :focus-within: :focus-within cannot be cancelled, so Escape
+     could not close a panel while focus remained on the toggle inside it, and the
+     visible state would drift out of sync with aria-expanded. */
+  .has-menu:hover .menu,
+  .has-menu.is-open .menu {
+    display: block;
+  }
+  /* Bridges the gap between trigger and panel so the pointer can travel down. */
+  .has-menu:hover .menu::before,
+  .has-menu.is-open .menu::before {
+    content: '';
+    position: absolute;
+    top: -0.5rem;
+    left: 0;
+    right: 0;
+    height: 0.5rem;
+  }
+  .menu a {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    color: var(--brand-text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+  .menu a:hover,
+  .menu a:focus-visible {
+    background: var(--brand-tint);
+    color: var(--brand-primary);
+  }
+  .menu-group + .menu-group {
+    margin-top: 0.35rem;
+  }
+  .menu-parent {
+    font-weight: 700 !important;
+    color: var(--brand-primary) !important;
+  }
+  .menu-children {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 0.6rem;
+  }
+  .menu-children a {
+    color: var(--brand-muted);
+    font-size: 0.85rem;
   }
   /* Coral surface, navy label — never white-on-coral (2.5:1). */
   .cta {
@@ -112,7 +300,12 @@ const isActive = (href: string) =>
   .cta:hover {
     background: var(--brand-secondary-dark);
   }
-  @media (max-width: 640px) {
+  /* ───────────── Mobile: no dropdowns, everything expanded inline ─────────────
+     Hover menus are a poor fit for touch, so below 900px the panels become plain
+     nested lists that are always visible and the toggle buttons are removed from
+     the page entirely (display:none also drops them from the a11y tree, so there
+     is no invisible control to tab into). */
+  @media (max-width: 900px) {
     .nav {
       flex-wrap: wrap;
       gap: 0.75rem;
@@ -121,6 +314,102 @@ const isActive = (href: string) =>
       margin-left: 0;
       order: 3;
       width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.15rem;
+    }
+    .has-menu {
+      position: static;
+    }
+    .menu-toggle {
+      display: none;
+    }
+    .nav-links > li > a,
+    .nav-item > a {
+      display: block;
+      padding: 0.5rem 0;
+      font-size: 1rem;
+    }
+    /* Always open on mobile, regardless of aria-expanded state. */
+    .menu,
+    .has-menu:hover .menu,
+    .has-menu.is-open .menu {
+      display: block;
+      position: static;
+      min-width: 0;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+      padding: 0 0 0.5rem 0.75rem;
+      border-left: 2px solid var(--brand-border);
+      margin-left: 0.15rem;
+    }
+    .menu a {
+      padding: 0.45rem 0.5rem;
     }
   }
 </style>
+
+<script>
+  // Progressive enhancement. Hover and :focus-within already open the panels in
+  // CSS, so the menus work with zero JS. This only adds the explicit disclosure
+  // state (aria-expanded), Escape-to-close, and click-outside-to-close.
+  const DESKTOP = window.matchMedia('(min-width: 901px)');
+
+  document.querySelectorAll<HTMLButtonElement>('.menu-toggle').forEach((toggle) => {
+    const item = toggle.closest('.has-menu');
+    if (!item) return;
+
+    const close = () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      item.classList.remove('is-open');
+    };
+    const open = () => {
+      toggle.setAttribute('aria-expanded', 'true');
+      item.classList.add('is-open');
+    };
+
+    // Escape sets this so the focusin handler below does not instantly reopen the
+    // panel it just closed (focus is still sitting on the toggle at that point).
+    let dismissed = false;
+
+    toggle.addEventListener('click', () => {
+      if (!DESKTOP.matches) return;
+      if (toggle.getAttribute('aria-expanded') === 'true') {
+        dismissed = true;
+        close();
+      } else {
+        dismissed = false;
+        open();
+      }
+    });
+
+    // Requirement: dropdowns open on keyboard focus, not only on click. Tabbing
+    // into the toggle or into any link inside the panel opens and keeps it open.
+    item.addEventListener('focusin', () => {
+      if (!DESKTOP.matches || dismissed) return;
+      open();
+    });
+
+    item.addEventListener('focusout', (event) => {
+      const next = (event as FocusEvent).relatedTarget as Node | null;
+      if (!next || !item.contains(next)) {
+        dismissed = false; // leaving the item resets the dismissal
+        close();
+      }
+    });
+
+    item.addEventListener('keydown', (event) => {
+      if ((event as KeyboardEvent).key !== 'Escape') return;
+      dismissed = true;
+      close();
+      toggle.focus();
+    });
+
+    // Pointer users who click away should not leave a menu stuck open.
+    document.addEventListener('click', (event) => {
+      const target = event.target as Node | null;
+      if (target && !item.contains(target)) close();
+    });
+  });
+</script>

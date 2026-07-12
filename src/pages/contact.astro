@@ -66,7 +66,7 @@ const officeHours = primaryOffice.hours.map((block) => ({
 const steps = [
   {
     title: 'You Contact Us',
-    text: 'Call, email, or send a short note about what is not working. You do not need a brief, a budget, or a list of services. A sentence about why the phone is not ringing enough is a fine place to start.',
+    text: 'Call us or send a short note through the form about what is not working. You do not need a brief, a budget, or a list of services. A sentence about why the phone is not ringing enough is a fine place to start.',
   },
   {
     title: 'We Learn About Your Business',
@@ -233,7 +233,7 @@ const nextSteps = [
       </p>
       <div class="hero-actions">
         <a class="button primary" href={`tel:${BUSINESS.phone}`}>Schedule a Strategy Call</a>
-        <a class="button outline" href={`mailto:${BUSINESS.email}`}>Email Us</a>
+        <a class="button outline" href="#contact-form">Tell Us About Your Business</a>
       </div>
     </header>
 
@@ -250,7 +250,7 @@ const nextSteps = [
           <h3>This form is not connected yet</h3>
           <p>
             No submission endpoint has been configured, so the form is disabled rather than accepting
-            a message it cannot deliver. Call or email in the meantime, and see
+            a message it cannot deliver. Call us in the meantime, and see
             src/data/contact-form.ts to connect it.
           </p>
         </div>
@@ -322,19 +322,23 @@ const nextSteps = [
               />
             </p>
             <p class="field">
-              <label for="website">Website <abbr title="required">*</abbr></label>
+              <label for="website">Website URL (optional)</label>
+              {/* Deliberately type="text", not type="url". type="url" rejects a bare
+                  domain like "acmeplumbing.com" and would force people into a scheme
+                  they should not have to think about. The submit handler prepends
+                  https:// to a bare domain instead, so an empty value stays empty and
+                  a normal URL is accepted either way. */}
               <input
-                type="url"
+                type="text"
                 id="website"
                 name="website"
                 autocomplete="url"
                 inputmode="url"
                 placeholder="https://"
                 aria-describedby="website-hint"
-                required
               />
               <span class="hint" id="website-hint">
-                If you do not have one yet, put the profile or page you use instead.
+                Leave this blank if you do not currently have a website.
               </span>
             </p>
             <p class="field">
@@ -450,9 +454,9 @@ const nextSteps = [
           <p><a href={`tel:${BUSINESS.phone}`}>{BUSINESS.phoneDisplay}</a></p>
         </div>
         <div class="detail-card">
-          <h3>Email</h3>
-          <p>Send a note about what is not working. Include your website if you have one.</p>
-          <p><a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></p>
+          <h3>Send a Message</h3>
+          <p>Tell us what is not working and we will come back to you with a straight answer.</p>
+          <p><a href="#contact-form">Use the contact form</a></p>
         </div>
         <div class="detail-card">
           <h3>Where We Work</h3>
@@ -646,10 +650,25 @@ const nextSteps = [
       errorBox.hidden = true;
     };
 
+    // 2b. Website is OPTIONAL. Nothing here rejects a value or demands one. An
+    // empty field is left exactly as it is and submits fine. A bare domain gets
+    // https:// prepended so the webhook and the sheet receive a usable URL.
+    const website = form.querySelector<HTMLInputElement>('#website');
+    const normaliseWebsite = () => {
+      if (!website) return;
+      const value = website.value.trim();
+      if (!value) {
+        website.value = '';
+        return;
+      }
+      website.value = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+    };
+
     form.addEventListener('submit', async (event) => {
       // The submit event only fires once the browser's own validation has
       // passed, so every `required` and every type= rule is still enforced.
       event.preventDefault();
+      normaliseWebsite();
 
       // A second click while the first request is in flight would book the lead
       // twice. The disabled button covers the mouse, this covers Enter.
@@ -679,7 +698,7 @@ const nextSteps = [
           button.textContent = idleLabel;
         }
         showError(
-          'We could not send your message. Please try again, or call or email us and we will pick it up from there.',
+          'We could not send your message. Please try again, or call us and we will pick it up from there.',
         );
       }
     });
