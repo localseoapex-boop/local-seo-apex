@@ -34,9 +34,16 @@ const serviceGroups = services.map((service) => ({
   })),
 }));
 
-/** Flat Locations menu, one entry per city page that actually builds. */
+/**
+ * Flat Locations menu, one entry per city page that actually builds.
+ *
+ * Location has NO `name` field. It carries `city` + `region`, so the label is
+ * composed the same way the /locations hub composes it. Reading a non-existent
+ * property here renders an EMPTY anchor, which looks exactly like a CSS colour
+ * bug and is not one.
+ */
 const locationLinks = serviceAreaLocations.map((loc) => ({
-  name: loc.name,
+  name: `${loc.city}, ${loc.region}`,
   href: cityUrl(loc.slug),
 }));
 
@@ -116,7 +123,9 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
                     ))
                   : locationLinks.map((loc) => (
                       <li>
-                        <a href={loc.href}>{loc.name}</a>
+                        <a class="menu-link" href={loc.href}>
+                          {loc.name}
+                        </a>
                       </li>
                     ))}
               </ul>
@@ -284,6 +293,19 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
   .menu-children a {
     color: var(--brand-muted);
     font-size: 0.85rem;
+  }
+  /* Location links: navy on the white panel (16:1).
+     MUST be qualified as `.menu a.menu-link`, not a bare `.menu-link`. Astro scopes
+     `.menu a` to `.menu[cid] a[cid]` (specificity 0,3,1), which outranks a lone
+     `.menu-link[cid]` (0,2,0) and silently keeps the colour at --brand-text. */
+  .menu a.menu-link {
+    color: var(--brand-primary);
+    font-weight: 600;
+  }
+  .menu a.menu-link:hover,
+  .menu a.menu-link:focus-visible {
+    background: var(--brand-tint);
+    color: var(--brand-primary);
   }
   /* Coral surface, navy label — never white-on-coral (2.5:1). */
   .cta {
