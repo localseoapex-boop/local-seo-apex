@@ -15,7 +15,6 @@
  */
 import { services, getService, allServiceSlugs, type Service } from '../data/services';
 import { locations, getLocation, type Location } from '../data/locations';
-import { subServices, type SubService } from '../data/subservices';
 import { type Industry } from '../data/industries';
 import { primaryOffice } from '../data/offices';
 import { SITE } from '../config/site';
@@ -104,13 +103,6 @@ export const nearbyCities = (citySlug: string, limit = 4): Location[] => {
     .filter((l): l is Location => Boolean(l) && isServiceAreaLocation(l))
     .slice(0, limit);
 };
-
-/**
- * Sub-services belonging to a category, in catalog order. Empty for categories
- * that have none yet (e.g. 'insulation'), so callers can render unconditionally.
- */
-export const subServicesForCategory = (categorySlug: string): SubService[] =>
-  subServices.filter((s) => s.parent === categorySlug);
 
 /**
  * The services we would build first for an industry, resolved from its

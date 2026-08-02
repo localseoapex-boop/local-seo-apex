@@ -1,0 +1,66 @@
+{
+  "_comment": "Fal AI image manifest for Local SEO Apex. Each entry generates one image via the fal CLI (fal-ai/flux/dev) using your existing `fal auth login` session — no API key required. Run: node scripts/generate-images.mjs  (add --force to regenerate; pass names to limit). A shared STYLE suffix is appended to every prompt in generate-images.mjs so the whole library reads as one art-directed system: editorial, natural light, premium, no text/logos/watermarks (Flux renders gibberish text, so we design it out). Density is 'balanced': photo heroes on major pages + purposeful image-bands, not imagery on every element.",
+  "style": "editorial photograph, shot on 35mm, natural light, premium and authentic, muted sophisticated color grade with warm highlights, deep depth, high detail, no text, no logos, no watermarks, no signage, no captions",
+  "images": [
+    {
+      "name": "home-hero",
+      "size": "landscape_16_9",
+      "prompt": "wide architectural photograph of a premium modern American suburban home exterior at golden hour, warm side light, immaculate landscaping, calm empty driveway, generous open sky with negative space on the left, cinematic and aspirational, no people, no vehicles"
+    },
+    {
+      "name": "home-trust",
+      "size": "landscape_4_3",
+      "prompt": "candid documentary photograph of a home service business owner in a plain work shirt looking off camera mid-conversation in a bright modern warehouse office, unposed natural moment, soft window light, out of focus tools and shelving behind"
+    },
+    {
+      "name": "home-systems",
+      "size": "landscape_4_3",
+      "prompt": "over the shoulder editorial shot of a marketing strategist reviewing local search analytics on a laptop at a sunlit modern desk, warm natural light, plants and coffee, screen glow, clean and premium, screen shows abstract charts with no readable text"
+    },
+    {
+      "name": "services-hero",
+      "size": "landscape_16_9",
+      "prompt": "wide editorial photograph of a clean modern marketing agency workspace at golden hour, laptops and notebooks on a light oak desk, warm window light, plants, calm and premium, no people, negative space on the right"
+    },
+    {
+      "name": "service-local-seo",
+      "size": "landscape_4_3",
+      "prompt": "elevated street level editorial photograph of a sunlit American suburban neighborhood of premium homes, warm golden tones, soft depth, aspirational and calm, no people, no vehicles"
+    },
+    {
+      "name": "service-website",
+      "size": "landscape_4_3",
+      "prompt": "editorial close up of a sleek open laptop on a minimal designer desk beside a coffee and a plant, warm window light, soft abstract colorful shapes glowing on the screen with no readable text, premium and clean"
+    },
+    {
+      "name": "service-ppc",
+      "size": "landscape_4_3",
+      "prompt": "editorial photograph of a marketing professional reviewing colorful performance charts on a large monitor in a warm modern office, screen intentionally out of focus with no readable text, focused and premium"
+    },
+    {
+      "name": "service-gbp",
+      "size": "landscape_4_3",
+      "prompt": "candid documentary photograph of a friendly local business owner in a plain shirt greeting a customer at the bright doorway of a clean modern storefront, natural daylight, authentic unposed moment"
+    },
+    {
+      "name": "about-hero",
+      "size": "landscape_16_9",
+      "prompt": "candid editorial photograph of a small focused marketing team collaborating around a laptop in a bright modern office, natural window light, authentic unposed moment, warm premium tones, negative space on the left"
+    },
+    {
+      "name": "locations-hero",
+      "size": "landscape_16_9",
+      "prompt": "aerial editorial photograph of a sunlit Arizona suburban neighborhood with desert landscaping and premium homes, warm golden hour tones, long soft shadows, aspirational, no text, no people, negative space on the left"
+    },
+    {
+      "name": "industries-hero",
+      "size": "landscape_16_9",
+      "prompt": "wide editorial photograph of a spotless plain white service van parked in the driveway of a premium modern home at golden hour, van has no text and no logos and no graphics, warm natural light, professional and aspirational, negative space in the sky"
+    },
+    {
+      "name": "contact-consult",
+      "size": "landscape_4_3",
+      "prompt": "candid editorial photograph of two professionals having a relaxed strategy conversation over a laptop at a sunlit wooden table, warm natural light, authentic and approachable, laptop screen out of focus with no readable text"
+    }
+  ]
+}

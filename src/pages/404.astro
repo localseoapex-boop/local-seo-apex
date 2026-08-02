@@ -1,0 +1,132 @@
+---
+/**
+ * 404.astro — custom not-found page.
+ *
+ * Astro serves this for unmatched routes on static hosts (Vercel included).
+ * It is noindexed (an error page has no place in search) and gives the visitor
+ * a way back instead of a dead end: primary CTAs plus the main navigational
+ * paths, all resolved from real routes so none of them 404 in turn.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { contactUrl } from '../lib/urls';
+
+const links = [
+  { label: 'Services', href: '/services' },
+  { label: 'Industries', href: '/industries' },
+  { label: 'Areas we serve', href: '/locations' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+];
+---
+
+<BaseLayout
+  title="Page Not Found"
+  description="Sorry, we couldn't find that page. Explore Local SEO Apex services, industries, and service areas instead."
+  noindex={true}
+>
+  <section class="notfound">
+    <div class="notfound-inner">
+      <p class="eyebrow">Error 404</p>
+      <p class="notfound-code" aria-hidden="true">404</p>
+      <h1>This page took a wrong turn</h1>
+      <p class="lead">
+        The page you were looking for has moved or never existed. Let's get you back to something
+        useful — start with a strategy call or pick a page below.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
+        <a class="button outline" href="/">Back to home</a>
+      </div>
+      <nav class="notfound-links" aria-label="Popular pages">
+        {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: var(--brand-white);
+    background:
+      radial-gradient(70% 90% at 88% 8%, rgba(255, 127, 80, 0.28), rgba(255, 127, 80, 0) 50%),
+      linear-gradient(155deg, var(--brand-ink), var(--brand-primary-dark) 60%, var(--brand-primary));
+    padding: clamp(4rem, 10vw, 8rem) clamp(1.1rem, 4vw, 3.5rem);
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+  .notfound::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--grain);
+    background-size: 180px;
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+  .notfound-inner {
+    max-width: 620px;
+  }
+  .notfound .eyebrow {
+    justify-content: center;
+    color: var(--brand-white);
+  }
+  .notfound-code {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(5rem, 16vw, 9rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin: 1rem 0 0.5rem;
+    background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.35));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .notfound h1 {
+    color: var(--brand-white);
+    margin: 0 0 0.9rem;
+  }
+  .notfound .lead {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.12rem;
+    margin: 0 auto;
+    max-width: 48ch;
+  }
+  .notfound .hero-actions {
+    justify-content: center;
+  }
+  .notfound .button.outline {
+    border-color: rgba(255, 255, 255, 0.55);
+    color: var(--brand-white);
+  }
+  .notfound .button.outline:hover {
+    background: var(--brand-white);
+    color: var(--brand-primary);
+    border-color: var(--brand-white);
+  }
+  .notfound-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .notfound-links a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .notfound-links a:hover {
+    color: var(--brand-white);
+  }
+</style>

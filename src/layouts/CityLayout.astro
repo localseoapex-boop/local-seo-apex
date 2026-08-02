@@ -54,7 +54,8 @@ const nearbyLinks = nearbyCities(location.slug).map((loc) => ({
   <article class="container page">
     <Breadcrumbs items={crumbs} />
 
-    <header class="page-hero">
+    <header class="page-hero has-image">
+      <img class="page-hero-bg" src="/images/generated/locations-hero.jpg" alt="Aerial view of a sunlit Arizona suburban neighborhood at golden hour" width="1024" height="576" fetchpriority="high" />
       <p class="eyebrow">Serving {cityState}</p>
       <h1>{title}</h1>
       <p class="lede">{location.intro ?? description}</p>

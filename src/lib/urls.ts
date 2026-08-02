@@ -19,10 +19,6 @@ export const cityUrl = (slug: string): string => `/locations/${slug}`;
  */
 export const industryUrl = (slug: string): string => `/industries/${slug}`;
 
-/** /services/[category]/[subservice] — parent sub-service page. */
-export const subServiceUrl = (categorySlug: string, subSlug: string): string =>
-  `/services/${categorySlug}/${subSlug}`;
-
 /**
  * The offers a CTA can carry into the contact form.
  *

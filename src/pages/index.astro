@@ -154,24 +154,32 @@ const faqSchema = {
 
 <BaseLayout title="Digital Marketing for Home Service Companies" description={SITE.description}>
   <section class="hero">
-    <div class="hero-content">
-      <p class="eyebrow">Digital Marketing for Home Service Companies</p>
-      <h1>More Qualified Leads for Your Home Service Business</h1>
-      <p class="lead">
-        Local SEO Apex helps HVAC, plumbing, electrical, roofing, and other home service companies
-        get found by the customers who are ready to book. Local SEO, an SEO-first website, Google
-        Business Profile, PPC, and AI-powered marketing systems work together so your phone rings
-        with better leads.
-      </p>
-      <div class="hero-actions">
-        <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
-        <a class="button secondary" href={contactUrl('audit')}>Get a Free SEO Audit</a>
-      </div>
-      <div class="hero-strip">
-        <span>Local SEO</span>
-        <span>SEO-First Websites</span>
-        <span>Google Business Profile</span>
-        <span>PPC Management</span>
+    <img
+      class="hero-bg"
+      src="/images/generated/home-hero.jpg"
+      alt="A premium modern suburban home glowing at golden hour"
+      width="1024"
+      height="576"
+      fetchpriority="high"
+    />
+    <div class="hero-inner">
+      <div class="hero-content">
+        <span class="hero-badge"><span class="dot"></span> Home service marketing, Mesa AZ</span>
+        <h1>More <span class="accent">Qualified Leads</span> for Your Home Service Business</h1>
+        <p class="lead">
+          Local SEO Apex helps HVAC, plumbing, electrical, roofing, and other home service companies
+          get found by the customers who are ready to book. Local SEO, an SEO-first website, Google
+          Business Profile, and PPC work together so your phone rings with better leads.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href={contactUrl('strategy')}>Schedule a Strategy Call</a>
+          <a class="button secondary" href={contactUrl('audit')}>Get a Free SEO Audit</a>
+        </div>
+        <div class="hero-strip">
+          <div class="stat"><b>4</b><span>Integrated growth channels</span></div>
+          <div class="stat"><b>100%</b><span>Home service focus</span></div>
+          <div class="stat"><b>Mesa, AZ</b><span>Local search specialists</span></div>
+        </div>
       </div>
     </div>
   </section>
@@ -186,7 +194,7 @@ const faqSchema = {
       </p>
     </div>
 
-    <div class="card-grid">
+    <div class="card-grid reveal-stagger">
       {services.map((service) => (
         <article class="service-card">
           <ServiceIcon name={service.icon} class="card-icon" />
@@ -209,7 +217,7 @@ const faqSchema = {
       </p>
     </div>
 
-    <div class="card-grid">
+    <div class="card-grid reveal-stagger">
       {industries.map((industry) => (
         <article class="city-card">
           <h3>{industry.name}</h3>
@@ -222,6 +230,31 @@ const faqSchema = {
   </section>
 
   <section class="section">
+    <div class="image-band reveal">
+      <div class="image-band__media">
+        <img
+          src="/images/generated/home-trust.jpg"
+          alt="A home service business owner standing in a bright workshop office"
+          width="1024"
+          height="768"
+          loading="lazy"
+        />
+      </div>
+      <div class="image-band__body">
+        <p class="eyebrow">Who we are</p>
+        <h2>A team that only does home services</h2>
+        <p>
+          We are not a generalist agency splitting attention across ecommerce, SaaS, and
+          restaurants. We work with HVAC, plumbing, electrical, and the trades around them every
+          day. That focus is why we already know your buyer, your seasonality, and which searches
+          turn into booked jobs instead of learning it on your budget.
+        </p>
+        <a class="button outline" href="/about">More about our approach</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
     <div class="section-heading">
       <p class="eyebrow">Why Local SEO Apex</p>
       <h2>Principles, not promises</h2>
@@ -231,7 +264,7 @@ const faqSchema = {
       </p>
     </div>
 
-    <ol class="number-list why-list">
+    <ol class="number-list why-list reveal-stagger">
       {principles.map((principle) => (
         <li>
           <h3>{principle.title}</h3>
@@ -271,9 +304,10 @@ const faqSchema = {
       </p>
     </div>
 
-    <div class="card-grid pricing-grid">
+    <div class="card-grid pricing-grid reveal-stagger">
       {packages.map((pkg) => (
-        <article class="detail-card">
+        <article class:list={['detail-card', { featured: pkg.slug === 'local-seo' }]}>
+          {pkg.slug === 'local-seo' && <span class="price-badge">Most chosen</span>}
           <h3>{pkg.title}</h3>
           <p class="price-label">Starting at</p>
           <p class="price-value">{pkg.price}</p>
@@ -338,6 +372,28 @@ const faqSchema = {
 
   .pricing-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+  /* Featured tier: coral ring + lift + badge, so the recommendation reads
+     through emphasis rather than a taller column. */
+  .pricing-grid .detail-card.featured {
+    position: relative;
+    border-color: var(--brand-secondary);
+    box-shadow: 0 0 0 1px var(--brand-secondary), var(--shadow-lg);
+  }
+  .price-badge {
+    position: absolute;
+    top: -0.75rem;
+    left: 1.4rem;
+    background: var(--brand-secondary);
+    color: var(--brand-primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
   }
   .price-label {
     color: var(--brand-muted);

@@ -42,6 +42,46 @@
       "statusCode": 301
     },
     {
+      "source": "/services/local-seo/local-seo-audits(/)?",
+      "destination": "/services/local-seo",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/local-seo/citation-building(/)?",
+      "destination": "/services/local-seo",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/website-development/seo-website-design(/)?",
+      "destination": "/services/website-development",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/website-development/website-redesign(/)?",
+      "destination": "/services/website-development",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/ppc-management/google-ads-management(/)?",
+      "destination": "/services/ppc-management",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/ppc-management/local-services-ads(/)?",
+      "destination": "/services/ppc-management",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/google-business-profile-optimization/gbp-setup(/)?",
+      "destination": "/services/google-business-profile-optimization",
+      "statusCode": 301
+    },
+    {
+      "source": "/services/google-business-profile-optimization/review-management(/)?",
+      "destination": "/services/google-business-profile-optimization",
+      "statusCode": 301
+    },
+    {
       "source": "/locations/mesa(/)?",
       "destination": "/locations/mesa-az",
       "statusCode": 301

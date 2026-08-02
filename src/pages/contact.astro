@@ -224,7 +224,8 @@ const nextSteps = [
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Contact' }]} />
 
     {/* 1. Hero. */}
-    <header class="page-hero">
+    <header class="page-hero has-image">
+      <img class="page-hero-bg" src="/images/generated/contact-consult.jpg" alt="Two professionals having a relaxed strategy conversation over a laptop" width="1024" height="768" fetchpriority="high" />
       <p class="eyebrow">Contact</p>
       <h1>Contact Local SEO Apex</h1>
       <p class="lede">
@@ -715,12 +716,12 @@ const nextSteps = [
   }
 
   .lead-form fieldset {
-    background: var(--brand-white);
+    background: var(--brand-elevated);
     border: 1px solid var(--brand-border);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    margin: 0 0 1rem;
-    padding: 1.25rem 1.4rem 1.4rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin: 0 0 1.25rem;
+    padding: 1.5rem 1.6rem 1.7rem;
   }
 
   .lead-form legend {
@@ -758,16 +759,32 @@ const nextSteps = [
   .lead-form input,
   .lead-form select,
   .lead-form textarea {
-    border: 1px solid var(--brand-border);
-    border-radius: 8px;
+    border: 1.5px solid var(--brand-border-strong);
+    border-radius: var(--radius-md);
     background: var(--brand-surface);
     color: var(--brand-text);
     font: inherit;
     /* 16px minimum stops iOS Safari zooming the viewport on focus. */
     font-size: 1rem;
-    min-height: 48px;
-    padding: 0.7rem 0.85rem;
+    min-height: 50px;
+    padding: 0.75rem 0.9rem;
     width: 100%;
+    transition: border-color var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out),
+      background-color var(--dur-1) var(--ease-out);
+  }
+  .lead-form input:hover,
+  .lead-form select:hover,
+  .lead-form textarea:hover {
+    border-color: var(--brand-primary);
+  }
+  /* Premium focus: navy ring glow + white surface, replacing the default outline. */
+  .lead-form input:focus,
+  .lead-form select:focus,
+  .lead-form textarea:focus {
+    border-color: var(--brand-primary);
+    background: var(--brand-white);
+    box-shadow: 0 0 0 4px rgba(0, 0, 128, 0.12);
+    outline: none;
   }
 
   .lead-form textarea {

@@ -8,8 +8,8 @@
  * standard for home-service sites where phone calls are the main conversion.
  *
  * DROPDOWNS are built from the SAME data the routes are generated from
- * (services + subServicesForCategory, serviceAreaLocations), so a menu entry
- * cannot point at a route that does not exist. Never hardcode these URLs.
+ * (services + serviceAreaLocations), so a menu entry cannot point at a route
+ * that does not exist. Never hardcode these URLs.
  *
  * Industries has NO dropdown on purpose: every entry in data/industries.ts is
  * `hasPage: false` and there is no /industries/[industry] route, so a submenu
@@ -17,21 +17,17 @@
  */
 import { SITE, BUSINESS, NAV_LINKS } from '../config/site';
 import { services } from '../data/services';
-import { serviceAreaLocations, subServicesForCategory } from '../lib/links';
-import { serviceUrl, subServiceUrl, cityUrl } from '../lib/urls';
+import { serviceAreaLocations } from '../lib/links';
+import { serviceUrl, cityUrl } from '../lib/urls';
 
 const currentPath = Astro.url.pathname;
 const isActive = (href: string) =>
   href === '/' ? currentPath === '/' : currentPath.startsWith(href.split('/').slice(0, 2).join('/'));
 
-/** Grouped Services menu: each category, then the sub-services beneath it. */
+/** Services menu: one entry per core category. */
 const serviceGroups = services.map((service) => ({
   name: service.name,
   href: serviceUrl(service.slug),
-  children: subServicesForCategory(service.slug).map((sub) => ({
-    name: sub.name,
-    href: subServiceUrl(service.slug, sub.slug),
-  })),
 }));
 
 /**
@@ -128,15 +124,6 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
                         <a class="menu-parent" href={group.href}>
                           {group.name}
                         </a>
-                        {group.children.length > 0 && (
-                          <ul class="menu-children">
-                            {group.children.map((child) => (
-                              <li>
-                                <a href={child.href}>{child.name}</a>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
                       </li>
                     ))
                   : locationLinks.map((loc) => (
@@ -161,16 +148,18 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
 <style>
   .site-header {
     border-bottom: 1px solid var(--brand-border);
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: saturate(180%) blur(6px);
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    box-shadow: var(--shadow-xs);
     position: sticky;
     top: 0;
     z-index: 10;
   }
   .nav {
-    max-width: 1100px;
+    max-width: var(--wide-width);
     margin: 0 auto;
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1rem;
     display: flex;
     align-items: center;
     gap: 1.5rem;
@@ -204,15 +193,38 @@ const MENUS: Record<string, { id: string; kind: 'services' | 'locations' }> = {
   }
   .nav-links > li > a,
   .nav-item > a {
+    position: relative;
     color: var(--brand-muted);
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 700;
+    padding: 0.2rem 0;
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  /* Animated coral underline — the single accent, applied to wayfinding. */
+  .nav-links > li > a::after,
+  .nav-item > a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.35rem;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: var(--brand-secondary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-2) var(--ease-out);
   }
   .nav-links > li > a:hover,
   .nav-item > a:hover,
   .nav-links a[aria-current='page'] {
     color: var(--brand-primary);
+  }
+  .nav-links > li > a:hover::after,
+  .nav-item > a:hover::after,
+  .nav-links a[aria-current='page']::after {
+    transform: scaleX(1);
   }
 
   /* ───────────── Dropdowns ───────────── */

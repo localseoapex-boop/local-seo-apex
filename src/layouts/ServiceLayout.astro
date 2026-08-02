@@ -29,8 +29,8 @@ import {
   whyChoose,
   serviceTrustBullets,
 } from '../data/service-content';
-import { relatedServices, locationsForService, subServicesForCategory } from '../lib/links';
-import { serviceUrl, cityUrl, subServiceUrl, absoluteUrl, contactUrl } from '../lib/urls';
+import { relatedServices, locationsForService } from '../lib/links';
+import { serviceUrl, cityUrl, absoluteUrl, contactUrl } from '../lib/urls';
 
 interface Props {
   service: Service;
@@ -51,8 +51,14 @@ const crumbs = [
   { name: service.name },
 ];
 
-// The two sub-services in this category, rendered as cards in section 5.
-const subServices = subServicesForCategory(service.slug);
+/** Per-service editorial hero image (generated via scripts/generate-images.mjs). */
+const serviceHeroImage: Record<string, string> = {
+  'local-seo': '/images/generated/service-local-seo.jpg',
+  'website-development': '/images/generated/service-website.jpg',
+  'ppc-management': '/images/generated/service-ppc.jpg',
+  'google-business-profile-optimization': '/images/generated/service-gbp.jpg',
+};
+const heroImage = serviceHeroImage[service.slug];
 
 // The other three services, pulled from the catalog so names, taglines, and
 // links cannot drift from services.ts.
@@ -104,7 +110,17 @@ const faqSchema = {
     <Breadcrumbs items={crumbs} />
 
     {/* 1. Hero */}
-    <header class="page-hero service-hero">
+    <header class:list={['page-hero', 'service-hero', { 'has-image': heroImage }]}>
+      {heroImage && (
+        <img
+          class="page-hero-bg"
+          src={heroImage}
+          alt={`${service.name} for home service businesses`}
+          width="1024"
+          height="768"
+          fetchpriority="high"
+        />
+      )}
       <p class="eyebrow">
         <ServiceIcon name={service.icon} class="eyebrow-icon" />
         {service.shortName}
@@ -199,26 +215,7 @@ const faqSchema = {
         </section>
       )}
 
-      {/* 5. Sub-services. */}
-      {subServices.length > 0 && (
-        <section class="service-section">
-          <h2>{service.name} services</h2>
-          <div class="detail-grid">
-            {subServices.map((sub) => (
-              <div class="detail-card">
-                <h3>{sub.name}</h3>
-                <p>{sub.tagline}</p>
-                <ul>
-                  {sub.features.slice(0, 3).map((f) => <li>{f}</li>)}
-                </ul>
-                <a href={subServiceUrl(service.slug, sub.slug)}>Explore {sub.name}</a>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 6. Process. */}
+      {/* 5. Process. */}
       <section class="service-section">
         <h2>How we get you more booked jobs</h2>
         <ol class="number-list">

@@ -52,6 +52,10 @@ export const BUSINESS = {
 /**
  * Primary navigation links rendered in the header.
  *
+ * Home is intentionally absent. The header logo is already a link to `/`, which
+ * is the convention users expect, so a separate Home item only spends menu width
+ * on a destination visitors already know how to reach.
+ *
  * Blog is intentionally absent. The blog architecture still exists
  * (src/pages/blog/[...slug].astro + the `blog` content collection) but there are
  * zero published posts, so the hub page was removed rather than ship an empty,
@@ -59,7 +63,6 @@ export const BUSINESS = {
  * re-add src/pages/blog/index.astro, once real articles are written.
  */
 export const NAV_LINKS = [
-  { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Industries', href: '/industries' },

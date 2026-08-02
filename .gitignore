@@ -29,3 +29,5 @@ rebuild-kit/
 
 # Local reference material
 reference/
+# Local secrets
+.env.local
