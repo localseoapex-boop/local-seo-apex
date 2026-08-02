@@ -12,8 +12,11 @@
  * so each section is a single map(). Once these repeat on other pages, the card
  * grids should move to components.
  */
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
+import homeHero from '../assets/generated/home-hero.jpg';
+import homeTrust from '../assets/generated/home-trust.jpg';
 import { SITE, BUSINESS } from '../config/site';
 import { services, formatStartingPrice } from '../data/services';
 import { industries } from '../data/industries';
@@ -154,12 +157,13 @@ const faqSchema = {
 
 <BaseLayout title="Digital Marketing for Home Service Companies" description={SITE.description}>
   <section class="hero">
-    <img
+    <Image
       class="hero-bg"
-      src="/images/generated/home-hero.jpg"
+      src={homeHero}
       alt="A premium modern suburban home glowing at golden hour"
-      width="1024"
-      height="576"
+      widths={[480, 768, 1024]}
+      sizes="100vw"
+      loading="eager"
       fetchpriority="high"
     />
     <div class="hero-inner">
@@ -232,11 +236,11 @@ const faqSchema = {
   <section class="section">
     <div class="image-band reveal">
       <div class="image-band__media">
-        <img
-          src="/images/generated/home-trust.jpg"
+        <Image
+          src={homeTrust}
           alt="A home service business owner standing in a bright workshop office"
-          width="1024"
-          height="768"
+          widths={[480, 768, 1024]}
+          sizes="(max-width: 860px) 100vw, 50vw"
           loading="lazy"
         />
       </div>

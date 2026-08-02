@@ -18,6 +18,8 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { Image } from 'astro:assets';
+import aboutHero from '../assets/generated/about-hero.jpg';
 import InternalLinks from '../components/InternalLinks.astro';
 import { contactUrl } from '../lib/urls';
 
@@ -201,7 +203,7 @@ const nextSteps = [
 
     {/* 1. Hero. */}
     <header class="page-hero has-image">
-      <img class="page-hero-bg" src="/images/generated/about-hero.jpg" alt="A focused marketing team collaborating in a bright modern office" width="1024" height="576" fetchpriority="high" />
+      <Image class="page-hero-bg" src={aboutHero} alt="A focused marketing team collaborating in a bright modern office" widths={[480, 768, 1024]} sizes="100vw" loading="eager" fetchpriority="high" />
       <p class="eyebrow">Who We Are</p>
       <h1>About Local SEO Apex</h1>
       <p class="lede">

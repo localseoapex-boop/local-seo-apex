@@ -31,6 +31,12 @@ import {
 } from '../data/service-content';
 import { relatedServices, locationsForService } from '../lib/links';
 import { serviceUrl, cityUrl, absoluteUrl, contactUrl } from '../lib/urls';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import imgLocalSeo from '../assets/generated/service-local-seo.jpg';
+import imgWebsite from '../assets/generated/service-website.jpg';
+import imgPpc from '../assets/generated/service-ppc.jpg';
+import imgGbp from '../assets/generated/service-gbp.jpg';
 
 interface Props {
   service: Service;
@@ -52,11 +58,11 @@ const crumbs = [
 ];
 
 /** Per-service editorial hero image (generated via scripts/generate-images.mjs). */
-const serviceHeroImage: Record<string, string> = {
-  'local-seo': '/images/generated/service-local-seo.jpg',
-  'website-development': '/images/generated/service-website.jpg',
-  'ppc-management': '/images/generated/service-ppc.jpg',
-  'google-business-profile-optimization': '/images/generated/service-gbp.jpg',
+const serviceHeroImage: Record<string, ImageMetadata> = {
+  'local-seo': imgLocalSeo,
+  'website-development': imgWebsite,
+  'ppc-management': imgPpc,
+  'google-business-profile-optimization': imgGbp,
 };
 const heroImage = serviceHeroImage[service.slug];
 
@@ -112,12 +118,13 @@ const faqSchema = {
     {/* 1. Hero */}
     <header class:list={['page-hero', 'service-hero', { 'has-image': heroImage }]}>
       {heroImage && (
-        <img
+        <Image
           class="page-hero-bg"
           src={heroImage}
           alt={`${service.name} for home service businesses`}
-          width="1024"
-          height="768"
+          widths={[480, 768, 1024]}
+          sizes="100vw"
+          loading="eager"
           fetchpriority="high"
         />
       )}

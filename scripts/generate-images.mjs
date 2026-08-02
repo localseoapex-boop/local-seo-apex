@@ -25,7 +25,9 @@ import { fileURLToPath } from 'node:url';
 import os from 'node:os';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const OUT_DIR = join(ROOT, 'public', 'images', 'generated');
+// Images live under src/assets so Astro's <Image> optimizes them (WebP +
+// responsive srcset) at build time. Components import them from here.
+const OUT_DIR = join(ROOT, 'src', 'assets', 'generated');
 const MODEL = process.env.FAL_MODEL || 'fal-ai/flux/dev';
 
 // The fal CLI installs under the Python user bin, which isn't always on PATH

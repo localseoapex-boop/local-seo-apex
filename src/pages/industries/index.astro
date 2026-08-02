@@ -21,6 +21,8 @@
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { Image } from 'astro:assets';
+import industriesHero from '../../assets/generated/industries-hero.jpg';
 import { industries, industriesByDemandShape } from '../../data/industries';
 import { services } from '../../data/services';
 import { servicesForIndustry } from '../../lib/links';
@@ -89,7 +91,7 @@ const faqSchema = {
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Industries' }]} />
 
     <header class="page-hero has-image">
-      <img class="page-hero-bg" src="/images/generated/industries-hero.jpg" alt="A clean service van parked at a premium modern home at golden hour" width="1024" height="576" fetchpriority="high" />
+      <Image class="page-hero-bg" src={industriesHero} alt="A clean service van parked at a premium modern home at golden hour" widths={[480, 768, 1024]} sizes="100vw" loading="eager" fetchpriority="high" />
       <p class="eyebrow">Industries We Serve</p>
       <h1>Marketing Built Around How Your Trade Is Actually Bought</h1>
       <p class="lede">

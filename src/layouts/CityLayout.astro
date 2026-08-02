@@ -12,6 +12,8 @@
  */
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { Image } from 'astro:assets';
+import locationsHero from '../assets/generated/locations-hero.jpg';
 import InternalLinks from '../components/InternalLinks.astro';
 import type { Location } from '../data/locations';
 import { getOffice, primaryOffice } from '../data/offices';
@@ -55,7 +57,7 @@ const nearbyLinks = nearbyCities(location.slug).map((loc) => ({
     <Breadcrumbs items={crumbs} />
 
     <header class="page-hero has-image">
-      <img class="page-hero-bg" src="/images/generated/locations-hero.jpg" alt="Aerial view of a sunlit Arizona suburban neighborhood at golden hour" width="1024" height="576" fetchpriority="high" />
+      <Image class="page-hero-bg" src={locationsHero} alt="Aerial view of a sunlit Arizona suburban neighborhood at golden hour" widths={[480, 768, 1024]} sizes="100vw" loading="eager" fetchpriority="high" />
       <p class="eyebrow">Serving {cityState}</p>
       <h1>{title}</h1>
       <p class="lede">{location.intro ?? description}</p>
